@@ -67,7 +67,10 @@
       pointer-events: none;
     }
 
+    .hero-bg-video iframe,
     .hero-bg-video video {
+      /* Scale media to cover the hero — oversize so it fills
+         without letterboxing regardless of viewport aspect ratio. */
       position: absolute;
       top: 50%;
       left: 50%;
@@ -81,7 +84,7 @@
       pointer-events: none;
     }
 
-    /* Soft tint so foreground text stays legible */
+    /* Soft tint so the foreground text stays legible */
     .hero-bg-tint {
       position: absolute;
       inset: 0;
@@ -94,10 +97,47 @@
       );
     }
 
-    /* Lift hero content above the video */
-    .hero-section > .hero {
+    /* Lift the actual hero content above the video */
+    .hero-section > .top-bar,
+    .hero-section > .hero-main {
       position: relative;
       z-index: 2;
+    }
+
+    /* ── PARTICLE BAND ── */
+    .particle-band {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 55%;
+      width: 100%;
+      pointer-events: none;
+      z-index: 0;
+      mask-image: linear-gradient(to right,
+        transparent 0%,
+        black 8%,
+        black 92%,
+        transparent 100%);
+      -webkit-mask-image: linear-gradient(to right,
+        transparent 0%,
+        black 8%,
+        black 92%,
+        transparent 100%);
+    }
+
+    .particle-band canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Hero content sits above the particles */
+    .hero {
+      position: relative;
+      z-index: 1;
     }
 
     /* ── TOP BAR ── */
@@ -114,6 +154,7 @@
       z-index: 200;
       padding: 20px 40px;
       background: transparent;
+      transition: background 0.2s;
     }
 
     /* Absolutely center the nav pill */
@@ -123,7 +164,7 @@
       transform: translateX(-50%);
     }
 
-    /* Name pill */
+    /* Name pill — same family as nav/contact */
     .topbar-name-pill {
       background: var(--pill-bg);
       border: 1px solid var(--pill-border);
@@ -186,6 +227,13 @@
       color: var(--bg);
     }
 
+    .nav-pill .nav-divider {
+      width: 1px;
+      height: 16px;
+      background: var(--pill-border);
+      flex-shrink: 0;
+    }
+
     .wave-icon {
       display: inline-block;
       font-style: normal;
@@ -213,6 +261,8 @@
       align-items: center;
       gap: 0;
       padding: 6px 14px;
+      flex: 1;
+      justify-content: flex-end;
       max-width: fit-content;
       margin-left: auto;
     }
@@ -229,7 +279,9 @@
       transition: color 0.18s;
     }
 
-    .contact-pill a:hover { color: var(--ink); }
+    .contact-pill a:hover {
+      color: var(--ink);
+    }
 
     .contact-pill .c-divider {
       width: 1px;
@@ -239,6 +291,7 @@
       flex-shrink: 0;
     }
 
+    /* LinkedIn SVG */
     .li-icon {
       width: 17px;
       height: 17px;
@@ -246,7 +299,7 @@
       flex-shrink: 0;
     }
 
-    /* ── HERO LAYOUT ── */
+    /* ── HERO ── */
     .hero {
       flex: 1;
       display: grid;
@@ -256,6 +309,149 @@
       padding: 0 60px;
       min-height: 0;
       overflow: visible;
+    }
+
+    /* ── WORK SECTION ── */
+    .work-section {
+      padding: 120px 60px 160px;
+      background: var(--bg);
+      overflow-x: hidden;
+    }
+
+    .work-heading {
+      font-family: var(--font-display);
+      font-size: clamp(36px, 4vw, 60px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .work-heading-line {
+      width: 48px;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 2px;
+      margin-bottom: 80px;
+    }
+
+    /* ── CASE STUDY CARDS ── */
+    .cs-list {
+      display: flex;
+      flex-direction: column;
+      gap: 80px;
+    }
+
+    .cs-item {
+      display: flex;
+      /* odd = left-aligned, even = right-aligned */
+    }
+
+    .cs-item.left  { justify-content: flex-start; }
+    .cs-item.right { justify-content: flex-end; }
+
+    .cs-card {
+      width: 75%;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .cs-image-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 16px;
+      overflow: hidden;
+      background: var(--cs-bg, #e8e4dc);
+      position: relative;
+    }
+
+    .cs-image-wrap img,
+    .cs-image-placeholder {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .cs-card:hover .cs-image-placeholder,
+    .cs-card:hover .cs-image-wrap img {
+      transform: scale(1.09);
+    }
+
+    /* Placeholder stripe pattern */
+    .cs-image-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        transparent,
+        transparent 12px,
+        oklch(0% 0 0 / 0.04) 12px,
+        oklch(0% 0 0 / 0.04) 24px
+      );
+    }
+
+    .cs-placeholder-label {
+      font-family: monospace;
+      font-size: 12px;
+      color: var(--ink-mid);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: oklch(100% 0 0 / 0.7);
+      padding: 6px 14px;
+      border-radius: 4px;
+    }
+
+    .cs-meta {
+      padding: 24px 4px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cs-title {
+      font-family: var(--font-display);
+      font-size: clamp(22px, 2.4vw, 34px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--ink);
+      line-height: 1.15;
+    }
+
+    .cs-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .cs-tag {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      color: var(--ink-mid);
+      background: var(--bg2);
+      border: 1px solid var(--pill-border);
+      border-radius: 999px;
+      padding: 5px 14px;
+    }
+
+    /* ── SCROLL SLIDE-IN ── */
+    .cs-item {
+      opacity: 0;
+      transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cs-item.left  { transform: translateX(-160px); }
+    .cs-item.right { transform: translateX(160px); }
+
+    .cs-item.visible {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     /* LEFT — intro text */
@@ -343,6 +539,7 @@
       justify-content: center;
     }
 
+    /* No background — pure illustrated figure */
     .photo-placeholder {
       width: 100%;
       height: 100%;
@@ -381,6 +578,8 @@
       position: relative;
     }
 
+    .hero-quote.italic { font-style: italic; }
+
     .hero-quote::before {
       content: '\201C';
       font-family: var(--font-display);
@@ -400,139 +599,7 @@
       border-radius: 1px;
     }
 
-    /* ── WORK SECTION ── */
-    .work-section {
-      padding: 120px 60px 160px;
-      background: var(--bg);
-      overflow-x: hidden;
-    }
-
-    .work-heading {
-      font-family: var(--font-display);
-      font-size: clamp(36px, 4vw, 60px);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      color: var(--ink);
-      margin-bottom: 16px;
-    }
-
-    .work-heading-line {
-      width: 48px;
-      height: 3px;
-      background: var(--accent);
-      border-radius: 2px;
-      margin-bottom: 80px;
-    }
-
-    /* ── CASE STUDY CARDS ── */
-    .cs-list {
-      display: flex;
-      flex-direction: column;
-      gap: 80px;
-    }
-
-    .cs-item {
-      display: flex;
-      opacity: 0;
-      transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1),
-                  transform 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
-    .cs-item.left  { justify-content: flex-start; transform: translateX(-160px); }
-    .cs-item.right { justify-content: flex-end;   transform: translateX(160px); }
-
-    .cs-item.visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    .cs-card {
-      width: 75%;
-      cursor: pointer;
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .cs-image-wrap {
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 16px;
-      overflow: hidden;
-      background: var(--cs-bg, #e8e4dc);
-      position: relative;
-    }
-
-    .cs-image-wrap img,
-    .cs-image-placeholder {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    .cs-card:hover .cs-image-placeholder,
-    .cs-card:hover .cs-image-wrap img {
-      transform: scale(1.09);
-    }
-
-    .cs-image-placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-image: repeating-linear-gradient(
-        -45deg,
-        transparent,
-        transparent 12px,
-        oklch(0% 0 0 / 0.04) 12px,
-        oklch(0% 0 0 / 0.04) 24px
-      );
-    }
-
-    .cs-placeholder-label {
-      font-family: monospace;
-      font-size: 12px;
-      color: var(--ink-mid);
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      background: oklch(100% 0 0 / 0.7);
-      padding: 6px 14px;
-      border-radius: 4px;
-    }
-
-    .cs-meta {
-      padding: 24px 4px 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .cs-title {
-      font-family: var(--font-display);
-      font-size: clamp(22px, 2.4vw, 34px);
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-      line-height: 1.15;
-    }
-
-    .cs-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .cs-tag {
-      font-family: var(--font-body);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.04em;
-      color: var(--ink-mid);
-      background: var(--bg2);
-      border: 1px solid var(--pill-border);
-      border-radius: 999px;
-      padding: 5px 14px;
-    }
+    /* No entrance animations — content always visible */
 
     /* ── ABOUT WRAP ── */
     .about-wrap {
@@ -541,17 +608,13 @@
       position: relative;
     }
 
+    /* About hero / intro block */
     .about-hero {
       padding: 140px 0 40px;
       position: relative;
     }
-
     .about-hero .container,
-    .about-wrap .container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 0 60px;
-    }
+    .about-wrap .container { max-width: 1240px; margin: 0 auto; padding: 0 60px; }
 
     .about-eyebrow {
       display: inline-flex;
@@ -565,14 +628,12 @@
       text-transform: uppercase;
       margin-bottom: 24px;
     }
-
     .about-eyebrow .dot {
       width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--accent);
       transition: background 0.4s;
     }
-
     .about-wrap.personal .about-eyebrow .dot { background: var(--personal); }
 
     .about-hero-grid {
@@ -581,7 +642,6 @@
       gap: 80px;
       align-items: center;
     }
-
     .about-title {
       font-family: var(--font-display);
       font-weight: 700;
@@ -591,16 +651,13 @@
       color: var(--ink);
       margin-bottom: 28px;
     }
-
     .about-title em {
       font-style: italic;
       font-weight: 600;
       color: var(--accent);
       transition: color 0.4s;
     }
-
     .about-wrap.personal .about-title em { color: var(--personal); }
-
     .about-role-pill {
       display: inline-flex;
       align-items: center;
@@ -616,16 +673,13 @@
       color: var(--ink);
       margin-bottom: 28px;
     }
-
     .about-role-pill .dot {
       width: 7px; height: 7px;
       border-radius: 50%;
       background: var(--accent);
       transition: background 0.4s;
     }
-
     .about-wrap.personal .about-role-pill .dot { background: var(--personal); }
-
     .about-intro-line {
       font-family: var(--font-body);
       font-size: 18px;
@@ -633,7 +687,6 @@
       max-width: 50ch;
       line-height: 1.55;
     }
-
     .about-image {
       width: 100%;
       aspect-ratio: 4 / 5;
@@ -642,7 +695,6 @@
       background: var(--bg2);
       position: relative;
     }
-
     .about-image img {
       width: 100%;
       height: 100%;
@@ -659,7 +711,6 @@
       align-items: center;
       gap: 16px;
     }
-
     .mode-toggle {
       position: relative;
       display: inline-flex;
@@ -670,7 +721,6 @@
       border-radius: 999px;
       box-shadow: var(--pill-shadow);
     }
-
     .mode-toggle button {
       position: relative;
       z-index: 2;
@@ -690,9 +740,7 @@
       white-space: nowrap;
       letter-spacing: 0.01em;
     }
-
     .mode-toggle button.active { color: var(--bg); }
-
     .mode-toggle .slider {
       position: absolute;
       z-index: 1;
@@ -705,28 +753,23 @@
                   width 0.45s cubic-bezier(0.4, 0, 0.2, 1),
                   background 0.4s;
     }
-
     .about-wrap.personal .mode-toggle .slider { background: var(--personal); }
-
     .mode-toggle .pip {
       width: 8px; height: 8px;
       border-radius: 50%;
       background: var(--accent);
       transition: background 0.4s;
     }
-
     .about-wrap:not(.personal) .mode-toggle [data-mode="pro"] .pip { background: var(--accent-soft); }
     .about-wrap:not(.personal) .mode-toggle [data-mode="personal"] .pip { background: var(--personal); }
     .about-wrap.personal .mode-toggle [data-mode="pro"] .pip { background: var(--accent); }
     .about-wrap.personal .mode-toggle [data-mode="personal"] .pip { background: oklch(94% 0.05 320); }
-
     .mode-caption {
       font-family: var(--font-body);
       font-size: 13px;
       color: var(--ink-soft);
       letter-spacing: 0.04em;
     }
-
     .mode-caption strong {
       color: var(--ink-mid);
       font-weight: 600;
@@ -734,32 +777,25 @@
 
     /* Panels */
     .about-panel { display: none; }
-    .about-panel.active {
-      display: block;
-      animation: aboutFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-    }
-
+    .about-panel.active { display: block; animation: aboutFadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1); }
     @keyframes aboutFadeUp {
-      0%   { opacity: 0; transform: translateY(24px); }
+      0% { opacity: 0; transform: translateY(24px); }
       100% { opacity: 1; transform: translateY(0); }
     }
 
     /* Bio block */
     .bio-block { padding: 56px 0 100px; }
-
     .bio-grid {
       display: grid;
       grid-template-columns: auto 1fr;
       gap: 80px;
       align-items: start;
     }
-
     .bio-side {
       position: sticky;
       top: 110px;
       max-width: 220px;
     }
-
     .bio-side .e {
       font-family: var(--font-body);
       font-size: 11.5px;
@@ -769,7 +805,6 @@
       text-transform: uppercase;
       margin-bottom: 12px;
     }
-
     .bio-side h2 {
       font-family: var(--font-display);
       font-size: 24px;
@@ -778,7 +813,6 @@
       color: var(--ink);
       line-height: 1.1;
     }
-
     .bio-prose {
       font-family: var(--font-display);
       font-size: clamp(24px, 2.4vw, 34px);
@@ -788,10 +822,8 @@
       color: var(--ink);
       text-wrap: pretty;
     }
-
     .bio-prose p { margin-bottom: 20px; }
     .bio-prose p:first-of-type::first-line { font-weight: 700; }
-
     .bio-prose mark {
       background: linear-gradient(180deg, transparent 60%, var(--accent-soft) 60%);
       color: inherit;
@@ -803,9 +835,7 @@
       padding: 100px 0;
       border-top: 1px solid var(--pill-border);
     }
-
     section.about-block.alt { background: var(--bg-soft); }
-
     .ab-eyebrow {
       display: flex;
       align-items: center;
@@ -818,7 +848,6 @@
       text-transform: uppercase;
       margin-bottom: 18px;
     }
-
     .ab-eyebrow .num {
       display: inline-flex;
       align-items: center;
@@ -830,7 +859,6 @@
       font-size: 11px;
       font-weight: 700;
     }
-
     .ab-title {
       font-family: var(--font-display);
       font-weight: 700;
@@ -842,9 +870,7 @@
       max-width: 22ch;
       text-wrap: balance;
     }
-
     .ab-title em { font-style: italic; color: var(--accent); font-weight: 600; }
-
     .ab-meta {
       display: inline-flex;
       align-items: baseline;
@@ -854,7 +880,6 @@
       color: var(--ink-mid);
       margin-bottom: 56px;
     }
-
     .ab-meta strong {
       font-family: var(--font-display);
       font-size: 22px;
@@ -865,7 +890,6 @@
 
     /* Timeline */
     .timeline { display: flex; flex-direction: column; }
-
     .tl-row {
       display: grid;
       grid-template-columns: 180px 1fr;
@@ -874,9 +898,7 @@
       border-top: 1px solid var(--pill-border);
       position: relative;
     }
-
     .tl-row:first-of-type { border-top: 1px solid var(--ink); }
-
     .tl-row::before {
       content: '';
       position: absolute;
@@ -887,7 +909,6 @@
       background: var(--accent);
       transform: translateX(-50%);
     }
-
     .tl-date {
       display: flex;
       flex-direction: column;
@@ -895,20 +916,17 @@
       font-family: var(--font-body);
       padding-top: 4px;
     }
-
     .tl-date .range {
       font-size: 13px;
       font-weight: 600;
       color: var(--ink);
       letter-spacing: 0.02em;
     }
-
     .tl-date .duration {
       font-size: 12px;
       color: var(--ink-soft);
       letter-spacing: 0.04em;
     }
-
     .tl-company {
       display: flex;
       align-items: baseline;
@@ -916,7 +934,6 @@
       flex-wrap: wrap;
       margin-bottom: 4px;
     }
-
     .tl-company h3 {
       font-family: var(--font-display);
       font-size: clamp(28px, 2.8vw, 38px);
@@ -925,7 +942,6 @@
       color: var(--ink);
       line-height: 1.1;
     }
-
     .tl-company .badge {
       display: inline-flex;
       align-items: center;
@@ -941,7 +957,6 @@
       background: var(--bg2);
       border: 1px solid var(--pill-border);
     }
-
     .tl-role {
       font-family: var(--font-body);
       font-size: 16px;
@@ -949,14 +964,12 @@
       color: var(--ink-mid);
       margin-bottom: 20px;
     }
-
     .tl-points {
       list-style: none;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
-
     .tl-points li {
       position: relative;
       padding-left: 20px;
@@ -966,7 +979,6 @@
       line-height: 1.55;
       text-wrap: pretty;
     }
-
     .tl-points li::before {
       content: '';
       position: absolute;
@@ -975,9 +987,7 @@
       width: 8px; height: 1px;
       background: var(--ink-mid);
     }
-
     .tl-points li strong { color: var(--ink); font-weight: 600; }
-
     .tl-points li mark {
       background: var(--accent-tint);
       color: var(--accent);
@@ -986,14 +996,12 @@
       font-weight: 600;
       font-size: 14.5px;
     }
-
     .impact-chips {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin: 18px 0 4px;
     }
-
     .impact-chip {
       display: inline-flex;
       align-items: center;
@@ -1006,7 +1014,6 @@
       font-size: 13px;
       color: var(--ink);
     }
-
     .impact-chip .v {
       font-family: var(--font-display);
       font-size: 17px;
@@ -1021,7 +1028,6 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
-
     .accolade-card {
       padding: 28px 26px 32px;
       background: var(--bg);
@@ -1032,12 +1038,10 @@
       gap: 12px;
       transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s;
     }
-
     .accolade-card:hover {
       transform: translateY(-4px);
       box-shadow: 0 20px 40px -22px oklch(15% 0.01 60 / 0.2);
     }
-
     .accolade-card .year {
       display: inline-flex;
       align-items: center;
@@ -1048,7 +1052,6 @@
       color: var(--accent);
       letter-spacing: 0.04em;
     }
-
     .accolade-card .year svg {
       width: 14px; height: 14px;
       stroke: var(--accent);
@@ -1057,7 +1060,6 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-
     .accolade-card h4 {
       font-family: var(--font-display);
       font-size: 20px;
@@ -1066,13 +1068,11 @@
       color: var(--ink);
       line-height: 1.2;
     }
-
     .accolade-card .issuer {
       font-size: 13px;
       color: var(--ink-soft);
       font-style: italic;
     }
-
     .accolade-card p {
       font-size: 14px;
       color: var(--ink-mid);
@@ -1085,7 +1085,6 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
     }
-
     .edu-card {
       background: var(--bg);
       border: 1px solid var(--pill-border);
@@ -1095,7 +1094,6 @@
       flex-direction: column;
       gap: 12px;
     }
-
     .edu-card .years {
       font-family: var(--font-body);
       font-size: 12px;
@@ -1104,7 +1102,6 @@
       color: var(--accent);
       text-transform: uppercase;
     }
-
     .edu-card h4 {
       font-family: var(--font-display);
       font-size: 21px;
@@ -1113,13 +1110,11 @@
       color: var(--ink);
       line-height: 1.2;
     }
-
     .edu-card .program {
       font-size: 14px;
       color: var(--ink-mid);
       line-height: 1.4;
     }
-
     .edu-card .score {
       display: inline-flex;
       align-items: baseline;
@@ -1128,7 +1123,6 @@
       padding-top: 14px;
       border-top: 1px solid var(--pill-border);
     }
-
     .edu-card .score .v {
       font-family: var(--font-display);
       font-size: 26px;
@@ -1136,7 +1130,6 @@
       letter-spacing: -0.02em;
       color: var(--ink);
     }
-
     .edu-card .score .l {
       font-size: 12px;
       color: var(--ink-soft);
@@ -1154,7 +1147,6 @@
       align-items: center;
       gap: 24px;
     }
-
     .cert-card .ribbon {
       flex-shrink: 0;
       width: 56px; height: 56px;
@@ -1165,7 +1157,6 @@
       align-items: center;
       justify-content: center;
     }
-
     .cert-card .ribbon svg {
       width: 28px; height: 28px;
       stroke: var(--accent);
@@ -1174,9 +1165,7 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-
     .cert-card .meta { display: flex; flex-direction: column; gap: 4px; }
-
     .cert-card h4 {
       font-family: var(--font-display);
       font-size: 20px;
@@ -1185,7 +1174,6 @@
       color: var(--ink);
       line-height: 1.2;
     }
-
     .cert-card p {
       font-size: 14px;
       color: var(--ink-mid);
@@ -1199,7 +1187,6 @@
       grid-template-columns: repeat(4, 1fr);
       gap: 36px 32px;
     }
-
     .skill-col h4 {
       font-family: var(--font-display);
       font-size: 18px;
@@ -1213,7 +1200,6 @@
       align-items: center;
       gap: 10px;
     }
-
     .skill-col h4 svg {
       width: 18px; height: 18px;
       stroke: var(--accent);
@@ -1222,9 +1208,7 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-
     .skill-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
-
     .skill-col li {
       font-family: var(--font-body);
       font-size: 15px;
@@ -1237,7 +1221,6 @@
       padding: 100px 0 140px;
       border-top: 1px solid var(--pill-border);
     }
-
     .personal-stage {
       background: linear-gradient(135deg,
         var(--personal-soft) 0%,
@@ -1249,7 +1232,6 @@
       position: relative;
       overflow: hidden;
     }
-
     .personal-stage::before,
     .personal-stage::after {
       content: '';
@@ -1259,21 +1241,17 @@
       opacity: 0.6;
       z-index: 0;
     }
-
     .personal-stage::before {
       top: -80px; left: -80px;
       width: 320px; height: 320px;
       background: oklch(78% 0.16 320);
     }
-
     .personal-stage::after {
       bottom: -100px; right: -60px;
       width: 280px; height: 280px;
       background: oklch(80% 0.15 25);
     }
-
     .personal-stage > * { position: relative; z-index: 1; }
-
     .personal-eyebrow {
       display: inline-flex;
       align-items: center;
@@ -1292,19 +1270,16 @@
       color: var(--personal);
       margin-bottom: 36px;
     }
-
     .personal-eyebrow .pulse {
       width: 8px; height: 8px;
       border-radius: 50%;
       background: var(--personal);
       animation: pulse 1.6s ease-in-out infinite;
     }
-
     @keyframes pulse {
       0%, 100% { transform: scale(1); opacity: 1; }
-      50%       { transform: scale(1.6); opacity: 0.4; }
+      50% { transform: scale(1.6); opacity: 0.4; }
     }
-
     .personal-title {
       font-family: var(--font-display);
       font-weight: 700;
@@ -1318,13 +1293,11 @@
       margin-right: auto;
       text-wrap: balance;
     }
-
     .personal-title em {
       font-style: italic;
       color: var(--personal);
       font-weight: 600;
     }
-
     .personal-sub {
       font-family: var(--font-body);
       font-size: 17px;
@@ -1333,14 +1306,12 @@
       margin: 0 auto 56px;
       text-wrap: pretty;
     }
-
     .hobby-strip {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 14px;
     }
-
     .hobby-tile {
       display: flex;
       flex-direction: column;
@@ -1355,9 +1326,7 @@
       min-width: 130px;
       transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     }
-
     .hobby-tile:hover { transform: translateY(-6px); }
-
     .hobby-tile svg {
       width: 32px; height: 32px;
       stroke: var(--personal);
@@ -1366,7 +1335,6 @@
       stroke-linecap: round;
       stroke-linejoin: round;
     }
-
     .hobby-tile span {
       font-family: var(--font-display);
       font-size: 15px;
@@ -1375,13 +1343,7 @@
       letter-spacing: -0.01em;
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 980px) {
-      .hero { grid-template-columns: 1fr; padding: 80px 28px 40px; }
-      .hero-left, .hero-right { padding: 0; }
-      .hero-center { display: none; }
-      .topbar { padding: 16px 20px; }
-      .work-section { padding: 80px 28px 100px; }
       .about-wrap .container { padding-left: 28px; padding-right: 28px; }
       .about-hero-grid, .bio-grid { grid-template-columns: 1fr; gap: 40px; }
       .bio-side { position: static; max-width: none; }
@@ -1391,566 +1353,869 @@
       .cert-card { flex-direction: column; align-items: flex-start; }
       .personal-stage { padding: 60px 28px 80px; }
     }
-
     @media (max-width: 640px) {
       .accolades-grid, .edu-grid, .skills-grid { grid-template-columns: 1fr; }
-      .contact-pill a:first-child { display: none; }
     }
+
+    /* ── CONTACT SECTION ── */
+    .contact-section {
+      position: relative;
+      padding: 160px 60px;
+      background: var(--bg);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Layered ambient blobs */
+    .contact-section::before,
+    .contact-section::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .contact-section::before {
+      width: 600px; height: 600px;
+      top: -120px; left: -160px;
+      background: radial-gradient(circle, oklch(88% 0.10 60 / 0.55) 0%, transparent 70%);
+    }
+    .contact-section::after {
+      width: 500px; height: 500px;
+      bottom: -120px; right: -100px;
+      background: radial-gradient(circle, oklch(84% 0.12 320 / 0.40) 0%, transparent 70%);
+    }
+
+    .contact-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* Eyebrow label */
+    .contact-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 32px;
+    }
+    .contact-eyebrow .line {
+      width: 32px; height: 1px;
+      background: var(--ink-soft);
+      opacity: 0.4;
+    }
+
+    /* Big heading */
+    .contact-heading {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: clamp(52px, 8vw, 116px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 28px;
+      text-wrap: balance;
+    }
+    .contact-heading em {
+      font-style: italic;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* Sub-text */
+    .contact-sub {
+      font-family: var(--font-body);
+      font-size: clamp(15px, 1.6vw, 18px);
+      color: var(--ink-mid);
+      max-width: 44ch;
+      margin: 0 auto 56px;
+      line-height: 1.6;
+    }
+
+    /* Button row */
+    .contact-btns {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Shared button base */
+    .c-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-body);
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 16px 32px;
+      cursor: pointer;
+      transition:
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        background 0.2s,
+        color 0.2s;
+      letter-spacing: 0.01em;
+      white-space: nowrap;
+    }
+    .c-btn:hover {
+      transform: translateY(-3px);
+    }
+
+    /* Primary — LinkedIn (filled dark) */
+    .c-btn-primary {
+      background: var(--ink);
+      color: var(--bg);
+      box-shadow: 0 4px 24px oklch(15% 0.01 60 / 0.18);
+    }
+    .c-btn-primary:hover {
+      background: oklch(22% 0.01 60);
+      box-shadow: 0 12px 40px oklch(15% 0.01 60 / 0.28);
+    }
+
+    /* Secondary — Email (outlined) */
+    .c-btn-secondary {
+      background: var(--pill-bg);
+      color: var(--ink);
+      border: 1px solid var(--pill-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--pill-shadow);
+    }
+    .c-btn-secondary:hover {
+      background: var(--bg2);
+      box-shadow: 0 10px 32px oklch(15% 0.01 60 / 0.12);
+    }
+
+    /* Button icon wrapper */
+    .c-btn-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .c-btn-primary .c-btn-icon {
+      background: oklch(100% 0 0 / 0.12);
+    }
+    .c-btn-secondary .c-btn-icon {
+      background: var(--accent-soft);
+    }
+    .c-btn-icon svg {
+      width: 15px; height: 15px;
+    }
+
+    /* Floating accent tags */
+    .contact-float {
+      position: absolute;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: var(--ink-soft);
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-border);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 999px;
+      padding: 7px 16px;
+      pointer-events: none;
+      z-index: 0;
+      white-space: nowrap;
+    }
+    .contact-float-1 {
+      top: 14%; left: 4%;
+      animation: floatA 7s ease-in-out infinite;
+    }
+    .contact-float-2 {
+      top: 22%; right: 5%;
+      animation: floatB 9s ease-in-out infinite;
+    }
+    .contact-float-3 {
+      bottom: 18%; left: 6%;
+      animation: floatC 8s ease-in-out infinite;
+    }
+    .contact-float-4 {
+      bottom: 14%; right: 4%;
+      animation: floatA 10s ease-in-out infinite reverse;
+    }
+    @keyframes floatA {
+      0%, 100% { transform: translateY(0px) rotate(-1deg); }
+      50%       { transform: translateY(-12px) rotate(1deg); }
+    }
+    @keyframes floatB {
+      0%, 100% { transform: translateY(0px) rotate(1.5deg); }
+      50%       { transform: translateY(-9px) rotate(-1.5deg); }
+    }
+    @keyframes floatC {
+      0%, 100% { transform: translateY(0px) rotate(-2deg); }
+      50%       { transform: translateY(-14px) rotate(2deg); }
+    }
+
+    /* Divider line above contact */
+    .contact-divider {
+      width: 100%;
+      height: 1px;
+      background: var(--pill-border);
+    }
+
+    @media (max-width: 768px) {
+      .contact-section { padding: 100px 28px; }
+      .contact-float { display: none; }
+      .contact-btns { flex-direction: column; align-items: stretch; }
+      .c-btn { justify-content: center; }
+    }
+
   </style>
 </head>
 <body>
   <div class="page">
+  <section id="home" class="hero-section">
 
-    <!-- ── HERO SECTION ── -->
-    <section id="home" class="hero-section">
+    <!-- Looping background video -->
+    <div class="hero-bg-video">
+      <video
+        src="assets/hero-bg.mp4"
+        autoplay=""
+        muted=""
+        loop=""
+        playsinline=""
+        preload="auto"></video>
+    </div>
+    <div class="hero-bg-tint"></div>
 
-      <!-- Looping background video -->
-      <div class="hero-bg-video">
-        <video src="assets/hero-bg.mp4" autoplay muted loop playsinline preload="auto"></video>
+    <!-- Animated particle band — horizontal flow behind hero -->
+    <div class="particle-band" aria-hidden="true">
+      <canvas id="particle-canvas"></canvas>
+    </div>
+
+    <!-- ── TOP BAR ── -->
+    <header class="topbar">
+
+      <!-- Left: name pill -->
+      <span class="topbar-name-pill">Rajarshi</span>
+
+      <!-- Center: nav pill (absolutely centered) -->
+      <div class="nav-pill-wrap">
+        <nav class="nav-pill" aria-label="Primary navigation">
+          <a href="#home" class="active">
+            <span class="wave-icon">👋</span> Hi
+          </a>
+          <a href="#work">Work</a>
+          <a href="#about">About</a>
+          <a href="#contact">Contact</a>
+          <a href="#">Download Resume</a>
+        </nav>
       </div>
-      <div class="hero-bg-tint"></div>
 
-      <!-- ── TOP BAR ── -->
-      <header class="topbar">
-
-        <!-- Left: name pill -->
-        <span class="topbar-name-pill">Rajarshi</span>
-
-        <!-- Center: nav pill (absolutely centered) -->
-        <div class="nav-pill-wrap">
-          <nav class="nav-pill" aria-label="Primary navigation">
-            <a href="#home" class="active">
-              <span class="wave-icon">👋</span> Hi
-            </a>
-            <a href="#work">Work</a>
-            <a href="#about">About</a>
-            <a href="assets/resume.pdf" download>Download Resume</a>
-          </nav>
+      <!-- Right: contact pill -->
+      <div class="topbar-right">
+        <div class="contact-pill">
+          <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
+          <div class="c-divider"></div>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+            <svg class="li-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <rect width="24" height="24" rx="4" fill="oklch(45% 0.12 240)"/>
+              <path d="M7.5 9.5H5V18H7.5V9.5Z" fill="white"/>
+              <circle cx="6.25" cy="6.75" r="1.5" fill="white"/>
+              <path d="M19 18H16.5V13.75C16.5 12.75 15.75 12 14.75 12C13.75 12 13 12.75 13 13.75V18H10.5V9.5H13V10.75C13.5 9.75 14.75 9.25 15.75 9.25C17.5 9.25 19 10.75 19 12.5V18Z" fill="white"/>
+            </svg>
+          </a>
         </div>
+      </div>
 
-        <!-- Right: contact pill -->
-        <div class="topbar-right">
-          <div class="contact-pill">
-            <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
-            <div class="c-divider"></div>
-            <a href="https://linkedin.com/in/rajarshi-dasgupta" target="_blank" rel="noopener" aria-label="LinkedIn">
-              <svg class="li-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <rect width="24" height="24" rx="4" fill="oklch(45% 0.12 240)"/>
-                <path d="M7.5 9.5H5V18H7.5V9.5Z" fill="white"/>
-                <circle cx="6.25" cy="6.75" r="1.5" fill="white"/>
-                <path d="M19 18H16.5V13.75C16.5 12.75 15.75 12 14.75 12C13.75 12 13 12.75 13 13.75V18H10.5V9.5H13V10.75C13.5 9.75 14.75 9.25 15.75 9.25C17.5 9.25 19 10.75 19 12.5V18Z" fill="white"/>
-              </svg>
-            </a>
+    </header>
+
+    <!-- ── HERO ── -->
+    <main class="hero">
+
+      <!-- LEFT: intro text -->
+      <div class="hero-left">
+        <h1 class="hero-greeting"><span class="line-hi">Hi, I'm</span><em>Raj.</em></h1>
+        <p class="hero-role">UX Designer at Walmart</p>
+        <span class="hero-exp">
+          <span class="hero-exp-dot"></span>
+          5+ yrs experience
+        </span>
+      </div>
+
+      <!-- CENTER: photo — no background, fades at bottom -->
+      <div class="hero-center">
+        <div class="photo-wrap">
+          <div class="photo-placeholder">
+            <img src="assets/profile.png" alt="Rajarshi" />
           </div>
         </div>
+      </div>
 
-      </header>
+      <!-- RIGHT: quote -->
+      <div class="hero-right">
+        <blockquote class="hero-quote">
+          Driven by<br/>curiosity,<br/>Ready to<br/>conquer any<br/>challenge
+        </blockquote>
+        <div class="hero-quote-line"></div>
+      </div>
 
-      <!-- ── HERO ── -->
-      <main class="hero">
+    </main>
 
-        <!-- LEFT: intro text -->
-        <div class="hero-left">
-          <h1 class="hero-greeting">
-            <span class="line-hi">Hi, I'm</span>
-            <em>Raj.</em>
-          </h1>
-          <p class="hero-role">UX Designer at Walmart</p>
-          <span class="hero-exp">
-            <span class="hero-exp-dot"></span>
-            5+ yrs experience
-          </span>
-        </div>
+  </section><!-- /hero-section -->
 
-        <!-- CENTER: photo -->
-        <div class="hero-center">
-          <div class="photo-wrap">
-            <div class="photo-placeholder">
-              <img src="assets/profile.png" alt="Rajarshi" />
+  <!-- ── WORK SECTION ── -->
+  <section id="work" class="work-section">
+    <h2 class="work-heading">Case Studies</h2>
+    <div class="work-heading-line"></div>
+
+    <div class="cs-list">
+
+      <!-- Card 1 — left -->
+      <div class="cs-item left">
+        <a class="cs-card" href="remittance.html" style="--cs-bg: #e8e3f5;">
+          <div class="cs-image-wrap">
+            <div class="cs-image-placeholder">
+              <span class="cs-placeholder-label">project screenshot</span>
             </div>
           </div>
-        </div>
-
-        <!-- RIGHT: quote -->
-        <div class="hero-right">
-          <blockquote class="hero-quote">
-            Driven by<br/>curiosity,<br/>Ready to<br/>conquer any<br/>challenge
-          </blockquote>
-          <div class="hero-quote-line"></div>
-        </div>
-
-      </main>
-
-    </section><!-- /hero-section -->
-
-    <!-- ── WORK SECTION ── -->
-    <section id="work" class="work-section">
-      <h2 class="work-heading">Case Studies</h2>
-      <div class="work-heading-line"></div>
-
-      <div class="cs-list">
-
-        <!-- Card 1 — left -->
-        <div class="cs-item left">
-          <a class="cs-card" href="remittance.html" style="--cs-bg: #e8e3f5;">
-            <div class="cs-image-wrap">
-              <div class="cs-image-placeholder">
-                <span class="cs-placeholder-label">project screenshot</span>
-              </div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Remittance: Money transfers from US to Mexico</h3>
+            <div class="cs-tags">
+              <span class="cs-tag">Finance</span>
+              <span class="cs-tag">User Research</span>
+              <span class="cs-tag">DT Workshop</span>
             </div>
-            <div class="cs-meta">
-              <h3 class="cs-title">Remittance: Money transfers from US to Mexico</h3>
-              <div class="cs-tags">
-                <span class="cs-tag">Finance</span>
-                <span class="cs-tag">User Research</span>
-                <span class="cs-tag">DT Workshop</span>
-              </div>
-            </div>
-          </a>
-        </div>
-
-        <!-- Card 2 — right -->
-        <div class="cs-item right">
-          <a class="cs-card" href="#" style="--cs-bg: #e3f0e8;">
-            <div class="cs-image-wrap">
-              <div class="cs-image-placeholder">
-                <span class="cs-placeholder-label">project screenshot</span>
-              </div>
-            </div>
-            <div class="cs-meta">
-              <h3 class="cs-title">Waste Management Dashboard</h3>
-              <div class="cs-tags">
-                <span class="cs-tag">Store Operations</span>
-                <span class="cs-tag">Data Visualization</span>
-                <span class="cs-tag">Dashboard Design</span>
-              </div>
-            </div>
-          </a>
-        </div>
-
-        <!-- Card 3 — left -->
-        <div class="cs-item left">
-          <a class="cs-card" href="#" style="--cs-bg: #fdf0e3;">
-            <div class="cs-image-wrap">
-              <div class="cs-image-placeholder">
-                <span class="cs-placeholder-label">project screenshot</span>
-              </div>
-            </div>
-            <div class="cs-meta">
-              <h3 class="cs-title">Vida: Electric Scooter Mobile App</h3>
-              <div class="cs-tags">
-                <span class="cs-tag">EV Automobile</span>
-                <span class="cs-tag">Interface Design</span>
-              </div>
-            </div>
-          </a>
-        </div>
-
+          </div>
+        </a>
       </div>
-    </section>
 
-    <!-- ── ABOUT SECTION ── -->
-    <section id="about" class="about-wrap">
+      <!-- Card 2 — right -->
+      <div class="cs-item right">
+        <a class="cs-card" href="#" style="--cs-bg: #e3f0e8;">
+          <div class="cs-image-wrap">
+            <div class="cs-image-placeholder">
+              <span class="cs-placeholder-label">project screenshot</span>
+            </div>
+          </div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Waste Management Dashboard</h3>
+            <div class="cs-tags">
+              <span class="cs-tag">Store Operations</span>
+              <span class="cs-tag">Data Visualization</span>
+              <span class="cs-tag">Dashboard Design</span>
+            </div>
+          </div>
+        </a>
+      </div>
 
-      <!-- About hero -->
-      <div class="about-hero">
+      <!-- Card 3 — left -->
+      <div class="cs-item left">
+        <a class="cs-card" href="#" style="--cs-bg: #fdf0e3;">
+          <div class="cs-image-wrap">
+            <div class="cs-image-placeholder">
+              <span class="cs-placeholder-label">project screenshot</span>
+            </div>
+          </div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Vida: Electric Scooter Mobile App</h3>
+            <div class="cs-tags">
+              <span class="cs-tag">EV Automobile</span>
+              <span class="cs-tag">Interface Design</span>
+            </div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ── ABOUT SECTION ── -->
+  <section id="about" class="about-wrap">
+
+    <!-- About hero -->
+    <div class="about-hero">
+      <div class="container">
+        <div class="about-eyebrow">
+          <span class="dot"></span>
+          About · Designer &amp; Maker
+        </div>
+        <div class="about-hero-grid">
+          <div>
+            <h2 class="about-title">A little <em>about me.</em></h2>
+            <span class="about-role-pill">
+              <span class="dot"></span>
+              UX Designer at Walmart · 5+ yrs
+            </span>
+            <p class="about-intro-line">Two sides to the same story — the one that ships products, and the one that's curious about everything else. Pick a side.</p>
+          </div>
+          <div class="about-image">
+            <img src="assets/profile.png" alt="Rajarshi" />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mode toggle -->
+    <div class="mode-section">
+      <div class="mode-toggle" role="tablist" aria-label="Mode toggle">
+        <span class="slider" aria-hidden="true"></span>
+        <button class="active" data-mode="pro" role="tab" aria-selected="true">
+          <span class="pip"></span> Professional
+        </button>
+        <button data-mode="personal" role="tab" aria-selected="false">
+          <span class="pip"></span> Personal
+        </button>
+      </div>
+      <p class="mode-caption">Currently viewing the <strong id="mode-label">professional</strong> side</p>
+    </div>
+
+    <!-- ── PROFESSIONAL PANEL ── -->
+    <div class="about-panel active" id="panel-pro">
+
+      <!-- Bio -->
+      <section class="bio-block">
         <div class="container">
-          <div class="about-eyebrow">
-            <span class="dot"></span>
-            About · Designer &amp; Maker
-          </div>
-          <div class="about-hero-grid">
-            <div>
-              <h2 class="about-title">A little <em>about me.</em></h2>
-              <span class="about-role-pill">
-                <span class="dot"></span>
-                UX Designer at Walmart · 5+ yrs
-              </span>
-              <p class="about-intro-line">Two sides to the same story — the one that ships products, and the one that's curious about everything else. Pick a side.</p>
-            </div>
-            <div class="about-image">
-              <img src="assets/profile.png" alt="Rajarshi" />
+          <div class="bio-grid">
+            <aside class="bio-side">
+              <div class="e">A short note</div>
+              <h2>How I show up to work.</h2>
+            </aside>
+            <div class="bio-prose">
+              <p>I believe that life is not about finding yourself, but <mark>creating yourself.</mark> Keeping this in mind I try to constantly learn and grow.</p>
+              <p>When I set out to explore, I like to keep a child-like attitude — one who is not afraid to fail, yet crazy enough to try out what they believe in. Even if I may be wrong, at least I will learn what does not work.</p>
+              <p>I find it fun to take radical approaches, build them quickly, try them, and pivot based on the feedback. I just keep pushing the boundaries and try to get the best out of myself. Once I set out to do something, I am fully committed — and that's where I find <mark>satisfaction and true joy.</mark></p>
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Mode toggle -->
-      <div class="mode-section">
-        <div class="mode-toggle" role="tablist" aria-label="Mode toggle">
-          <span class="slider" aria-hidden="true"></span>
-          <button class="active" data-mode="pro" role="tab" aria-selected="true">
-            <span class="pip"></span> Professional
-          </button>
-          <button data-mode="personal" role="tab" aria-selected="false">
-            <span class="pip"></span> Personal
-          </button>
+      <!-- Experience -->
+      <section class="about-block alt">
+        <div class="container">
+          <div class="ab-eyebrow"><span class="num">01</span> Experience</div>
+          <h2 class="ab-title">A path through <em>products that ship.</em></h2>
+          <div class="ab-meta">
+            <strong>4 yrs 6 mos</strong>
+            <span>across retail, mobility, XR &amp; social impact</span>
+          </div>
+
+          <div class="timeline">
+            <div class="tl-row">
+              <div class="tl-date">
+                <span class="range">Sep 2022 — Present</span>
+                <span class="duration">3 yrs 6 mos</span>
+              </div>
+              <div class="tl-body">
+                <div class="tl-company">
+                  <h3>Walmart</h3>
+                  <span class="badge">Current · Full-time</span>
+                </div>
+                <div class="tl-role">UX Designer III · Global Tech</div>
+                <div class="impact-chips">
+                  <span class="impact-chip"><span class="v">$27M</span> wastage saved · Canada market</span>
+                  <span class="impact-chip"><span class="v">+32%</span> AOV uplift · BNPL</span>
+                  <span class="impact-chip"><span class="v">+$1.4M</span> business benefit · FPP</span>
+                </div>
+                <ul class="tl-points">
+                  <li>Practiced the full UX loop end-to-end — <strong>user research, ideation, concept design, wireframing, prototyping</strong>.</li>
+                  <li>Partnered with the Data Science team to build the <strong>Waste Management Dashboard</strong>, which <mark>saved $27M in wastage</mark> for the Canada market in just eight months.</li>
+                  <li>Designed the user experience of <strong>Buy Now Pay Later</strong> — <mark>+32% AOV uplift</mark> at launch.</li>
+                  <li>Provided UX support (research to hi-fi) for the <strong>FPP Dashboard</strong> — <mark>+$1.4M business benefit</mark>.</li>
+                  <li>Worked on POCs including <strong>Store Experimentation Platform</strong>, <strong>Product Analytics Dashboard</strong> and <strong>Coupon Performance Dashboard</strong> — many adopted into the AOP plan for FY 2025.</li>
+                  <li>Conducted Design Thinking workshops through <strong>CTC (Certified Transformation Champion)</strong> and the <strong>Monthly Open Box Design Thinking Training</strong>, teaching &amp; mentoring aspiring candidates.</li>
+                  <li>Provided UX support for <strong>Giftabled Jobs</strong> — an accessible website built as part of Walmart's CSR initiative.</li>
+                  <li>Contributed to conducting the <strong>first-ever Walmart Accessibility Awareness Workshop</strong> across three offices in India · May 2023.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="tl-row">
+              <div class="tl-date">
+                <span class="range">Jun 2021 — Aug 2022</span>
+                <span class="duration">1 yr 2 mos</span>
+              </div>
+              <div class="tl-body">
+                <div class="tl-company">
+                  <h3>Yuj Designs</h3>
+                  <span class="badge">Full-time</span>
+                </div>
+                <div class="tl-role">UX Designer</div>
+                <ul class="tl-points">
+                  <li>Ideation, concept design, wireframing, prototyping and user testing across the <strong>cyber-security</strong> domain.</li>
+                  <li>Designed the experience for <strong>Vida by Hero Motors</strong> — connecting riders to their electric two-wheeler.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="tl-row">
+              <div class="tl-date">
+                <span class="range">May — Oct 2020</span>
+                <span class="duration">6 mos</span>
+              </div>
+              <div class="tl-body">
+                <div class="tl-company">
+                  <h3>Parallax Labs LLP</h3>
+                  <span class="badge">Internship</span>
+                </div>
+                <div class="tl-role">XR Design &amp; Development Intern</div>
+                <ul class="tl-points">
+                  <li>Research &amp; concept design for the <strong>Aditya Birla</strong> online brand store.</li>
+                  <li>UX &amp; UI design, prototyping and proof-of-concept work across multiple <strong>VR projects</strong>.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="tl-row">
+              <div class="tl-date">
+                <span class="range">Jun 2019</span>
+                <span class="duration">1 mo</span>
+              </div>
+              <div class="tl-body">
+                <div class="tl-company">
+                  <h3>Dignity Foundation</h3>
+                  <span class="badge">Summer internship</span>
+                </div>
+                <div class="tl-role">Designer</div>
+                <ul class="tl-points">
+                  <li>Re-designed the foundation's website — user research, ideation, UX &amp; UI design, prototyping and user testing.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
-        <p class="mode-caption">Currently viewing the <strong id="mode-label">professional</strong> side</p>
+      </section>
+
+      <!-- Accolades -->
+      <section class="about-block">
+        <div class="container">
+          <div class="ab-eyebrow"><span class="num">02</span> Accolades &amp; Recognitions</div>
+          <h2 class="ab-title">Moments that <em>made me proud.</em></h2>
+          <div class="ab-meta">
+            <strong>6</strong>
+            <span>awards, mentions and milestones</span>
+          </div>
+
+          <div class="accolades-grid">
+            <article class="accolade-card">
+              <span class="year">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
+                2024
+              </span>
+              <h4>Tech Forward Award</h4>
+              <span class="issuer">by Walmart</span>
+              <p>Team award for our contributions to the Retail Waste Management Initiative.</p>
+            </article>
+
+            <article class="accolade-card">
+              <span class="year">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
+                2024
+              </span>
+              <h4>SparkTech Winner</h4>
+              <span class="issuer">SparkTech, hosted by Walmart</span>
+              <p>My tech paper on the Retail Insights Tool — an in-store experimentation platform — won <strong>best poster presentation</strong> in the Design Track.</p>
+            </article>
+
+            <article class="accolade-card">
+              <span class="year">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
+                2023
+              </span>
+              <h4>Walmart Excellence Award</h4>
+              <span class="issuer">by Walmart</span>
+              <p>Honored in June 2023 for my individual contributions to the Global Tech team.</p>
+            </article>
+
+            <article class="accolade-card">
+              <span class="year">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
+                2021
+              </span>
+              <h4>All India Rank 10</h4>
+              <span class="issuer">M.Des. Interaction Design Entrance · NID</span>
+              <p>National Institute of Design entrance for the Masters in Interaction Design programme.</p>
+            </article>
+
+            <article class="accolade-card">
+              <span class="year">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
+                2020
+              </span>
+              <h4>Jury's Special Mention</h4>
+              <span class="issuer">ADI Battle of Projects · Pune Design Festival</span>
+              <p>Mobility Design category — a project on traffic control and fuel conservation.</p>
+            </article>
+
+            <article class="accolade-card">
+              <span class="year">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
+                2020
+              </span>
+              <h4>Third Place · Social Impact Challenge</h4>
+              <span class="issuer">Connecting Dreams Foundation</span>
+              <p>Worked with rural women from Tetwali village to grow their bamboo handicrafts business.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Education -->
+      <section class="about-block alt">
+        <div class="container">
+          <div class="ab-eyebrow"><span class="num">03</span> Education</div>
+          <h2 class="ab-title">School &amp; <em>school.</em></h2>
+
+          <div class="edu-grid">
+            <article class="edu-card">
+              <span class="years">2017 — 2021</span>
+              <h4>NMIMS School of Design</h4>
+              <span class="program">B.Des · Humanising Technology</span>
+              <div class="score">
+                <span class="v">3.63</span>
+                <span class="l">/ 4.00 GPA</span>
+              </div>
+            </article>
+            <article class="edu-card">
+              <span class="years">2015 — 2017</span>
+              <h4>Pace Jr College</h4>
+              <span class="program">HSC · Science</span>
+              <div class="score">
+                <span class="v">76</span>
+                <span class="l">%</span>
+              </div>
+            </article>
+            <article class="edu-card">
+              <span class="years">2005 — 2015</span>
+              <h4>S M Shetty International School</h4>
+              <span class="program">IGCSE</span>
+              <div class="score">
+                <span class="v">80</span>
+                <span class="l">%</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Certification -->
+      <section class="about-block">
+        <div class="container">
+          <div class="ab-eyebrow"><span class="num">04</span> Additional Certifications</div>
+          <div class="cert-card">
+            <span class="ribbon">
+              <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="9" r="6"/>
+                <path d="M9 14l-2 8 5-3 5 3-2-8"/>
+                <path d="M9.5 9l2 2 3-3.5"/>
+              </svg>
+            </span>
+            <div class="meta">
+              <h4>Certified Professional in Accessibility Core Competencies <span style="color: var(--ink-soft); font-weight: 500; font-size: 14px; letter-spacing: 0.04em; margin-left: 6px;">· 2023</span></h4>
+              <p>Learned the basics of seeing the world from a differently-abled person's perspective — and designing interaction with their experience in mind.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Skills -->
+      <section class="about-block alt">
+        <div class="container">
+          <div class="ab-eyebrow"><span class="num">05</span> Skills, Interests &amp; Hobbies</div>
+          <h2 class="ab-title">The toolbox &amp; <em>the curiosities.</em></h2>
+
+          <div class="skills-grid">
+            <div class="skill-col">
+              <h4>
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg>
+                Design
+              </h4>
+              <ul>
+                <li>User Research</li>
+                <li>Interaction Design</li>
+                <li>Visual &amp; UI Design</li>
+                <li>Data Visualization</li>
+                <li>Prototyping</li>
+                <li>User Testing</li>
+              </ul>
+            </div>
+            <div class="skill-col">
+              <h4>
+                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
+                Software
+              </h4>
+              <ul>
+                <li>Figma</li>
+                <li>FigJam / Miro</li>
+                <li>Builder.io</li>
+              </ul>
+            </div>
+            <div class="skill-col">
+              <h4>
+                <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
+                Interests
+              </h4>
+              <ul>
+                <li>Interaction Design</li>
+                <li>Experience Design</li>
+                <li>Product Design</li>
+              </ul>
+            </div>
+            <div class="skill-col">
+              <h4>
+                <svg viewBox="0 0 24 24"><path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                Hobbies
+              </h4>
+              <ul>
+                <li>Gaming</li>
+                <li>Traveling</li>
+                <li>Cooking</li>
+                <li>Reading</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── PERSONAL PANEL (placeholder) ── -->
+    <div class="about-panel" id="panel-personal">
+      <section class="personal-panel">
+        <div class="container">
+          <div class="personal-stage">
+            <span class="personal-eyebrow">
+              <span class="pulse"></span>
+              Coming soon
+            </span>
+            <h2 class="personal-title">The <em>off-the-clock</em> side is brewing.</h2>
+            <p class="personal-sub">Travel notes, recipes, the games I lose sleep to, the books on my nightstand — a fuller picture of what I do when I'm not in Figma. Stay tuned.</p>
+            <div class="hobby-strip">
+              <div class="hobby-tile">
+                <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 12v3M16 12v3M11 13h2"/><circle cx="17.5" cy="13.5" r="0.6" fill="currentColor"/></svg>
+                <span>Gaming</span>
+              </div>
+              <div class="hobby-tile">
+                <svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span>Traveling</span>
+              </div>
+              <div class="hobby-tile">
+                <svg viewBox="0 0 24 24"><path d="M3 12h18M5 12V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M7 12v6a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-6"/></svg>
+                <span>Cooking</span>
+              </div>
+              <div class="hobby-tile">
+                <svg viewBox="0 0 24 24"><path d="M4 4h7v16H4zM13 4h7v16h-7zM4 8h7M13 12h7"/></svg>
+                <span>Reading</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+  </section>
+
+  <!-- ── CONTACT SECTION ── -->
+  <div class="contact-divider"></div>
+  <section id="contact" class="contact-section">
+
+    <!-- Floating ambient tags -->
+    <span class="contact-float contact-float-1">UX Design</span>
+    <span class="contact-float contact-float-2">Open to collaborate</span>
+    <span class="contact-float contact-float-3">Based in Bengaluru</span>
+    <span class="contact-float contact-float-4">5+ yrs experience</span>
+
+    <div class="contact-inner">
+
+      <div class="contact-eyebrow">
+        <span class="line"></span>
+        Get in touch
+        <span class="line"></span>
       </div>
 
-      <!-- ── PROFESSIONAL PANEL ── -->
-      <div class="about-panel active" id="panel-pro">
+      <h2 class="contact-heading">
+        Let's build<br/><em>together!</em>
+      </h2>
 
-        <!-- Bio -->
-        <section class="bio-block">
-          <div class="container">
-            <div class="bio-grid">
-              <aside class="bio-side">
-                <div class="e">A short note</div>
-                <h2>How I show up to work.</h2>
-              </aside>
-              <div class="bio-prose">
-                <p>I believe that life is not about finding yourself, but <mark>creating yourself.</mark> Keeping this in mind I try to constantly learn and grow.</p>
-                <p>When I set out to explore, I like to keep a child-like attitude — one who is not afraid to fail, yet crazy enough to try out what they believe in. Even if I may be wrong, at least I will learn what does not work.</p>
-                <p>I find it fun to take radical approaches, build them quickly, try them, and pivot based on the feedback. I just keep pushing the boundaries and try to get the best out of myself. Once I set out to do something, I am fully committed — and that's where I find <mark>satisfaction and true joy.</mark></p>
-              </div>
-            </div>
-          </div>
-        </section>
+      <p class="contact-sub">
+        Whether you have a project in mind, a role to fill, or just want to say hello — my inbox is always open.
+      </p>
 
-        <!-- Experience -->
-        <section class="about-block alt">
-          <div class="container">
-            <div class="ab-eyebrow"><span class="num">01</span> Experience</div>
-            <h2 class="ab-title">A path through <em>products that ship.</em></h2>
-            <div class="ab-meta">
-              <strong>4 yrs 6 mos</strong>
-              <span>across retail, mobility, XR &amp; social impact</span>
-            </div>
+      <div class="contact-btns">
 
-            <div class="timeline">
-              <div class="tl-row">
-                <div class="tl-date">
-                  <span class="range">Sep 2022 — Present</span>
-                  <span class="duration">3 yrs 6 mos</span>
-                </div>
-                <div class="tl-body">
-                  <div class="tl-company">
-                    <h3>Walmart</h3>
-                    <span class="badge">Current · Full-time</span>
-                  </div>
-                  <div class="tl-role">UX Designer III · Global Tech</div>
-                  <div class="impact-chips">
-                    <span class="impact-chip"><span class="v">$27M</span> wastage saved · Canada market</span>
-                    <span class="impact-chip"><span class="v">+32%</span> AOV uplift · BNPL</span>
-                    <span class="impact-chip"><span class="v">+$1.4M</span> business benefit · FPP</span>
-                  </div>
-                  <ul class="tl-points">
-                    <li>Practiced the full UX loop end-to-end — <strong>user research, ideation, concept design, wireframing, prototyping</strong>.</li>
-                    <li>Partnered with the Data Science team to build the <strong>Waste Management Dashboard</strong>, which <mark>saved $27M in wastage</mark> for the Canada market in just eight months.</li>
-                    <li>Designed the user experience of <strong>Buy Now Pay Later</strong> — <mark>+32% AOV uplift</mark> at launch.</li>
-                    <li>Provided UX support (research to hi-fi) for the <strong>FPP Dashboard</strong> — <mark>+$1.4M business benefit</mark>.</li>
-                    <li>Worked on POCs including <strong>Store Experimentation Platform</strong>, <strong>Product Analytics Dashboard</strong> and <strong>Coupon Performance Dashboard</strong> — many adopted into the AOP plan for FY 2025.</li>
-                    <li>Conducted Design Thinking workshops through <strong>CTC (Certified Transformation Champion)</strong> and the <strong>Monthly Open Box Design Thinking Training</strong>, teaching &amp; mentoring aspiring candidates.</li>
-                    <li>Provided UX support for <strong>Giftabled Jobs</strong> — an accessible website built as part of Walmart's CSR initiative.</li>
-                    <li>Contributed to conducting the <strong>first-ever Walmart Accessibility Awareness Workshop</strong> across three offices in India · May 2023.</li>
-                  </ul>
-                </div>
-              </div>
+        <!-- LinkedIn -->
+        <a
+          class="c-btn c-btn-primary"
+          href="https://www.linkedin.com/in/rajarshi-dasgupta-097013154/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <span class="c-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="24" height="24" rx="4" fill="white" fill-opacity="0.9"/>
+              <path d="M7.5 9.5H5V18H7.5V9.5Z" fill="#0a66c2"/>
+              <circle cx="6.25" cy="6.75" r="1.5" fill="#0a66c2"/>
+              <path d="M19 18H16.5V13.75C16.5 12.75 15.75 12 14.75 12C13.75 12 13 12.75 13 13.75V18H10.5V9.5H13V10.75C13.5 9.75 14.75 9.25 15.75 9.25C17.5 9.25 19 10.75 19 12.5V18Z" fill="#0a66c2"/>
+            </svg>
+          </span>
+          Connect on LinkedIn
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.6">
+            <path d="M7 17L17 7M17 7H7M17 7v10"/>
+          </svg>
+        </a>
 
-              <div class="tl-row">
-                <div class="tl-date">
-                  <span class="range">Jun 2021 — Aug 2022</span>
-                  <span class="duration">1 yr 2 mos</span>
-                </div>
-                <div class="tl-body">
-                  <div class="tl-company">
-                    <h3>Yuj Designs</h3>
-                    <span class="badge">Full-time</span>
-                  </div>
-                  <div class="tl-role">UX Designer</div>
-                  <ul class="tl-points">
-                    <li>Ideation, concept design, wireframing, prototyping and user testing across the <strong>cyber-security</strong> domain.</li>
-                    <li>Designed the experience for <strong>Vida by Hero Motors</strong> — connecting riders to their electric two-wheeler.</li>
-                  </ul>
-                </div>
-              </div>
+        <!-- Email -->
+        <a
+          class="c-btn c-btn-secondary"
+          href="mailto:rajarshidasgupt633@gmail.com"
+        >
+          <span class="c-btn-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m2 7 10 7 10-7"/>
+            </svg>
+          </span>
+          Send me an email
+        </a>
 
-              <div class="tl-row">
-                <div class="tl-date">
-                  <span class="range">May — Oct 2020</span>
-                  <span class="duration">6 mos</span>
-                </div>
-                <div class="tl-body">
-                  <div class="tl-company">
-                    <h3>Parallax Labs LLP</h3>
-                    <span class="badge">Internship</span>
-                  </div>
-                  <div class="tl-role">XR Design &amp; Development Intern</div>
-                  <ul class="tl-points">
-                    <li>Research &amp; concept design for the <strong>Aditya Birla</strong> online brand store.</li>
-                    <li>UX &amp; UI design, prototyping and proof-of-concept work across multiple <strong>VR projects</strong>.</li>
-                  </ul>
-                </div>
-              </div>
-
-              <div class="tl-row">
-                <div class="tl-date">
-                  <span class="range">Jun 2019</span>
-                  <span class="duration">1 mo</span>
-                </div>
-                <div class="tl-body">
-                  <div class="tl-company">
-                    <h3>Dignity Foundation</h3>
-                    <span class="badge">Summer internship</span>
-                  </div>
-                  <div class="tl-role">Designer</div>
-                  <ul class="tl-points">
-                    <li>Re-designed the foundation's website — user research, ideation, UX &amp; UI design, prototyping and user testing.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Accolades -->
-        <section class="about-block">
-          <div class="container">
-            <div class="ab-eyebrow"><span class="num">02</span> Accolades &amp; Recognitions</div>
-            <h2 class="ab-title">Moments that <em>made me proud.</em></h2>
-            <div class="ab-meta">
-              <strong>6</strong>
-              <span>awards, mentions and milestones</span>
-            </div>
-
-            <div class="accolades-grid">
-              <article class="accolade-card">
-                <span class="year">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
-                  2024
-                </span>
-                <h4>Tech Forward Award</h4>
-                <span class="issuer">by Walmart</span>
-                <p>Team award for our contributions to the Retail Waste Management Initiative.</p>
-              </article>
-
-              <article class="accolade-card">
-                <span class="year">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
-                  2024
-                </span>
-                <h4>SparkTech Winner</h4>
-                <span class="issuer">SparkTech, hosted by Walmart</span>
-                <p>My tech paper on the Retail Insights Tool — an in-store experimentation platform — won <strong>best poster presentation</strong> in the Design Track.</p>
-              </article>
-
-              <article class="accolade-card">
-                <span class="year">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
-                  2023
-                </span>
-                <h4>Walmart Excellence Award</h4>
-                <span class="issuer">by Walmart</span>
-                <p>Honored in June 2023 for my individual contributions to the Global Tech team.</p>
-              </article>
-
-              <article class="accolade-card">
-                <span class="year">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
-                  2021
-                </span>
-                <h4>All India Rank 10</h4>
-                <span class="issuer">M.Des. Interaction Design Entrance · NID</span>
-                <p>National Institute of Design entrance for the Masters in Interaction Design programme.</p>
-              </article>
-
-              <article class="accolade-card">
-                <span class="year">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
-                  2020
-                </span>
-                <h4>Jury's Special Mention</h4>
-                <span class="issuer">ADI Battle of Projects · Pune Design Festival</span>
-                <p>Mobility Design category — a project on traffic control and fuel conservation.</p>
-              </article>
-
-              <article class="accolade-card">
-                <span class="year">
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="6"/><path d="M9 14l-2 8 5-3 5 3-2-8"/></svg>
-                  2020
-                </span>
-                <h4>Third Place · Social Impact Challenge</h4>
-                <span class="issuer">Connecting Dreams Foundation</span>
-                <p>Worked with rural women from Tetwali village to grow their bamboo handicrafts business.</p>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <!-- Education -->
-        <section class="about-block alt">
-          <div class="container">
-            <div class="ab-eyebrow"><span class="num">03</span> Education</div>
-            <h2 class="ab-title">School &amp; <em>school.</em></h2>
-
-            <div class="edu-grid">
-              <article class="edu-card">
-                <span class="years">2017 — 2021</span>
-                <h4>NMIMS School of Design</h4>
-                <span class="program">B.Des · Humanising Technology</span>
-                <div class="score">
-                  <span class="v">3.63</span>
-                  <span class="l">/ 4.00 GPA</span>
-                </div>
-              </article>
-              <article class="edu-card">
-                <span class="years">2015 — 2017</span>
-                <h4>Pace Jr College</h4>
-                <span class="program">HSC · Science</span>
-                <div class="score">
-                  <span class="v">76</span>
-                  <span class="l">%</span>
-                </div>
-              </article>
-              <article class="edu-card">
-                <span class="years">2005 — 2015</span>
-                <h4>S M Shetty International School</h4>
-                <span class="program">IGCSE</span>
-                <div class="score">
-                  <span class="v">80</span>
-                  <span class="l">%</span>
-                </div>
-              </article>
-            </div>
-          </div>
-        </section>
-
-        <!-- Certification -->
-        <section class="about-block">
-          <div class="container">
-            <div class="ab-eyebrow"><span class="num">04</span> Additional Certifications</div>
-            <div class="cert-card">
-              <span class="ribbon">
-                <svg viewBox="0 0 24 24">
-                  <circle cx="12" cy="9" r="6"/>
-                  <path d="M9 14l-2 8 5-3 5 3-2-8"/>
-                  <path d="M9.5 9l2 2 3-3.5"/>
-                </svg>
-              </span>
-              <div class="meta">
-                <h4>Certified Professional in Accessibility Core Competencies <span style="color: var(--ink-soft); font-weight: 500; font-size: 14px; letter-spacing: 0.04em; margin-left: 6px;">· 2023</span></h4>
-                <p>Learned the basics of seeing the world from a differently-abled person's perspective — and designing interaction with their experience in mind.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- Skills -->
-        <section class="about-block alt">
-          <div class="container">
-            <div class="ab-eyebrow"><span class="num">05</span> Skills, Interests &amp; Hobbies</div>
-            <h2 class="ab-title">The toolbox &amp; <em>the curiosities.</em></h2>
-
-            <div class="skills-grid">
-              <div class="skill-col">
-                <h4>
-                  <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M2 12h20M12 3a13 13 0 0 1 0 18M12 3a13 13 0 0 0 0 18"/></svg>
-                  Design
-                </h4>
-                <ul>
-                  <li>User Research</li>
-                  <li>Interaction Design</li>
-                  <li>Visual &amp; UI Design</li>
-                  <li>Data Visualization</li>
-                  <li>Prototyping</li>
-                  <li>User Testing</li>
-                </ul>
-              </div>
-              <div class="skill-col">
-                <h4>
-                  <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M8 21h8M12 18v3"/></svg>
-                  Software
-                </h4>
-                <ul>
-                  <li>Figma</li>
-                  <li>FigJam / Miro</li>
-                  <li>Builder.io</li>
-                </ul>
-              </div>
-              <div class="skill-col">
-                <h4>
-                  <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/><circle cx="12" cy="12" r="3"/></svg>
-                  Interests
-                </h4>
-                <ul>
-                  <li>Interaction Design</li>
-                  <li>Experience Design</li>
-                  <li>Product Design</li>
-                </ul>
-              </div>
-              <div class="skill-col">
-                <h4>
-                  <svg viewBox="0 0 24 24"><path d="M20.84 4.6a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                  Hobbies
-                </h4>
-                <ul>
-                  <li>Gaming</li>
-                  <li>Traveling</li>
-                  <li>Cooking</li>
-                  <li>Reading</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-      </div><!-- /panel-pro -->
-
-      <!-- ── PERSONAL PANEL (placeholder) ── -->
-      <div class="about-panel" id="panel-personal">
-        <section class="personal-panel">
-          <div class="container">
-            <div class="personal-stage">
-              <span class="personal-eyebrow">
-                <span class="pulse"></span>
-                Coming soon
-              </span>
-              <h2 class="personal-title">The <em>off-the-clock</em> side is brewing.</h2>
-              <p class="personal-sub">Travel notes, recipes, the games I lose sleep to, the books on my nightstand — a fuller picture of what I do when I'm not in Figma. Stay tuned.</p>
-              <div class="hobby-strip">
-                <div class="hobby-tile">
-                  <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="11" rx="2"/><path d="M8 12v3M16 12v3M11 13h2"/><circle cx="17.5" cy="13.5" r="0.6" fill="currentColor"/></svg>
-                  <span>Gaming</span>
-                </div>
-                <div class="hobby-tile">
-                  <svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>
-                  <span>Traveling</span>
-                </div>
-                <div class="hobby-tile">
-                  <svg viewBox="0 0 24 24"><path d="M3 12h18M5 12V8a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4M7 12v6a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-6"/></svg>
-                  <span>Cooking</span>
-                </div>
-                <div class="hobby-tile">
-                  <svg viewBox="0 0 24 24"><path d="M4 4h7v16H4zM13 4h7v16h-7zM4 8h7M13 12h7"/></svg>
-                  <span>Reading</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
       </div>
+    </div>
+  </section>
 
-    </section><!-- /about -->
+  </div>
 
-  </div><!-- /page -->
-
+  <!-- Scroll observers -->
   <script>
-    (function () {
+    (function() {
       // ── Card slide-in (resets on scroll up) ──
       const items = document.querySelectorAll('.cs-item');
       const cardObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-          entry.target.classList.toggle('visible', entry.isIntersecting);
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          } else {
+            entry.target.classList.remove('visible');
+          }
         });
       }, { threshold: 0.28, rootMargin: '0px 0px -80px 0px' });
       items.forEach(item => cardObserver.observe(item));
 
       // ── Active nav on scroll ──
       const sections = [
-        { id: 'home',  href: '#home'  },
-        { id: 'work',  href: '#work'  },
-        { id: 'about', href: '#about' },
+        { id: 'home',    navHref: '#home'    },
+        { id: 'work',    navHref: '#work'    },
+        { id: 'about',   navHref: '#about'   },
+        { id: 'contact', navHref: '#contact' },
       ];
 
       const navLinks = document.querySelectorAll('.nav-pill a');
@@ -1961,13 +2226,14 @@
         });
       }
 
+      // Set Hi active on initial load
       setActive('#home');
 
       const sectionObserver = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
           if (entry.isIntersecting) {
             const sec = sections.find(s => s.id === entry.target.id);
-            if (sec) setActive(sec.href);
+            if (sec) setActive(sec.navHref);
           }
         });
       }, { threshold: 0, rootMargin: '-40% 0px -55% 0px' });
@@ -1981,22 +2247,22 @@
       const aboutWrap = document.getElementById('about');
       const toggle = aboutWrap && aboutWrap.querySelector('.mode-toggle');
       if (toggle) {
-        const slider   = toggle.querySelector('.slider');
-        const buttons  = toggle.querySelectorAll('button');
-        const panels   = aboutWrap.querySelectorAll('.about-panel');
+        const slider = toggle.querySelector('.slider');
+        const buttons = toggle.querySelectorAll('button');
+        const panels = aboutWrap.querySelectorAll('.about-panel');
         const modeLabel = document.getElementById('mode-label');
 
         function setSlider(target) {
           if (!target) return;
-          const rect       = target.getBoundingClientRect();
+          const rect = target.getBoundingClientRect();
           const parentRect = toggle.getBoundingClientRect();
-          slider.style.width     = rect.width + 'px';
+          slider.style.width = rect.width + 'px';
           slider.style.transform = 'translateX(' + (rect.left - parentRect.left - 6) + 'px)';
         }
-
         requestAnimationFrame(() => setSlider(toggle.querySelector('button.active')));
         window.addEventListener('resize', () => setSlider(toggle.querySelector('button.active')));
-        window.addEventListener('load',   () => setSlider(toggle.querySelector('button.active')));
+        // recompute once fonts/images settle
+        window.addEventListener('load', () => setSlider(toggle.querySelector('button.active')));
 
         buttons.forEach(b => {
           b.addEventListener('click', () => {
@@ -2009,6 +2275,7 @@
             aboutWrap.classList.toggle('personal', mode === 'personal');
             if (modeLabel) modeLabel.textContent = mode === 'personal' ? 'personal' : 'professional';
             panels.forEach(p => p.classList.toggle('active', p.id === ('panel-' + mode)));
+            // keep the toggle in view after the swap
             const ms = aboutWrap.querySelector('.mode-section');
             if (ms) {
               const scroller = document.scrollingElement || document.documentElement;
@@ -2020,5 +2287,189 @@
       }
     })();
   </script>
+
+  <!-- Particle band animation -->
+  <script>
+    (function() {
+      const canvas = document.getElementById('particle-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      let W = 0, H = 0, dpr = window.devicePixelRatio || 1;
+      let nodes = [];
+      let cols = 0, rows = 0;
+      const SPACING_X = 12;        // horizontal spacing between columns (tight)
+      const SPACING_Y = 10;        // vertical spacing between dots in a column (tighter)
+      const WAVE_AMP = 32;         // vertical wave amplitude
+      const WAVE_LEN = 280;        // wavelength in px
+      const WAVE_SPEED = 0.00018;  // very slow traveling wave
+      const SECONDARY_AMP = 14;    // cross wave for topographic feel
+      const SECONDARY_LEN = 460;
+      let t0 = performance.now();
+
+      function getAccent() {
+        const c = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+        return c || '#579ffd';
+      }
+
+      function hexToRgb(hex) {
+        const h = hex.replace('#', '');
+        const full = h.length === 3 ? h.split('').map(c => c + c).join('') : h;
+        const num = parseInt(full, 16);
+        return [num >> 16 & 255, num >> 8 & 255, num & 255];
+      }
+
+      function resize() {
+        const rect = canvas.getBoundingClientRect();
+        W = rect.width;
+        H = rect.height;
+        canvas.width = W * dpr;
+        canvas.height = H * dpr;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        buildGrid();
+      }
+
+      function buildGrid() {
+        nodes = [];
+        cols = Math.ceil(W / SPACING_X) + 2;
+        rows = Math.ceil(H / SPACING_Y) + 2;
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            nodes.push({
+              ox: c * SPACING_X - SPACING_X,
+              oy: r * SPACING_Y - SPACING_Y,
+              x: 0, y: 0,
+            });
+          }
+        }
+      }
+
+      function tick(now) {
+        const elapsed = (now - t0);
+        ctx.clearRect(0, 0, W, H);
+        const accent = getAccent();
+        let rgb;
+        try { rgb = accent.startsWith('#') ? hexToRgb(accent) : [87, 159, 253]; }
+        catch(e) { rgb = [87, 159, 253]; }
+
+        const tt = elapsed * 0.00018;
+
+        // Multi-wave field — several traveling waves at different angles,
+        // frequencies, and speeds. Their sum creates a non-uniform, dynamic
+        // surface that varies across the canvas.
+        for (let n of nodes) {
+          const x = n.ox, y = n.oy;
+
+          // Wave 1: travels left→right
+          const w1 = Math.sin(x * 0.011 - tt * 6.0);
+          // Wave 2: travels diagonally, slower
+          const w2 = Math.sin(x * 0.005 + y * 0.008 - tt * 4.0);
+          // Wave 3: vertical ripple from top→bottom
+          const w3 = Math.sin(y * 0.014 + tt * 3.5);
+          // Wave 4: low-freq lumps that drift
+          const w4 = Math.sin(x * 0.002 - y * 0.003 - tt * 2.0);
+          // Wave 5: cross-traveling fast ripple, smaller amplitude
+          const w5 = Math.sin(x * 0.018 + y * 0.012 + tt * 8.0);
+
+          const dy =
+              w1 * 18 +
+              w2 * 14 +
+              w3 * 9  +
+              w4 * 22 +
+              w5 * 5;
+
+          const dx =
+              Math.cos(x * 0.008 - tt * 5.0) * 6 +
+              Math.cos(y * 0.011 + tt * 3.0) * 4 +
+              w4 * 5;
+
+          n.x = x + dx;
+          n.y = y + dy;
+        }
+
+        // Draw dots only — no connecting lines
+        for (let n of nodes) {
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 1.0, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, 0.7)`;
+          ctx.fill();
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      window.addEventListener('resize', resize);
+      resize();
+      requestAnimationFrame(tick);
+    })();
+  </script>
+
+  <!-- Tweaks -->
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel">
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "bgColor": "#ffffff",
+      "accentColor": "#579ffd",
+      "quoteStyle": "italic",
+      "showExpBadge": true
+    }/*EDITMODE-END*/;
+
+    function PortfolioTweaks() {
+      const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+      React.useEffect(() => {
+        const root = document.documentElement;
+        root.style.setProperty('--bg', tweaks.bgColor);
+        root.style.setProperty('--bg2', tweaks.bgColor === '#ffffff' ? '#f5f5f3' : 'oklch(94% 0.015 75)');
+        root.style.setProperty('--accent', tweaks.accentColor);
+        root.style.setProperty('--pill-bg', tweaks.bgColor + 'bf');
+
+        const quote = document.querySelector('.hero-quote');
+        if (quote) quote.style.fontStyle = tweaks.quoteStyle;
+
+        const badge = document.querySelector('.hero-exp');
+        if (badge) badge.style.display = tweaks.showExpBadge ? '' : 'none';
+      }, [tweaks]);
+
+      return (
+        <TweaksPanel>
+          <TweakSection label="Background">
+            <TweakColor
+              label="Page background"
+              value={tweaks.bgColor}
+              onChange={v => setTweak('bgColor', v)}
+            />
+          </TweakSection>
+          <TweakSection label="Accent">
+            <TweakColor
+              label="Accent color"
+              value={tweaks.accentColor}
+              onChange={v => setTweak('accentColor', v)}
+            />
+          </TweakSection>
+          <TweakSection label="Quote">
+            <TweakRadio
+              label="Quote style"
+              value={tweaks.quoteStyle}
+              options={[{label: 'Italic', value: 'italic'}, {label: 'Normal', value: 'normal'}]}
+              onChange={v => setTweak('quoteStyle', v)}
+            />
+          </TweakSection>
+          <TweakSection label="Details">
+            <TweakToggle
+              label="Show experience badge"
+              value={tweaks.showExpBadge}
+              onChange={v => setTweak('showExpBadge', v)}
+            />
+          </TweakSection>
+        </TweaksPanel>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('tweaks-root')).render(<PortfolioTweaks />);
+  </script>
+  <div id="tweaks-root"></div>
 </body>
 </html>
