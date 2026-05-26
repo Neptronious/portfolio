@@ -144,7 +144,7 @@
     .topbar {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
       width: 100%;
       flex-shrink: 0;
       position: fixed;
@@ -1607,37 +1607,16 @@
     <!-- ── TOP BAR ── -->
     <header class="topbar">
 
-      <!-- Left: name pill -->
-      <span class="topbar-name-pill">Rajarshi</span>
-
-      <!-- Center: nav pill (absolutely centered) -->
-      <div class="nav-pill-wrap">
-        <nav class="nav-pill" aria-label="Primary navigation">
-          <a href="#home" class="active">
-            <span class="wave-icon">👋</span> Hi
-          </a>
-          <a href="#work">Work</a>
-          <a href="#about">About</a>
-          <a href="#contact">Contact</a>
-          <a href="#">Download Resume</a>
-        </nav>
-      </div>
-
-      <!-- Right: contact pill -->
-      <div class="topbar-right">
-        <div class="contact-pill">
-          <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
-          <div class="c-divider"></div>
-          <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
-            <svg class="li-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-              <rect width="24" height="24" rx="4" fill="oklch(45% 0.12 240)"/>
-              <path d="M7.5 9.5H5V18H7.5V9.5Z" fill="white"/>
-              <circle cx="6.25" cy="6.75" r="1.5" fill="white"/>
-              <path d="M19 18H16.5V13.75C16.5 12.75 15.75 12 14.75 12C13.75 12 13 12.75 13 13.75V18H10.5V9.5H13V10.75C13.5 9.75 14.75 9.25 15.75 9.25C17.5 9.25 19 10.75 19 12.5V18Z" fill="white"/>
-            </svg>
-          </a>
-        </div>
-      </div>
+      <!-- Center: nav pill -->
+      <nav class="nav-pill" aria-label="Primary navigation">
+        <a href="#home" class="active">
+          <span class="wave-icon">👋</span> Hi
+        </a>
+        <a href="#work">Work</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+        <a href="#">Download Resume</a>
+      </nav>
 
     </header>
 
