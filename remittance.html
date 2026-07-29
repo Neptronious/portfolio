@@ -536,7 +536,7 @@
       border: 1px solid var(--pill-border);
     }
     .persona-card:hover {
-      transform: translateY(-6px);
+      transform: translateY(-6px) scale(1.03);
       box-shadow: 0 24px 48px -20px oklch(15% 0.01 60 / 0.2);
     }
     .persona-art {
@@ -635,8 +635,8 @@
     .balance-list { display: flex; flex-direction: column; gap: 0; }
     .balance-item {
       display: grid;
-      grid-template-columns: 40px 1fr;
-      gap: 16px;
+      grid-template-columns: 1fr;
+      gap: 0;
       padding: 20px 0;
       border-top: 1px solid var(--pill-border);
     }
@@ -904,19 +904,7 @@
       border: 1px solid oklch(40% 0.02 60);
       z-index: 2;
     }
-    .blueprint-scroll {
-      overflow-x: auto;
-      overflow-y: hidden;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-color: var(--accent) oklch(95% 0.005 60);
-      scrollbar-width: thin;
-    }
-    .blueprint-scroll img {
-      display: block;
-      width: auto;
-      max-width: none;
-      height: clamp(360px, 50vh, 560px);
-    }
+
     .blueprint-caption {
       display: flex;
       align-items: center;
@@ -1399,7 +1387,7 @@
       100% { offset-distance: 100%; opacity: 0; }
     }
     .money-dot {
-      offset-path: path('M 130 380 Q 360 180 700 280 T 1370 230');
+      offset-path: path('M 220 300 Q 420 130 750 200 T 1280 170');
       offset-rotate: 0deg;
       animation: travel 5.5s linear infinite;
     }
@@ -1434,6 +1422,217 @@
       .blueprint-stat:nth-last-child(-n+2), .workshop-stat:nth-last-child(-n+2) { border-bottom: none; }
       .screens-grid { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* ── PILLAR UPDATES ── */
+    .pillar-card {
+      cursor: default;
+      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s;
+    }
+    .pillar-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 48px -16px oklch(15% 0.01 60 / 0.18);
+      z-index: 2;
+    }
+    .pillar-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .pillar-desc {
+      font-size: 14.5px;
+      color: var(--ink-mid);
+      line-height: 1.6;
+      max-width: 68ch;
+    }
+
+    /* ── BLUEPRINT ZOOM/PAN ── */
+    .blueprint-zoom-wrap {
+      width: 100%;
+      height: clamp(360px, 50vh, 560px);
+      overflow: hidden;
+      cursor: grab;
+      user-select: none;
+      border-radius: 18px;
+      position: relative;
+      background: oklch(97% 0.005 60);
+    }
+    .blueprint-zoom-wrap:active { cursor: grabbing; }
+    .blueprint-zoom-wrap img {
+      display: block;
+      transform-origin: center center;
+      transition: none;
+      pointer-events: none;
+      width: auto;
+      height: 100%;
+      max-width: none;
+    }
+    .blueprint-zoom-hint {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      background: oklch(15% 0.01 60 / 0.7);
+      color: white;
+      font-size: 11px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.04em;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+    .zoom-controls {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+      align-items: center;
+    }
+    .zoom-btn {
+      background: var(--bg);
+      border: 1px solid var(--pill-border);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      cursor: pointer;
+      color: var(--ink);
+      transition: background 0.18s;
+    }
+    .zoom-btn:hover { background: var(--bg2); }
+
+    /* Blueprint stakeholders inline */
+    .blueprint-stakeholders {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+
+    /* ── STORYBOARD GALLERY ── */
+    .sb-gallery {
+      position: relative;
+      margin-bottom: 48px;
+    }
+    .sb-track {
+      position: relative;
+      overflow: hidden;
+      border-radius: 18px;
+    }
+    .sb-slide {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .sb-slide:first-child {
+      position: relative;
+    }
+    .sb-slide .storyboard-card {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--pill-border);
+      box-shadow: 0 12px 32px -18px rgba(0,0,0,0.18);
+    }
+    .sb-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid var(--pill-border);
+      box-shadow: 0 4px 16px oklch(15% 0.01 60 / 0.12);
+      font-size: 24px;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, transform 0.18s, opacity 0.18s;
+      z-index: 10;
+      line-height: 1;
+    }
+    .sb-btn:hover { background: var(--bg2); transform: translateY(-50%) scale(1.08); }
+    .sb-btn:disabled { opacity: 0.25; pointer-events: none; }
+    .sb-prev { left: -20px; }
+    .sb-next { right: -20px; }
+    .sb-dots {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .sb-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--pill-border);
+      transition: background 0.2s, transform 0.2s;
+    }
+    .sb-dot.active {
+      background: var(--accent);
+      transform: scale(1.3);
+    }
+
+
+    /* ── QUOTE TITLE ── */
+    .quote-title {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: oklch(75% 0.01 60);
+      margin-bottom: 24px;
+    }
+
+    /* ── PILLARS 2-COLUMN GRID ── */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      max-width: 1100px;
+    }
+    .pillars-grid .pillar-card {
+      margin-left: 0 !important;
+    }
+    .pillars-grid .pillar-card:last-child {
+      grid-column: 1 / -1;
+    }
+
+    /* ── BLUEPRINT ZOOM BUTTONS ── */
+    .blueprint-zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .bz-btn {
+      background: oklch(28% 0.02 60);
+      color: white;
+      border: 1px solid oklch(40% 0.02 60);
+      border-radius: 999px;
+      width: 36px; height: 36px;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.18s, transform 0.15s;
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1;
+    }
+    #bzReset {
+      width: auto;
+      padding: 0 16px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+    }
+    .bz-btn:hover { background: oklch(38% 0.02 60); transform: scale(1.08); }
+
+    /* ── STATS STRIP responsive clamp ── */
+    .stat-num em {
+      font-size: clamp(32px, 4vw, 64px);
+    }
+    .stat-label {
+      font-size: clamp(11px, 1.1vw, 14px);
+    }
+
   </style>
 </head>
 <body>
@@ -1472,7 +1671,7 @@
     <div class="container">
       <div class="hero-eyebrow">
         <span class="dot"></span>
-        Case study · Walmart Global Design
+        Case study · Global Design
       </div>
       <h1 class="project-title">Sending money <em>home.</em></h1>
       <p class="hero-sub">Rebuilding the remittance experience for families moving cash from the US to Mexico — the world's largest money corridor.</p>
@@ -1490,12 +1689,12 @@
           <span class="meta-value">UX Designer &amp; Researcher</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Client</span>
-          <span class="meta-value">Walmart Global Design</span>
+          <span class="meta-label">Project done for</span>
+          <span class="meta-value">Global Retail Group</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Timeline</span>
-          <span class="meta-value">14 weeks · 2024</span>
+          <span class="meta-value">6 months · 2024</span>
         </div>
         <div class="meta-item">
           <span class="meta-label">Focus</span>
@@ -1505,7 +1704,7 @@
 
       <!-- Corridor map visual -->
       <div class="corridor-map" aria-hidden="true">
-        <svg viewBox="0 0 1500 660" preserveAspectRatio="xMidYMid slice">
+        <svg viewBox="0 0 1500 440" preserveAspectRatio="xMidYMid slice">
           <defs>
             <pattern id="dotgrid" x="0" y="0" width="26" height="26" patternUnits="userSpaceOnUse">
               <circle cx="2" cy="2" r="1.2" fill="oklch(45% 0.12 240 / 0.14)"/>
@@ -1522,12 +1721,12 @@
           <rect width="1500" height="660" fill="url(#dotgrid)"/>
 
           <!-- US glow -->
-          <circle cx="130" cy="380" r="180" fill="url(#usGlow)"/>
+          <circle cx="220" cy="300" r="160" fill="url(#usGlow)"/>
           <!-- MX glow -->
-          <circle cx="1370" cy="230" r="180" fill="url(#mxGlow)"/>
+          <circle cx="1280" cy="170" r="160" fill="url(#mxGlow)"/>
 
           <!-- corridor route -->
-          <path d="M 130 380 Q 360 180 700 280 T 1370 230"
+          <path d="M 220 300 Q 420 130 750 200 T 1280 170"
                 stroke="#B873D5" stroke-width="3" fill="none"
                 stroke-dasharray="2 14" stroke-linecap="round" opacity="0.7"/>
 
@@ -1543,7 +1742,7 @@
           </g>
 
           <!-- US endpoint -->
-          <g transform="translate(130 380)">
+          <g transform="translate(220 300)">
             <circle r="16" fill="oklch(60% 0.2 250 / 0.22)" class="pulse-dot"/>
             <circle r="9" fill="oklch(50% 0.2 250)"/>
             <text y="-32" text-anchor="middle"
@@ -1555,7 +1754,7 @@
           </g>
 
           <!-- MX endpoint -->
-          <g transform="translate(1370 230)">
+          <g transform="translate(1280 170)">
             <circle r="16" fill="oklch(60% 0.18 150 / 0.22)" class="pulse-dot"/>
             <circle r="9" fill="oklch(45% 0.18 150)"/>
             <text y="-32" text-anchor="middle"
@@ -1567,13 +1766,14 @@
           </g>
 
           <!-- corridor label -->
-          <g transform="translate(750 100)">
-            <rect x="-130" y="-26" width="260" height="48" rx="24" fill="white" stroke="oklch(85% 0.01 70)"/>
-            <text text-anchor="middle" y="4"
-                  font-family="DM Sans, sans-serif" font-weight="500" font-size="14"
-                  fill="oklch(35% 0.01 60)" letter-spacing="0.08em">
-              <tspan font-weight="700" fill="#B873D5">$63B</tspan> · LARGEST CORRIDOR IN THE WORLD
-            </text>
+          <g transform="translate(750 72)">
+            <rect x="-210" y="-30" width="420" height="58" rx="29" fill="white" stroke="oklch(85% 0.01 70)" stroke-width="1.5"/>
+            <text text-anchor="middle" y="-2"
+                  font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="22"
+                  fill="#B873D5" letter-spacing="-0.01em">$63B</text>
+            <text text-anchor="middle" y="16"
+                  font-family="DM Sans, sans-serif" font-weight="500" font-size="11"
+                  fill="oklch(45% 0.01 60)" letter-spacing="0.1em">LARGEST CORRIDOR IN THE WORLD</text>
           </g>
         </svg>
       </div>
@@ -1600,6 +1800,10 @@
         <div class="stat-cell">
           <div class="stat-num"><em>5</em></div>
           <div class="stat-label">Experience pillars</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num"><em>24</em></div>
+          <div class="stat-label">Workshop participants</div>
         </div>
       </div>
     </div>
@@ -1628,7 +1832,7 @@
           <div class="journey-step">
             <div class="journey-dot">03</div>
             <h4>Compare</h4>
-            <p>Mystery-shop Walmart, Western Union, Elektra &amp; OXXO counters.</p>
+            <p>Mystery-shop major providers — Western Union, Elektra &amp; OXXO counters.</p>
           </div>
           <div class="journey-step">
             <div class="journey-dot">04</div>
@@ -1645,19 +1849,19 @@
 
       <div class="method-grid">
         <div class="method-card">
-          <span class="num">METHOD 01</span>
+          <span class="num">ACTIVITY 01</span>
           <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 21c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M15.5 8.5l3 3 4-4"/></svg>
           <h4>Ethnographic interviews</h4>
           <p>14 conversations in homes, kitchens and corner shops where the money actually lands.</p>
         </div>
         <div class="method-card">
-          <span class="num">METHOD 02</span>
+          <span class="num">ACTIVITY 02</span>
           <svg viewBox="0 0 24 24"><path d="M3 9h18l-1.5 11H4.5L3 9z"/><path d="M8 9V6a4 4 0 1 1 8 0v3"/><circle cx="9" cy="14" r="0.5" fill="currentColor"/><circle cx="15" cy="14" r="0.5" fill="currentColor"/></svg>
           <h4>Mystery shopping</h4>
           <p>Walked the queue, signed the slip, asked the awkward questions — at every major provider.</p>
         </div>
         <div class="method-card">
-          <span class="num">METHOD 03</span>
+          <span class="num">ACTIVITY 03</span>
           <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 4v16M16 4v16"/></svg>
           <h4>Service blueprint</h4>
           <p>Co-created end-to-end with US &amp; Mexican stakeholders — surfacing every hidden hand-off.</p>
@@ -1669,7 +1873,8 @@
   <!-- ── PULL QUOTE ── -->
   <section class="pull-quote">
     <div class="container">
-      <blockquote>I keep it at home and tell my family where to find it.</blockquote>
+      <p class="quote-title">Remittance goes beyond money</p>
+      <blockquote>When he sends money, we know he hasn't forgotten us.</blockquote>
       <cite>Receiver · Rural Mexico</cite>
     </div>
   </section>
@@ -1679,69 +1884,37 @@
     <div class="container">
       <div class="section-eyebrow"><span class="num">03</span> Receiver Personas</div>
       <h2 class="section-title">Three receivers, three different relationships with money.</h2>
-      <p class="section-lede">Same envelope, different journey. Who receives the cash determines where it goes next — and what the service needs to do.</p>
-
       <div class="persona-grid">
         <article class="persona-card">
           <div class="persona-art p1">
-            <svg viewBox="0 0 200 120" aria-hidden="true">
-              <!-- house with cart -->
-              <rect x="58" y="56" width="84" height="48" rx="4" fill="#fff" stroke="#7a2a64" stroke-width="2"/>
-              <path d="M52 56 L100 22 L148 56" fill="none" stroke="#7a2a64" stroke-width="2" stroke-linejoin="round"/>
-              <rect x="80" y="74" width="18" height="30" fill="#7a2a64" opacity="0.85"/>
-              <rect x="108" y="74" width="18" height="14" fill="#7a2a64" opacity="0.35"/>
-              <circle cx="34" cy="100" r="6" fill="#7a2a64"/>
-              <circle cx="170" cy="100" r="6" fill="#7a2a64"/>
-              <path d="M28 100 L46 70 L70 70" fill="none" stroke="#7a2a64" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <img src="assets/remittance/everyday-spends.png" alt="Persona — Personal Needs receiver" style="width:100%;height:100%;object-fit:cover;object-position:top center;" />
           </div>
           <div class="persona-meta">
             <span class="persona-num">Persona 01</span>
             <h3 class="persona-name">Personal Needs</h3>
             <p class="persona-desc">Receives weekly to cover groceries, school fees and medicine. Money lands and is spent.</p>
-            <span class="persona-chip">Spend quickly · Routine</span>
           </div>
         </article>
 
         <article class="persona-card">
           <div class="persona-art p2">
-            <svg viewBox="0 0 200 120" aria-hidden="true">
-              <!-- house under construction with star/dream -->
-              <rect x="44" y="60" width="92" height="46" fill="#fff" stroke="#2c4a78" stroke-width="2"/>
-              <path d="M38 60 L90 28 L142 60" fill="none" stroke="#2c4a78" stroke-width="2"/>
-              <rect x="56" y="72" width="14" height="22" fill="#2c4a78" opacity="0.3"/>
-              <rect x="80" y="72" width="14" height="22" fill="#2c4a78" opacity="0.3"/>
-              <rect x="104" y="72" width="14" height="22" fill="#2c4a78" opacity="0.3"/>
-              <path d="M158 30 L162 42 L174 42 L164 50 L168 62 L158 54 L148 62 L152 50 L142 42 L154 42 Z" fill="#2c4a78"/>
-              <path d="M44 106 L136 106" stroke="#2c4a78" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <img src="assets/remittance/dream-builder.png" alt="Persona — Dream Builders receiver" style="width:100%;height:100%;object-fit:cover;object-position:top center;" />
           </div>
           <div class="persona-meta">
             <span class="persona-num">Persona 02</span>
             <h3 class="persona-name">Dream Builders</h3>
             <p class="persona-desc">Saves on behalf of senders towards bigger goals — a home, a small business — with incentives along the way.</p>
-            <span class="persona-chip">Save · Long-term</span>
           </div>
         </article>
 
         <article class="persona-card">
           <div class="persona-art p3">
-            <svg viewBox="0 0 200 120" aria-hidden="true">
-              <!-- three figures, community -->
-              <circle cx="60" cy="50" r="12" fill="#fff" stroke="#4d6320" stroke-width="2"/>
-              <path d="M40 100 c0-12 8-22 20-22 s20 10 20 22" fill="none" stroke="#4d6320" stroke-width="2"/>
-              <circle cx="100" cy="44" r="14" fill="#fff" stroke="#4d6320" stroke-width="2"/>
-              <path d="M78 102 c0-14 10-24 22-24 s22 10 22 24" fill="none" stroke="#4d6320" stroke-width="2"/>
-              <circle cx="142" cy="50" r="12" fill="#fff" stroke="#4d6320" stroke-width="2"/>
-              <path d="M122 100 c0-12 8-22 20-22 s20 10 20 22" fill="none" stroke="#4d6320" stroke-width="2"/>
-              <path d="M76 64 L88 60 M112 60 L124 64" stroke="#4d6320" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <img src="assets/remittance/community-receiver.png" alt="Persona — Community Receivers" style="width:100%;height:100%;object-fit:cover;object-position:top center;" />
           </div>
           <div class="persona-meta">
             <span class="persona-num">Persona 03</span>
             <h3 class="persona-name">Community Receivers</h3>
             <p class="persona-desc">Cashes out and distributes — neighbours, elders, friends. Returns home with only a small token.</p>
-            <span class="persona-chip">Share · Trusted hub</span>
           </div>
         </article>
       </div>
@@ -1753,80 +1926,72 @@
     <div class="container">
       <div class="section-eyebrow"><span class="num">04</span> Tensions in the Journey</div>
       <h2 class="section-title">What pushes them away — what pulls them in.</h2>
-      <p class="section-lede">Two forces shape the experience in equal measure.</p>
+      <p class="section-lede">Forces shape the experience in equal measure.</p>
 
       <div class="balance-grid">
-        <div class="balance-col barriers">
-          <div class="balance-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 3 L22 21 L2 21 Z"/><path d="M12 10 L12 15"/><circle cx="12" cy="18" r="0.6" fill="currentColor" stroke="none"/></svg>
-          </div>
-          <h3 style="color: var(--warn);">Barriers</h3>
-          <p class="sub">What erodes trust at the counter.</p>
-          <div class="balance-list">
-            <div class="balance-item">
-              <span class="pip">B1</span>
-              <div>
-                <h4>Counter friction</h4>
-                <p>Long queues, unclear rules, dismissive staff.</p>
-              </div>
-            </div>
-            <div class="balance-item">
-              <span class="pip">B2</span>
-              <div>
-                <h4>Forced purchases</h4>
-                <p>Pressure to buy something when cashing out feels coercive.</p>
-              </div>
-            </div>
-            <div class="balance-item">
-              <span class="pip">B3</span>
-              <div>
-                <h4>Crime &amp; safety</h4>
-                <p>Receivers hide cash, vary pickup times — never feel safe.</p>
-              </div>
-            </div>
-            <div class="balance-item">
-              <span class="pip">B4</span>
-              <div>
-                <h4>Banking distrust</h4>
-                <p>Hidden charges, scams &amp; stolen funds stories keep them out.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <div class="balance-col drivers">
           <div class="balance-icon">
             <svg viewBox="0 0 24 24"><path d="M4 12 L10 18 L20 6"/></svg>
           </div>
           <h3 style="color: var(--mx-green);">Drivers</h3>
-          <p class="sub">The non-negotiables that win loyalty.</p>
+          <p class="sub">Forces that shape the experience</p>
           <div class="balance-list">
             <div class="balance-item">
-              <span class="pip">D1</span>
               <div>
                 <h4>Proximity</h4>
                 <p>A nearby outlet beats almost everything else.</p>
               </div>
             </div>
             <div class="balance-item">
-              <span class="pip">D2</span>
               <div>
                 <h4>Predictability</h4>
-                <p>Consistent rules. Money there when promised.</p>
+                <p>Consistent rules. Money guaranteed when promised.</p>
               </div>
             </div>
             <div class="balance-item">
-              <span class="pip">D3</span>
               <div>
                 <h4>Safety</h4>
                 <p>Protection from scams, theft &amp; staff negligence.</p>
               </div>
             </div>
             <div class="balance-item">
-              <span class="pip">D4</span>
               <div>
                 <h4>Respect</h4>
                 <p>Dignity — especially for elderly &amp; Indigenous receivers.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="balance-col barriers">
+          <div class="balance-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 3 L22 21 L2 21 Z"/><path d="M12 10 L12 15"/><circle cx="12" cy="18" r="0.6" fill="currentColor" stroke="none"/></svg>
+          </div>
+          <h3 style="color: var(--warn);">Barriers</h3>
+          <p class="sub">Forces that shape the experience</p>
+          <div class="balance-list">
+            <div class="balance-item">
+              <div>
+                <h4>Counter friction</h4>
+                <p>Long queues, unclear rules, dismissive staff.</p>
+              </div>
+            </div>
+            <div class="balance-item">
+              <div>
+                <h4>Forced purchases</h4>
+                <p>Pressure to buy something when cashing out is resented.</p>
+              </div>
+            </div>
+            <div class="balance-item">
+              <div>
+                <h4>Crime &amp; safety</h4>
+                <p>Receivers hide cash, vary pickup times — take extra precautions.</p>
+              </div>
+            </div>
+            <div class="balance-item">
+              <div>
+                <h4>Banking distrust</h4>
+                <p>Hidden charges, scams &amp; stolen funds stories keep them out.</p>
               </div>
             </div>
           </div>
@@ -1851,17 +2016,17 @@
         <div class="eco-tile">
           <svg viewBox="0 0 24 24"><path d="M12 2 L20 6 V13 c0 5-3.5 7.5-8 9-4.5-1.5-8-4-8-9 V6 Z"/></svg>
           <h4>Safety &amp; control</h4>
-          <p>"I keep it at home and tell my family where to find it."</p>
+          <p>People feel more in charge and safer when they hold money in hand.</p>
         </div>
         <div class="eco-tile">
           <svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M7 16h2M11 16h6"/></svg>
           <h4>Mistrust of banks</h4>
-          <p>Hidden fees, "stolen" funds, suspicions of collusion with crime.</p>
+          <p>Stories circulate about hidden fees, "stolen" funds, suspicions of collusion with crime.</p>
         </div>
         <div class="eco-tile">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M2 12s3-6 10-6 10 6 10 6-3 6-10 6-10-6-10-6z"/></svg>
           <h4>Fear of exposure</h4>
-          <p>Undocumented senders &amp; off-the-books receivers avoid scrutiny.</p>
+          <p>Un-documented senders often avoid banks to reduce risk of detection.</p>
         </div>
       </div>
     </div>
@@ -1875,49 +2040,97 @@
       <div class="blueprint-top">
         <div>
           <h2 class="section-title">Mapping the <em>whole system</em> — in person, in Mexico.</h2>
-          <p class="section-lede">A full-day blueprint workshop with every stakeholder in the same room. Front-stage, back-stage, every hand-off — laid bare to find the north-star solution.</p>
-        </div>
-        <div class="blueprint-stakeholders">
-          <span class="stake-chip"><span class="dot"></span>Business · US</span>
-          <span class="stake-chip"><span class="dot"></span>Business · Mexico</span>
-          <span class="stake-chip"><span class="dot"></span>Product</span>
-          <span class="stake-chip"><span class="dot"></span>Engineering</span>
-          <span class="stake-chip"><span class="dot"></span>Research</span>
-          <span class="stake-chip"><span class="dot"></span>Design</span>
-          <span class="stake-chip"><span class="dot"></span>Compliance</span>
-          <span class="stake-chip"><span class="dot"></span>Store Ops</span>
+          <p class="section-lede">A full-day blueprint workshop with every stakeholder in the same room.</p>
+          <div class="blueprint-stakeholders">
+            <span class="stake-chip"><span class="dot"></span>Business · US</span>
+            <span class="stake-chip"><span class="dot"></span>Business · Mexico</span>
+            <span class="stake-chip"><span class="dot"></span>Product</span>
+            <span class="stake-chip"><span class="dot"></span>Engineering</span>
+            <span class="stake-chip"><span class="dot"></span>Research</span>
+            <span class="stake-chip"><span class="dot"></span>Design</span>
+            <span class="stake-chip"><span class="dot"></span>Compliance</span>
+            <span class="stake-chip"><span class="dot"></span>Store Ops</span>
+          </div>
         </div>
       </div>
 
-      <div class="blueprint-frame">
-        <div class="blueprint-scroll">
-          <img src="assets/remittance/service-blueprint.png" alt="Service design blueprint mapping the end-to-end remittance journey" />
-        </div>
-      </div>
-      <div class="blueprint-caption">
-        <span class="scroll-hint">↔ scroll horizontally</span>
-        <span>Service design blueprint · co-created in Mexico with cross-functional stakeholders</span>
-      </div>
-
-      <div class="blueprint-stats">
+      <div class="blueprint-stats" style="margin-top:40px;margin-bottom:20px;">
         <div class="blueprint-stat">
           <div class="v">End-to-end</div>
           <div class="l">Every customer touchpoint mapped — discovery, sending, receiving, follow-up.</div>
         </div>
         <div class="blueprint-stat">
-          <div class="v">Front &amp; back-stage</div>
-          <div class="l">Visible counter steps stacked above invisible internal processes &amp; systems.</div>
+          <div class="v">Front &amp; back-end</div>
+          <div class="l">Visible money transfer steps mapped side-by-side to invisible internal process &amp; systems.</div>
         </div>
         <div class="blueprint-stat">
           <div class="v">In-person · Mexico</div>
           <div class="l">Stakeholders together for context, candor and faster alignment.</div>
         </div>
       </div>
+
+      <div class="blueprint-frame">
+        <div class="blueprint-zoom-wrap" id="blueprintZoom">
+          <img src="assets/remittance/service-blueprint.jpg" alt="Service design blueprint mapping the end-to-end remittance journey" id="blueprintImg" />
+        </div>
+      </div>
+      <div class="blueprint-zoom-controls">
+        <button class="bz-btn" id="bzMinus" aria-label="Zoom out">−</button>
+        <button class="bz-btn" id="bzReset" aria-label="Reset zoom">Reset</button>
+        <button class="bz-btn" id="bzPlus" aria-label="Zoom in">+</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── EXPERIENCE PILLARS ── -->
+  <section class="block alt" data-screen-label="07 Experience Pillars">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">07</span> Experience Pillars</div>
+      <h2 class="section-title">Five pillars to <em>build trust.</em></h2>
+      <p class="section-lede">The lens from which every design decision is taken and tested against.</p>
+
+      <div class="pillars-grid">
+        <div class="pillar-card pillar-1">
+          <div class="pillar-num">01</div>
+          <div class="pillar-body">
+            <h3 class="pillar-title">Keep it Simple &amp; Flexible</h3>
+            <p class="pillar-desc">Reduce cognitive load at every step. The service should adapt to varying levels of digital literacy — from first-time senders to habitual users — without added friction.</p>
+          </div>
+        </div>
+        <div class="pillar-card pillar-2">
+          <div class="pillar-num">02</div>
+          <div class="pillar-body">
+            <h3 class="pillar-title">Honor Familiarity</h3>
+            <p class="pillar-desc">Build on existing habits and trusted anchors — cash, known stores, familiar language. Don't replace what already works; enhance it.</p>
+          </div>
+        </div>
+        <div class="pillar-card pillar-3">
+          <div class="pillar-num">03</div>
+          <div class="pillar-body">
+            <h3 class="pillar-title">Enable Predictability &amp; Control</h3>
+            <p class="pillar-desc">Give users clear, consistent information at every stage. Predictable fees, reliable timelines, and visible status build the confidence to return.</p>
+          </div>
+        </div>
+        <div class="pillar-card pillar-4">
+          <div class="pillar-num">04</div>
+          <div class="pillar-body">
+            <h3 class="pillar-title">Deliver Maximum Value</h3>
+            <p class="pillar-desc">Every transaction should feel worth it — competitive rates, rewards, and ancillary benefits that make the service a net positive beyond the transfer itself.</p>
+          </div>
+        </div>
+        <div class="pillar-card pillar-5">
+          <div class="pillar-num">05</div>
+          <div class="pillar-body">
+            <h3 class="pillar-title">Build Transparency &amp; Trust</h3>
+            <p class="pillar-desc">Surface what is usually hidden — fees, exchange rates, processing steps — so users feel respected, not managed. Trust is earned through radical clarity.</p>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ── DESIGN THINKING WORKSHOP ── -->
-  <section class="block" data-screen-label="07 Design Thinking Workshop">
+  <section class="block" data-screen-label="08 Design Thinking Workshop">
     <div class="container-wide">
       <div class="section-eyebrow"><span class="num">07</span> Design Thinking Workshop</div>
       <h2 class="section-title">Three days. Three teams. <em>84 ideas.</em></h2>
@@ -1930,11 +2143,11 @@
         </div>
         <div class="workshop-stat">
           <div class="num">3</div>
-          <div class="lbl">Interdisciplinary teams competing in parallel</div>
+          <div class="lbl">3 interdisciplinary teams creating in parallel</div>
         </div>
         <div class="workshop-stat">
           <div class="num">3</div>
-          <div class="lbl">Days of immersive in-person work</div>
+          <div class="lbl">3 days of immersive online sessions</div>
         </div>
         <div class="workshop-stat">
           <div class="num">84</div>
@@ -1943,80 +2156,89 @@
       </div>
 
       <div class="storyboard-eyebrow">Workshop activities</div>
-      <div class="workshop-activities">
-        <span class="activity-pill"><span class="step">1</span>Defining pains &amp; gains</span>
-        <span class="activity-pill"><span class="step">2</span>How-might-we statements</span>
-        <span class="activity-pill"><span class="step">3</span>Crazy 8 ideations</span>
-        <span class="activity-pill"><span class="step">4</span>Theme prioritization</span>
-        <span class="activity-pill"><span class="step">5</span>Storyboarding</span>
+      <div class="journey" style="margin-top:24px;margin-bottom:48px;">
+        <div class="journey-rail">
+          <div class="journey-step active">
+            <div class="journey-dot">01</div>
+            <h4>Defining pains &amp; gains</h4>
+            <p>Mapping what frustrates and what delights across the current remittance journey.</p>
+          </div>
+          <div class="journey-step">
+            <div class="journey-dot">02</div>
+            <h4>How-might-we statements</h4>
+            <p>Reframing problems as opportunity spaces to unlock creative thinking.</p>
+          </div>
+          <div class="journey-step">
+            <div class="journey-dot">03</div>
+            <h4>Crazy 8 ideations</h4>
+            <p>Eight concepts in eight minutes — forcing quantity over perfectionism.</p>
+          </div>
+          <div class="journey-step">
+            <div class="journey-dot">04</div>
+            <h4>Theme prioritization</h4>
+            <p>Clustering and dot-voting ideas into actionable opportunity themes.</p>
+          </div>
+          <div class="journey-step">
+            <div class="journey-dot">05</div>
+            <h4>Storyboarding</h4>
+            <p>End-to-end visual storytelling of each concept — from trigger moment to repeat use.</p>
+          </div>
+        </div>
       </div>
 
       <div class="storyboard-block">
         <div class="storyboard-eyebrow">Final concept storyboards</div>
         <h3 class="storyboard-title">Three teams · three end-to-end concepts</h3>
 
+        <!-- Concept 01 Gallery -->
         <div class="concept-divider">
           <span class="label">Concept 01</span>
           <span class="line"></span>
         </div>
-        <div class="storyboard-grid">
-          <div class="storyboard-card"><img src="assets/remittance/storyboard-1.png" alt="Concept 1 storyboard part 1 — awareness, digital KYC, QR pre-population" /></div>
-          <div class="storyboard-card"><img src="assets/remittance/storyboard-2.png" alt="Concept 1 storyboard part 2 — tracking, notifications, coupons &amp; referrals" /></div>
+        <div class="sb-gallery" data-gallery="1">
+          <div class="sb-track">
+            <div class="sb-slide"><div class="storyboard-card"><img src="assets/remittance/storyboard-1.png" alt="Concept 1 part 1" /></div></div>
+            <div class="sb-slide"><div class="storyboard-card"><img src="assets/remittance/storyboard-2.png" alt="Concept 1 part 2" /></div></div>
+          </div>
+          <button class="sb-btn sb-prev" aria-label="Previous" disabled>‹</button>
+          <button class="sb-btn sb-next" aria-label="Next">›</button>
+          <div class="sb-dots">
+            <span class="sb-dot active"></span><span class="sb-dot"></span>
+          </div>
         </div>
 
+        <!-- Concept 02 Gallery -->
         <div class="concept-divider">
           <span class="label">Concept 02</span>
           <span class="line"></span>
         </div>
-        <div class="storyboard-grid">
-          <div class="storyboard-card"><img src="assets/remittance/storyboard-3.png" alt="Concept 2 storyboard part 1 — Sparky AI assistant helps the sender" /></div>
-          <div class="storyboard-card"><img src="assets/remittance/storyboard-4.png" alt="Concept 2 storyboard part 2 — receiver digital KYC and store guidance" /></div>
+        <div class="sb-gallery" data-gallery="2">
+          <div class="sb-track">
+            <div class="sb-slide"><div class="storyboard-card"><img src="assets/remittance/storyboard-3.png" alt="Concept 2 part 1" /></div></div>
+            <div class="sb-slide"><div class="storyboard-card"><img src="assets/remittance/storyboard-4.png" alt="Concept 2 part 2" /></div></div>
+          </div>
+          <button class="sb-btn sb-prev" aria-label="Previous" disabled>‹</button>
+          <button class="sb-btn sb-next" aria-label="Next">›</button>
+          <div class="sb-dots">
+            <span class="sb-dot active"></span><span class="sb-dot"></span>
+          </div>
         </div>
 
+        <!-- Concept 03 Gallery -->
         <div class="concept-divider">
           <span class="label">Concept 03</span>
           <span class="line"></span>
         </div>
-        <div class="storyboard-grid">
-          <div class="storyboard-card"><img src="assets/remittance/storyboard-5.png" alt="Concept 3 storyboard part 1 — pre-sending and during-sending experience" /></div>
-          <div class="storyboard-card"><img src="assets/remittance/storyboard-6.png" alt="Concept 3 storyboard part 2 — post-sending, receiving and repeat" /></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ── EXPERIENCE PILLARS ── -->
-  <section class="block" data-screen-label="08 Experience Pillars">
-    <div class="container-wide">
-      <div class="section-eyebrow"><span class="num">08</span> Experience Pillars</div>
-      <h2 class="section-title">Five pillars to <em>build trust.</em></h2>
-      <p class="section-lede">The lens every design decision is tested against — from in-store signage to the mobile money flow.</p>
-
-      <div class="pillars-list">
-        <div class="pillar-card pillar-1">
-          <div class="pillar-num">01</div>
-          <h3 class="pillar-title">Keep it Simple &amp; Flexible</h3>
-          <span class="pillar-icon">→</span>
-        </div>
-        <div class="pillar-card pillar-2">
-          <div class="pillar-num">02</div>
-          <h3 class="pillar-title">Honor Familiarity</h3>
-          <span class="pillar-icon">→</span>
-        </div>
-        <div class="pillar-card pillar-3">
-          <div class="pillar-num">03</div>
-          <h3 class="pillar-title">Enable Predictability &amp; Control</h3>
-          <span class="pillar-icon">→</span>
-        </div>
-        <div class="pillar-card pillar-4">
-          <div class="pillar-num">04</div>
-          <h3 class="pillar-title">Deliver Maximum Value</h3>
-          <span class="pillar-icon">→</span>
-        </div>
-        <div class="pillar-card pillar-5">
-          <div class="pillar-num">05</div>
-          <h3 class="pillar-title">Build Transparency &amp; Trust</h3>
-          <span class="pillar-icon">→</span>
+        <div class="sb-gallery" data-gallery="3">
+          <div class="sb-track">
+            <div class="sb-slide"><div class="storyboard-card"><img src="assets/remittance/storyboard-5.png" alt="Concept 3 part 1" /></div></div>
+            <div class="sb-slide"><div class="storyboard-card"><img src="assets/remittance/storyboard-6.png" alt="Concept 3 part 2" /></div></div>
+          </div>
+          <button class="sb-btn sb-prev" aria-label="Previous" disabled>‹</button>
+          <button class="sb-btn sb-next" aria-label="Next">›</button>
+          <div class="sb-dots">
+            <span class="sb-dot active"></span><span class="sb-dot"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -2036,14 +2258,14 @@
         </div>
         <div class="solution-text">
           <h2 class="section-title">Remesas — <em>inside</em> the app people already trust.</h2>
-          <p class="section-lede">The pillars shape a new entry to remittance in the Walmart Mexico app, beside the wallet and store credit they already use weekly.</p>
+          <p class="section-lede">The pillars shape a new remittance entry beside the wallet and store credit users already use weekly.</p>
 
           <div class="solution-feature-list">
             <div class="feature-row">
               <span class="badge"><svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/><circle cx="12" cy="12" r="3"/></svg></span>
               <div>
                 <h4>One known surface</h4>
-                <p>Lives next to Cashi &amp; Walmart Pass — no separate app, no separate login.</p>
+                <p>Lives next to the digital wallet — no separate app, no separate login.</p>
               </div>
             </div>
             <div class="feature-row">
@@ -2057,7 +2279,7 @@
               <span class="badge"><svg viewBox="0 0 24 24"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-6h6v6"/></svg></span>
               <div>
                 <h4>Cash-friendly by default</h4>
-                <p>Pick up at 3,000+ Walmart stores customers already shop at.</p>
+                <p>Pick up at 3,000+ store locations customers already shop at.</p>
               </div>
             </div>
             <div class="feature-row">
@@ -2332,5 +2554,150 @@
       });
     })();
   </script>
+
+  <script>
+    // ── STORYBOARD GALLERIES ──
+    document.querySelectorAll('.sb-gallery').forEach(gallery => {
+      const track = gallery.querySelector('.sb-track');
+      const slides = Array.from(gallery.querySelectorAll('.sb-slide'));
+      const prevBtn = gallery.querySelector('.sb-prev');
+      const nextBtn = gallery.querySelector('.sb-next');
+      const dots = Array.from(gallery.querySelectorAll('.sb-dot'));
+      let current = 0;
+
+      // Set track height to first slide height so the relative+absolute layout works
+      function setTrackHeight() {
+        const h = slides[0].offsetHeight;
+        if (h > 0) track.style.height = h + 'px';
+      }
+
+      function goTo(idx) {
+        current = Math.max(0, Math.min(idx, slides.length - 1));
+        slides.forEach((s, i) => {
+          const offset = (i - current) * 100;
+          s.style.transform = `translateX(${offset}%)`;
+        });
+        dots.forEach((d, i) => d.classList.toggle('active', i === current));
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === slides.length - 1;
+        setTrackHeight();
+      }
+
+      // init: stack all slides, first visible
+      slides.forEach((s, i) => {
+        s.style.transform = `translateX(${i * 100}%)`;
+        s.style.transition = 'transform 0.45s cubic-bezier(0.22, 1, 0.36, 1)';
+      });
+
+      // Wait for images to load to get correct height
+      const imgs = gallery.querySelectorAll('img');
+      let loaded = 0;
+      imgs.forEach(img => {
+        if (img.complete) { loaded++; if (loaded === imgs.length) setTrackHeight(); }
+        else img.addEventListener('load', () => { loaded++; if (loaded === imgs.length) setTrackHeight(); });
+      });
+      setTimeout(setTrackHeight, 300);
+
+      prevBtn.addEventListener('click', () => goTo(current - 1));
+      nextBtn.addEventListener('click', () => goTo(current + 1));
+      dots.forEach((d, i) => d.addEventListener('click', () => goTo(i)));
+    });
+
+    // ── BLUEPRINT ZOOM / PAN ──
+    (function() {
+      const wrap = document.getElementById('blueprintZoom');
+      const img  = document.getElementById('blueprintImg');
+      const btnPlus  = document.getElementById('bzPlus');
+      const btnMinus = document.getElementById('bzMinus');
+      const btnReset = document.getElementById('bzReset');
+      if (!wrap || !img) return;
+
+      let scale = 1, tx = 0, ty = 0;
+      let dragging = false, startX, startY, lastTx, lastTy;
+      const MIN = 0.5, MAX = 4;
+
+      function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+      function constrainPan() {
+        const ww = wrap.offsetWidth, wh = wrap.offsetHeight;
+        const iw = img.naturalWidth  || img.offsetWidth;
+        const ih = img.naturalHeight || img.offsetHeight;
+        const scaledW = iw * scale, scaledH = ih * scale;
+        const maxX = Math.max(0, (scaledW - ww) / 2);
+        const maxY = Math.max(0, (scaledH - wh) / 2);
+        tx = clamp(tx, -maxX, maxX);
+        ty = clamp(ty, -maxY, maxY);
+      }
+
+      function apply() {
+        img.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
+        img.style.position = 'absolute';
+        img.style.top = '50%';
+        img.style.left = '50%';
+        img.style.height = 'auto';
+        img.style.width = 'auto';
+        img.style.maxWidth = 'none';
+      }
+
+      // init — center the image
+      img.addEventListener('load', () => { tx = 0; ty = 0; apply(); });
+      tx = 0; ty = 0; apply();
+
+      // Scroll to zoom
+      wrap.addEventListener('wheel', e => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 1.12 : 0.9;
+        scale = clamp(scale * delta, MIN, MAX);
+        constrainPan();
+        apply();
+      }, { passive: false });
+
+      // Mouse drag
+      wrap.addEventListener('mousedown', e => {
+        dragging = true; startX = e.clientX; startY = e.clientY;
+        lastTx = tx; lastTy = ty;
+      });
+      window.addEventListener('mousemove', e => {
+        if (!dragging) return;
+        tx = lastTx + (e.clientX - startX);
+        ty = lastTy + (e.clientY - startY);
+        constrainPan(); apply();
+      });
+      window.addEventListener('mouseup', () => { dragging = false; });
+
+      // Touch drag + pinch
+      let lastDist = null;
+      wrap.addEventListener('touchstart', e => {
+        if (e.touches.length === 1) {
+          dragging = true;
+          startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+          lastTx = tx; lastTy = ty;
+        }
+        lastDist = null;
+      }, { passive: true });
+      wrap.addEventListener('touchmove', e => {
+        if (e.touches.length === 2) {
+          e.preventDefault();
+          const d = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          if (lastDist) { scale = clamp(scale * (d / lastDist), MIN, MAX); constrainPan(); apply(); }
+          lastDist = d;
+        } else if (dragging && e.touches.length === 1) {
+          tx = lastTx + (e.touches[0].clientX - startX);
+          ty = lastTy + (e.touches[0].clientY - startY);
+          constrainPan(); apply();
+        }
+      }, { passive: false });
+      wrap.addEventListener('touchend', () => { dragging = false; lastDist = null; });
+
+      // +/- buttons
+      if (btnPlus)  btnPlus.addEventListener('click',  () => { scale = Math.min(scale * 1.25, MAX); constrainPan(); apply(); });
+      if (btnMinus) btnMinus.addEventListener('click', () => { scale = Math.max(scale * 0.8,  MIN); constrainPan(); apply(); });
+      if (btnReset) btnReset.addEventListener('click', () => { scale = 1; tx = 0; ty = 0; apply(); });
+    })();
+  </script>
+
 </body>
 </html>
