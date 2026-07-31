@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Waste Dashboard — Rajarshi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg: oklch(100% 0 0);
+      --bg2: oklch(94% 0.015 75);
+      --bg-soft: oklch(97% 0.008 75);
+      --ink: oklch(15% 0.01 60);
+      --ink-mid: oklch(45% 0.01 60);
+      --ink-soft: oklch(62% 0.01 60);
+
+      --accent: #2E9E7B;
+      --accent-deep: #1f7159;
+      --accent-soft: oklch(93% 0.06 165);
+      --accent-tint: oklch(97% 0.03 165);
+
+      --navy: #0e1b33;
+      --navy-2: #16294a;
+      --spark: #3ecf8e;
+
+      --warn: oklch(60% 0.18 30);
+
+      /* waste category palette */
+      --w-donation: #7c6cf0;
+      --w-cvp: #2bb9ad;
+      --w-shopworn: #e0913a;
+      --w-damage: #4c46c9;
+      --w-throw: #cc4b8f;
+
+      --pill-bg: oklch(100% 0 0 / 0.75);
+      --pill-border: oklch(85% 0.01 70);
+      --pill-shadow: 0 2px 24px oklch(15% 0.01 60 / 0.08), 0 1px 4px oklch(15% 0.01 60 / 0.05);
+
+      --font-display: 'Bricolage Grotesque', 'DM Sans', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --font-mono: 'DM Mono', ui-monospace, monospace;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 60px; }
+    .container-wide { max-width: 1440px; margin: 0 auto; padding: 0 60px; }
+
+    em { font-style: italic; color: var(--accent); }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      padding: 20px 40px;
+    }
+    .topbar-name-pill, .contact-pill, .nav-pill {
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-border);
+      box-shadow: var(--pill-shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 999px;
+    }
+    .topbar-name-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px;
+      font-family: var(--font-display); font-weight: 600; font-size: 15px;
+      color: var(--ink); text-decoration: none;
+      transition: transform 0.2s;
+    }
+    .topbar-name-pill:hover { transform: translateX(-2px); }
+    .back-arrow { font-size: 16px; }
+
+    .nav-pill { display: flex; align-items: center; padding: 6px 8px; gap: 2px; }
+    .nav-pill a {
+      padding: 8px 16px; border-radius: 999px;
+      font-size: 14px; color: var(--ink-mid); text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-pill a:hover { color: var(--ink); background: var(--bg2); }
+    .nav-pill a.active { color: var(--ink); background: var(--bg2); }
+    .wave-icon { margin-right: 2px; }
+
+    .contact-pill { display: flex; align-items: center; padding: 8px 10px 8px 18px; gap: 12px; }
+    .contact-pill a { font-size: 13px; color: var(--ink-mid); text-decoration: none; display: flex; align-items: center; }
+    .contact-pill a:hover { color: var(--ink); }
+    .c-divider { width: 1px; height: 18px; background: var(--pill-border); }
+    .li-icon { width: 24px; height: 24px; }
+
+    @media (max-width: 980px) {
+      .nav-pill-wrap, .topbar-right { display: none; }
+    }
+
+    /* ── SHARED SECTION SYSTEM ── */
+    section.block { padding: 120px 0; }
+    section.block.alt { background: var(--bg2); }
+    section.block.navy { background: var(--navy); color: white; }
+
+    .section-eyebrow {
+      display: inline-flex; align-items: center; gap: 12px;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--accent-deep); margin-bottom: 28px;
+    }
+    .navy .section-eyebrow { color: var(--spark); }
+    .section-eyebrow .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--accent); color: white;
+      font-size: 11px; font-weight: 500;
+    }
+    .navy .section-eyebrow .num { background: var(--spark); color: var(--navy); }
+
+    .section-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(32px, 4.6vw, 58px); line-height: 1.02;
+      letter-spacing: -0.03em; color: var(--ink);
+      max-width: 20ch; text-wrap: balance; margin-bottom: 24px;
+    }
+    .navy .section-title { color: white; }
+    .navy .section-title em { color: var(--spark); }
+
+    .section-lede {
+      font-size: clamp(16px, 1.7vw, 19px); color: var(--ink-mid);
+      max-width: 62ch; line-height: 1.65;
+    }
+    .navy .section-lede { color: oklch(82% 0.02 220); }
+
+    .tag {
+      display: inline-block; padding: 7px 15px; border-radius: 999px;
+      font-size: 13px; color: var(--ink-mid);
+      background: var(--bg-soft); border: 1px solid var(--pill-border);
+    }
+
+    /* ── HERO ── */
+    .hero { padding: 150px 0 0; position: relative; overflow: hidden; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent-deep); margin-bottom: 30px;
+    }
+    .hero-eyebrow .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
+    .hero-title {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(48px, 8vw, 108px); line-height: 0.95;
+      letter-spacing: -0.045em; margin-bottom: 28px; text-wrap: balance;
+    }
+    .hero-sub { font-size: clamp(17px, 2vw, 22px); color: var(--ink-mid); max-width: 54ch; line-height: 1.55; margin-bottom: 40px; }
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 56px; }
+
+    .meta-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 0; border-top: 1px solid var(--pill-border);
+      border-bottom: 1px solid var(--pill-border); margin-bottom: 72px;
+    }
+    .meta-item { padding: 26px 24px 26px 0; }
+    .meta-item + .meta-item { padding-left: 24px; border-left: 1px solid var(--pill-border); }
+    .meta-label { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+    .meta-value { font-family: var(--font-display); font-weight: 600; font-size: 16px; }
+
+    /* Counter panel */
+    .count-panel {
+      position: relative; border-radius: 28px; overflow: hidden;
+      background: radial-gradient(120% 140% at 20% 0%, var(--navy-2), var(--navy) 60%);
+      color: white; padding: clamp(48px, 7vw, 92px) clamp(32px, 6vw, 80px);
+      margin-bottom: 4px;
+    }
+    .count-panel::after {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, oklch(100% 0 0 / 0.06) 1px, transparent 0);
+      background-size: 26px 26px; pointer-events: none;
+    }
+    .count-cap { position: relative; z-index: 1; font-family: var(--font-mono); font-size: 13px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--spark); margin-bottom: 22px; }
+    .count-num {
+      position: relative; z-index: 1;
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(46px, 10vw, 132px); line-height: 0.9; letter-spacing: -0.04em;
+      color: white; font-variant-numeric: tabular-nums;
+    }
+    .count-num .cur { color: var(--spark); }
+    .count-bar { position: relative; z-index: 1; height: 6px; width: 0; max-width: 460px; background: var(--spark); border-radius: 3px; margin: 30px 0 22px; transition: width 1.8s cubic-bezier(0.22,1,0.36,1); }
+    .count-panel.in .count-bar { width: 60%; }
+    .count-sub { position: relative; z-index: 1; font-size: clamp(15px, 1.8vw, 19px); color: oklch(82% 0.02 220); max-width: 44ch; }
+
+    /* ── SCALE / COMPARE CHART ── */
+    .scale-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 64px; align-items: center; }
+    @media (max-width: 900px) { .scale-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+    .compare-card {
+      border: 1px solid var(--pill-border); border-radius: 22px;
+      padding: 36px 36px 28px; background: var(--bg);
+      box-shadow: 0 24px 60px -40px oklch(15% 0.01 60 / 0.3);
+    }
+    .compare-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 30px; }
+    .compare-head h4 { font-family: var(--font-display); font-weight: 700; font-size: 18px; }
+    .compare-legend { display: flex; gap: 16px; font-size: 12.5px; color: var(--ink-mid); }
+    .compare-legend span { display: inline-flex; align-items: center; gap: 6px; }
+    .lg-dot { width: 10px; height: 10px; border-radius: 3px; }
+    .lg-sales { background: #8b83e8; }
+    .lg-waste { background: var(--w-throw); }
+
+    .compare-plot { display: flex; align-items: flex-end; justify-content: space-around; gap: 40px; height: 300px; padding-top: 20px; border-bottom: 2px solid var(--pill-border); }
+    .cluster { display: flex; align-items: flex-end; gap: 14px; height: 100%; }
+    .cbar-wrap { display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; }
+    .cbar {
+      width: 62px; border-radius: 8px 8px 0 0; height: 0;
+      transition: height 1.3s cubic-bezier(0.22,1,0.36,1);
+      position: relative;
+    }
+    .cbar.sales { background: linear-gradient(180deg, #9a92ef, #7a71dd); }
+    .cbar.waste { background: linear-gradient(180deg, #d95fa0, #c23e86); }
+    .cbar .val { position: absolute; top: -26px; left: 50%; transform: translateX(-50%); font-family: var(--font-display); font-weight: 700; font-size: 15px; white-space: nowrap; color: var(--ink); opacity: 0; transition: opacity 0.4s 0.9s; }
+    .compare-plot.grow .cbar .val { opacity: 1; }
+    .cbar .pct { position: absolute; top: -44px; left: 50%; transform: translateX(-50%); font-size: 11px; color: var(--ink-soft); white-space: nowrap; opacity: 0; transition: opacity 0.4s 1s; }
+    .compare-plot.grow .cbar .pct { opacity: 1; }
+    .cluster-label { text-align: center; margin-top: 14px; font-size: 13px; color: var(--ink-mid); font-weight: 500; }
+
+    .change-cards { display: flex; flex-direction: column; gap: 16px; }
+    .change-card {
+      border: 1px solid var(--pill-border); border-radius: 18px; padding: 22px 26px;
+      display: flex; align-items: center; justify-content: space-between; background: var(--bg);
+    }
+    .change-card .cc-label { font-size: 14px; color: var(--ink-mid); }
+    .change-card .cc-val { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-weight: 800; font-size: 30px; letter-spacing: -0.02em; }
+    .cc-arrow { font-size: 16px; }
+    .cc-bad .cc-val { color: var(--warn); }
+    .cc-bad .cc-arrow { color: var(--warn); }
+    .cc-warn .cc-val { color: #c98a1a; }
+    .cc-warn .cc-arrow { color: #c98a1a; }
+
+    /* ── TYPES OF WASTE (segmented bar) ── */
+    .waste-types { margin-top: 48px; }
+    .seg-bar { display: flex; width: 100%; height: 74px; border-radius: 16px; overflow: hidden; border: 1px solid var(--pill-border); }
+    .seg {
+      position: relative; cursor: pointer; display: flex; align-items: center; justify-content: center;
+      color: white; font-family: var(--font-display); font-weight: 700; font-size: 14px;
+      transition: flex 0.4s cubic-bezier(0.22,1,0.36,1), filter 0.2s;
+      min-width: 0; overflow: hidden; white-space: nowrap;
+    }
+    .seg:hover { filter: brightness(1.08); }
+    .seg.active { filter: brightness(1.12); }
+    .seg .seg-pct { opacity: 0.85; font-weight: 500; margin-left: 8px; font-size: 12px; }
+    .seg-donation { background: var(--w-donation); }
+    .seg-cvp { background: var(--w-cvp); }
+    .seg-shopworn { background: var(--w-shopworn); }
+    .seg-damage { background: var(--w-damage); }
+    .seg-throw { background: var(--w-throw); }
+
+    .seg-detail {
+      margin-top: 28px; display: grid; grid-template-columns: 56px 1fr;
+      gap: 22px; align-items: start; padding: 28px 30px; border-radius: 18px;
+      background: var(--bg-soft); border: 1px solid var(--pill-border);
+      min-height: 128px;
+    }
+    .seg-detail .sd-swatch { width: 56px; height: 56px; border-radius: 14px; }
+    .seg-detail h4 { font-family: var(--font-display); font-weight: 700; font-size: 22px; margin-bottom: 8px; }
+    .seg-detail p { color: var(--ink-mid); font-size: 15.5px; line-height: 1.6; max-width: 70ch; }
+    .seg-detail .sd-tag { display: inline-block; margin-top: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; background: var(--bg); border: 1px solid var(--pill-border); color: var(--ink-mid); }
+
+    /* ── PERSONAS (detailed) ── */
+    .persona-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    @media (max-width: 860px) { .persona-detail-grid { grid-template-columns: 1fr; } }
+    .pd-card {
+      border: 1px solid var(--pill-border); border-radius: 24px; overflow: hidden;
+      background: var(--bg); transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+    }
+    .pd-card:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -34px oklch(15% 0.01 60 / 0.28); }
+    .pd-head { display: flex; align-items: center; gap: 18px; padding: 30px 32px; border-bottom: 1px solid var(--pill-border); background: var(--bg-soft); }
+    .pd-avatar {
+      width: 60px; height: 60px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-display); font-weight: 700; font-size: 20px; color: white;
+    }
+    .pd-1 .pd-avatar { background: linear-gradient(135deg, #2fa985, #1f7159); }
+    .pd-2 .pd-avatar { background: linear-gradient(135deg, #4c78c9, #2c4a78); }
+    .pd-role { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+    .pd-name { font-family: var(--font-display); font-weight: 700; font-size: 21px; }
+    .pd-body { padding: 30px 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    @media (max-width: 520px) { .pd-body { grid-template-columns: 1fr; } }
+    .pd-col h5 { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+    .pd-obj h5 { color: var(--accent-deep); }
+    .pd-fru h5 { color: var(--warn); }
+    .pd-col ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .pd-col li { position: relative; padding-left: 22px; font-size: 14.5px; color: var(--ink-mid); line-height: 1.5; }
+    .pd-col li::before { content: ''; position: absolute; left: 0; top: 8px; width: 8px; height: 8px; border-radius: 50%; }
+    .pd-obj li::before { background: var(--accent); }
+    .pd-fru li::before { background: var(--warn); }
+
+    /* ── OLD DASHBOARD / BEFORE-AFTER ── */
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+    @media (max-width: 940px) { .problem-grid { grid-template-columns: 1fr; gap: 40px; } }
+    .challenge-list { display: flex; flex-direction: column; gap: 4px; }
+    .challenge-item { display: grid; grid-template-columns: 30px 1fr; gap: 16px; align-items: center; padding: 20px 0; border-top: 1px solid var(--pill-border); }
+    .challenge-item:last-child { border-bottom: 1px solid var(--pill-border); }
+    .challenge-x { width: 30px; height: 30px; border-radius: 50%; background: oklch(94% 0.04 30); color: var(--warn); display: flex; align-items: center; justify-content: center; font-size: 15px; }
+    .challenge-item h4 { font-family: var(--font-display); font-weight: 600; font-size: 16.5px; }
+
+    .ba-frame { border-radius: 18px; overflow: hidden; border: 1px solid var(--pill-border); box-shadow: 0 26px 60px -36px oklch(15% 0.01 60 / 0.3); position: relative; }
+    .ba-frame img { width: 100%; display: block; }
+    .ba-tag { position: absolute; top: 14px; left: 14px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; background: oklch(20% 0.02 30 / 0.82); color: white; backdrop-filter: blur(4px); }
+
+    /* ── DOUBLE DIAMOND (native SVG) ── */
+    .diamond-wrap { margin-top: 30px; }
+    .diamond-captions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 20px; }
+    @media (max-width: 800px) { .diamond-captions { grid-template-columns: 1fr 1fr; gap: 18px; } }
+    .dcap { position: relative; padding-left: 20px; }
+    .dcap::before { content: ''; position: absolute; left: 0; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--spark); }
+    .dcap b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--ink); }
+    .dcap span { font-size: 13.5px; color: var(--ink-mid); line-height: 1.5; }
+    .diamond-svg { width: 100%; height: auto; }
+
+    .hmw-banner {
+      margin-top: 64px; padding: clamp(40px, 6vw, 72px) 40px; border-radius: 24px; text-align: center;
+      background: radial-gradient(120% 160% at 50% 0%, var(--navy-2), var(--navy));
+      color: white; position: relative; overflow: hidden;
+    }
+    .hmw-banner::after { content:''; position:absolute; inset:0; background-image: radial-gradient(circle at 1px 1px, oklch(100% 0 0 / 0.05) 1px, transparent 0); background-size: 24px 24px; }
+    .hmw-eyebrow { position: relative; z-index:1; font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--spark); margin-bottom: 20px; }
+    .hmw-text { position: relative; z-index:1; font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 46px); line-height: 1.12; letter-spacing: -0.02em; text-wrap: balance; }
+    .hmw-text em { color: var(--spark); }
+
+    /* ── DIRECTIONS ── */
+    .dir-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 8px; }
+    @media (max-width: 860px) { .dir-grid { grid-template-columns: 1fr; } }
+    .dir-card { border-radius: 24px; padding: 34px 34px 30px; border: 1px solid var(--pill-border); }
+    .dir-a { background: linear-gradient(160deg, oklch(96% 0.04 165), var(--bg)); }
+    .dir-b { background: linear-gradient(160deg, oklch(96% 0.05 90), var(--bg)); }
+    .dir-badge { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px; margin-bottom: 20px; }
+    .dir-a .dir-badge { background: var(--accent); color: white; }
+    .dir-b .dir-badge { background: #e6a52a; color: #4a3200; }
+    .dir-card h3 { font-family: var(--font-display); font-weight: 700; font-size: 23px; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .dir-card > p { color: var(--ink-mid); font-size: 15px; margin-bottom: 24px; }
+    .dir-opps { display: flex; flex-direction: column; gap: 12px; }
+    .dir-opp { display: flex; gap: 14px; align-items: flex-start; padding: 16px 18px; background: var(--bg); border: 1px solid var(--pill-border); border-radius: 14px; }
+    .dir-opp .oi { flex-shrink: 0; width: 24px; height: 24px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 11px; color: white; }
+    .dir-a .oi { background: var(--accent); }
+    .dir-b .oi { background: #e6a52a; }
+    .dir-opp b { font-family: var(--font-display); font-weight: 600; font-size: 14.5px; display: block; }
+    .dir-chosen { margin-top: 20px; display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: var(--accent-deep); }
+
+    /* ── PRINCIPLES ── */
+    .principles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px; }
+    @media (max-width: 800px) { .principles-grid { grid-template-columns: 1fr; } }
+    .principle {
+      display: grid; grid-template-columns: 64px 1fr; gap: 20px;
+      padding: 30px 32px; border-radius: 20px; border: 1px solid var(--pill-border); background: var(--bg);
+      transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), box-shadow 0.3s;
+    }
+    .principle:hover { transform: scale(1.02); box-shadow: 0 20px 48px -20px oklch(15% 0.01 60 / 0.18); z-index: 2; }
+    .principle:last-child:nth-child(odd) { grid-column: 1; }
+    .principle-num { font-family: var(--font-display); font-weight: 800; font-size: 40px; letter-spacing: -0.03em; color: var(--accent); line-height: 1; }
+    .principle h3 { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin-bottom: 8px; }
+    .principle p { font-size: 14.5px; color: var(--ink-mid); line-height: 1.6; }
+
+    /* ── SOLUTION (KPIs + browser frame) ── */
+    .browser-frame { border-radius: 16px 16px 18px 18px; overflow: hidden; border: 1px solid var(--pill-border); box-shadow: 0 40px 90px -44px oklch(15% 0.01 60 / 0.4); background: var(--bg); margin: 44px 0; }
+    .browser-bar { display: flex; align-items: center; gap: 14px; padding: 13px 18px; background: var(--bg-soft); border-bottom: 1px solid var(--pill-border); }
+    .browser-dots { display: flex; gap: 7px; }
+    .browser-dots span { width: 11px; height: 11px; border-radius: 50%; }
+    .bd-r { background: #ff5f57; } .bd-y { background: #febc2e; } .bd-g { background: #28c840; }
+    .browser-url { flex: 1; background: var(--bg); border: 1px solid var(--pill-border); border-radius: 8px; padding: 6px 14px; font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+    .browser-frame > img { width: 100%; display: block; }
+
+    .kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 8px; }
+    @media (max-width: 900px) { .kpi-row { grid-template-columns: 1fr 1fr; } }
+    .kpi { border: 1px solid var(--pill-border); border-radius: 16px; padding: 22px 24px; background: var(--bg); }
+    .kpi-top { display: flex; align-items: center; gap: 9px; font-size: 13px; color: var(--ink-mid); margin-bottom: 14px; }
+    .kpi-ic { width: 18px; height: 18px; color: var(--accent-deep); }
+    .kpi-val { font-family: var(--font-display); font-weight: 800; font-size: 26px; letter-spacing: -0.02em; }
+    .kpi-delta { font-size: 12.5px; margin-top: 8px; }
+    .kpi-up { color: var(--accent-deep); } .kpi-down { color: var(--warn); }
+
+    /* ── DRILL-DOWN EXPLORER ── */
+    .drill {
+      border: 1px solid var(--pill-border); border-radius: 24px; overflow: hidden;
+      background: var(--bg); box-shadow: 0 30px 70px -44px oklch(15% 0.01 60 / 0.34); margin-top: 44px;
+    }
+    .drill-top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 22px 28px; border-bottom: 1px solid var(--pill-border); background: var(--bg-soft); flex-wrap: wrap; }
+    .breadcrumb { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
+    .crumb { display: inline-flex; align-items: center; gap: 8px; }
+    .crumb button { border: none; background: none; cursor: pointer; font-family: var(--font-body); font-size: 14px; color: var(--accent-deep); font-weight: 600; padding: 4px 8px; border-radius: 8px; transition: background 0.18s; }
+    .crumb button:hover { background: var(--accent-tint); }
+    .crumb.current button { color: var(--ink); cursor: default; }
+    .crumb.current button:hover { background: none; }
+    .crumb-sep { color: var(--ink-soft); }
+    .drill-total { font-family: var(--font-mono); font-size: 13px; color: var(--ink-mid); }
+    .drill-total b { color: var(--ink); font-size: 16px; }
+
+    .drill-hint { padding: 14px 28px 0; font-size: 13px; color: var(--ink-soft); }
+    .drill-body { padding: 18px 28px 30px; display: flex; flex-direction: column; gap: 12px; }
+    .drow { display: grid; grid-template-columns: 190px 1fr 92px 30px; gap: 16px; align-items: center; padding: 8px 0; }
+    @media (max-width: 700px) { .drow { grid-template-columns: 120px 1fr 70px; } .drow .drow-chev { display: none; } }
+    .drow-label { font-weight: 600; font-size: 14.5px; display: flex; align-items: center; gap: 8px; }
+    .drow-swatch { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+    .drow-track { height: 34px; background: var(--bg2); border-radius: 8px; overflow: hidden; position: relative; }
+    .drow-fill { height: 100%; border-radius: 8px; width: 0; transition: width 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .drow-val { font-family: var(--font-mono); font-size: 13px; text-align: right; color: var(--ink-mid); }
+    .drow.clickable { cursor: pointer; border-radius: 12px; transition: background 0.18s; padding: 8px 10px; margin: 0 -10px; }
+    .drow.clickable:hover { background: var(--bg-soft); }
+    .drow-chev { color: var(--ink-soft); text-align: center; }
+    .drow.leaf .drow-chev { opacity: 0; }
+
+    .drill-foot { padding: 0 28px 26px; }
+    .drill-reset { border: 1px solid var(--pill-border); background: var(--bg); border-radius: 999px; padding: 9px 20px; font-family: var(--font-body); font-size: 13px; cursor: pointer; color: var(--ink); transition: background 0.18s; }
+    .drill-reset:hover { background: var(--bg2); }
+
+    /* ── IMPACT ── */
+    .impact { text-align: center; }
+    .impact-eyebrow { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--spark); margin-bottom: 24px; }
+    .impact-fig { font-family: var(--font-display); font-weight: 800; font-size: clamp(72px, 15vw, 200px); line-height: 0.86; letter-spacing: -0.05em; color: var(--spark); font-variant-numeric: tabular-nums; }
+    .impact-sub { font-family: var(--font-display); font-weight: 600; font-size: clamp(20px, 2.6vw, 30px); margin-top: 24px; color: white; }
+    .impact-row { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 48px; }
+    .impact-chip { display: inline-flex; align-items: center; gap: 12px; padding: 16px 26px; border-radius: 16px; background: oklch(100% 0 0 / 0.06); border: 1px solid oklch(100% 0 0 / 0.12); }
+    .impact-chip .ic-big { font-family: var(--font-display); font-weight: 800; font-size: 26px; color: var(--spark); }
+    .impact-chip .ic-txt { text-align: left; font-size: 14px; color: oklch(85% 0.02 220); line-height: 1.35; }
+
+    /* ── OTHER PROJECTS ── */
+    .other-section { padding: 110px 0; }
+    .other-head { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 44px; }
+    .other-heading { font-family: var(--font-display); font-weight: 800; font-size: clamp(30px, 4vw, 46px); letter-spacing: -0.03em; }
+    .other-heading-line { width: 60px; height: 4px; background: var(--accent); border-radius: 2px; margin-top: 14px; }
+    .other-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+    @media (max-width: 820px) { .other-grid { grid-template-columns: 1fr; } }
+    .cs-card { text-decoration: none; color: inherit; border-radius: 22px; overflow: hidden; border: 1px solid var(--pill-border); background: var(--cs-bg, var(--bg-soft)); transition: transform 0.35s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s; }
+    .cs-card:hover { transform: translateY(-6px); box-shadow: 0 30px 60px -34px oklch(15% 0.01 60 / 0.25); }
+    .cs-image-wrap { aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center; }
+    .cs-image-placeholder { display: flex; align-items: center; justify-content: center; }
+    .cs-placeholder-label { font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); }
+    .cs-meta { padding: 26px 30px 30px; background: var(--bg); }
+    .cs-title { font-family: var(--font-display); font-weight: 700; font-size: 21px; margin-bottom: 14px; }
+    .cs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cs-tag { font-size: 12px; color: var(--ink-mid); background: var(--bg-soft); border: 1px solid var(--pill-border); padding: 5px 12px; border-radius: 999px; }
+
+    /* ── FOOTER ── */
+    .foot { display: flex; align-items: center; justify-content: space-between; padding: 40px 60px; border-top: 1px solid var(--pill-border); font-size: 14px; color: var(--ink-mid); flex-wrap: wrap; gap: 16px; }
+    .foot a { color: var(--ink-mid); text-decoration: none; }
+    .foot a:hover { color: var(--ink); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 720px) {
+      .container, .container-wide { padding: 0 24px; }
+      .meta-grid { grid-template-columns: 1fr 1fr; }
+      .meta-item + .meta-item:nth-child(3) { border-left: none; padding-left: 0; }
+      .kpi-row { grid-template-columns: 1fr 1fr; }
+      .foot { padding: 32px 24px; }
+      .topbar { padding: 14px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <a class="topbar-name-pill" href="index.html">
+      <span class="back-arrow">←</span> Rajarshi
+    </a>
+    <div class="nav-pill-wrap">
+      <nav class="nav-pill" aria-label="Primary navigation">
+        <a href="index.html"><span class="wave-icon">👋</span> Hi</a>
+        <a href="index.html#work" class="active">Work</a>
+        <a href="index.html#about">About</a>
+        <a href="#">Download Resume</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="contact-pill">
+        <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
+        <div class="c-divider"></div>
+        <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg class="li-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="24" height="24" rx="4" fill="oklch(45% 0.12 240)"/>
+            <path d="M7.5 9.5H5V18H7.5V9.5Z" fill="white"/>
+            <circle cx="6.25" cy="6.75" r="1.5" fill="white"/>
+            <path d="M19 18H16.5V13.75C16.5 12.75 15.75 12 14.75 12C13.75 12 13 12.75 13 13.75V18H10.5V9.5H13V10.75C13.5 9.75 14.75 9.25 15.75 9.25C17.5 9.25 19 10.75 19 12.5V18Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow"><span class="dot"></span> Case study · Enterprise SaaS &amp; Data Viz</div>
+      <h1 class="hero-title">Making waste<br/><em>impossible to ignore.</em></h1>
+      <p class="hero-sub">A store-operations dashboard that turns billions in invisible, scattered waste data into one clear view — where the loss is, why it's happening, and exactly what to do next.</p>
+      <div class="hero-tags">
+        <span class="tag">Data Visualization</span>
+        <span class="tag">Dashboard Design</span>
+        <span class="tag">Enterprise SaaS</span>
+        <span class="tag">User Research</span>
+        <span class="tag">Interaction Design</span>
+      </div>
+
+      <div class="meta-grid">
+        <div class="meta-item"><span class="meta-label">Role</span><span class="meta-value">UX &amp; Interaction Designer</span></div>
+        <div class="meta-item"><span class="meta-label">Project done for</span><span class="meta-value">Global Retail Group</span></div>
+        <div class="meta-item"><span class="meta-label">Timeline</span><span class="meta-value">5 months · 2024</span></div>
+        <div class="meta-item"><span class="meta-label">Recognition</span><span class="meta-value">Internal Tech Summit</span></div>
+      </div>
+
+      <!-- Animated waste counter -->
+      <div class="count-panel" id="countPanel">
+        <div class="count-cap">Waste produced · single fiscal year</div>
+        <div class="count-num"><span class="cur">$</span><span id="counter">0</span></div>
+        <div class="count-bar"></div>
+        <p class="count-sub">Real money, quietly written off across thousands of stores — and almost none of it visible to the people who could stop it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── THE SCALE ── -->
+  <section class="block" data-screen-label="01 Scale">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">01</span> The Scale</div>
+      <div class="scale-grid">
+        <div>
+          <div class="compare-card">
+            <div class="compare-head">
+              <h4>Last year vs. this year</h4>
+              <div class="compare-legend">
+                <span><span class="lg-dot lg-sales"></span>Sales</span>
+                <span><span class="lg-dot lg-waste"></span>Waste</span>
+              </div>
+            </div>
+            <div class="compare-plot" id="comparePlot">
+              <div class="cluster">
+                <div class="cbar-wrap"><div class="cbar sales" data-h="83"><span class="val">$12.7B</span></div></div>
+                <div class="cbar-wrap"><div class="cbar waste" data-h="15"><span class="val">$2.2B</span><span class="pct">17.5%</span></div></div>
+              </div>
+              <div class="cluster">
+                <div class="cbar-wrap"><div class="cbar sales" data-h="92"><span class="val">$13.9B</span></div></div>
+                <div class="cbar-wrap"><div class="cbar waste" data-h="18"><span class="val">$2.6B</span><span class="pct">18.9%</span></div></div>
+              </div>
+            </div>
+            <div style="display:flex; justify-content:space-around; margin-top:0;">
+              <div class="cluster-label">Last Year · 2021</div>
+              <div class="cluster-label">This Year · 2022</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <h2 class="section-title">Waste was growing <em>faster than sales.</em></h2>
+          <p class="section-lede" style="margin-bottom:32px;">Sales climbed a healthy 9.4% — but waste jumped almost twice as fast. The waste-to-sales ratio was creeping the wrong way, and nobody could say precisely where or why.</p>
+          <div class="change-cards">
+            <div class="change-card cc-up">
+              <span class="cc-label">Change in Sales</span>
+              <span class="cc-val"><span class="cc-arrow" style="color:var(--accent-deep)">▲</span> <span style="color:var(--accent-deep)">9.4%</span></span>
+            </div>
+            <div class="change-card cc-bad">
+              <span class="cc-label">Change in Waste</span>
+              <span class="cc-val"><span class="cc-arrow">▲</span> 18.4%</span>
+            </div>
+            <div class="change-card cc-warn">
+              <span class="cc-label">Change in Waste : Sales ratio</span>
+              <span class="cc-val"><span class="cc-arrow">▲</span> 1.4%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TYPES OF WASTE ── -->
+  <section class="block alt" data-screen-label="02 Types">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">02</span> Anatomy of Waste</div>
+      <h2 class="section-title">Not all waste is <em>equal.</em></h2>
+      <p class="section-lede">Before designing anything, the categories had to be made legible. Each type has a different cause, a different cost, and a very different best-case outcome. Tap a segment to explore.</p>
+
+      <div class="waste-types">
+        <div class="seg-bar" id="segBar">
+          <div class="seg seg-throw active" data-seg="throw" style="flex: 34;">Throw Away<span class="seg-pct">34%</span></div>
+          <div class="seg seg-damage" data-seg="damage" style="flex: 24;">Damage<span class="seg-pct">24%</span></div>
+          <div class="seg seg-shopworn" data-seg="shopworn" style="flex: 18;">Shop Worn<span class="seg-pct">18%</span></div>
+          <div class="seg seg-cvp" data-seg="cvp" style="flex: 15;">CVP<span class="seg-pct">15%</span></div>
+          <div class="seg seg-donation" data-seg="donation" style="flex: 9;">Donation<span class="seg-pct">9%</span></div>
+        </div>
+
+        <div class="seg-detail" id="segDetail">
+          <div class="sd-swatch" style="background: var(--w-throw);"></div>
+          <div>
+            <h4>Throw Away</h4>
+            <p>Pure landfill loss — product that expired or spoiled before anyone could act. This is the category the entire dashboard was built to shrink, because every dollar here is unrecoverable.</p>
+            <span class="sd-tag">Worst outcome · fully unrecoverable</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHO IT'S FOR ── -->
+  <section class="block" data-screen-label="03 Who">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">03</span> Who It's For</div>
+      <h2 class="section-title">Two people, one shared blind spot.</h2>
+      <p class="section-lede" style="margin-bottom:44px;">The dashboard had to serve the person on the floor and the person watching the whole region — both drowning in numbers, neither able to find the story inside them.</p>
+
+      <div class="persona-detail-grid">
+        <article class="pd-card pd-1">
+          <div class="pd-head">
+            <div class="pd-avatar">CM</div>
+            <div>
+              <div class="pd-role">Primary · Store Manager</div>
+              <div class="pd-name">Charles Miner</div>
+            </div>
+          </div>
+          <div class="pd-body">
+            <div class="pd-col pd-obj">
+              <h5>Objectives</h5>
+              <ul>
+                <li>Increase sales while reducing waste</li>
+                <li>Keep the waste-to-sales ratio to a minimum</li>
+                <li>Become the No. 1 store on sales and waste</li>
+              </ul>
+            </div>
+            <div class="pd-col pd-fru">
+              <h5>Frustrations</h5>
+              <ul>
+                <li>No clear idea what's happening at the store</li>
+                <li>Hard to determine the causes of waste</li>
+                <li>Difficult to prioritise where to act first</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+
+        <article class="pd-card pd-2">
+          <div class="pd-head">
+            <div class="pd-avatar">DS</div>
+            <div>
+              <div class="pd-role">Secondary · Business Lead</div>
+              <div class="pd-name">David Smirnoff</div>
+            </div>
+          </div>
+          <div class="pd-body">
+            <div class="pd-col pd-obj">
+              <h5>Objectives</h5>
+              <ul>
+                <li>Make sure every store meets its target</li>
+                <li>Reduce waste while increasing sales</li>
+                <li>Increase the CVP share of total waste generated</li>
+              </ul>
+            </div>
+            <div class="pd-col pd-fru">
+              <h5>Frustrations</h5>
+              <ul>
+                <li>No consistent way to benchmark stores</li>
+                <li>Can't see which locations need help most</li>
+                <li>Targets feel abstract without a clear path</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── THE OLD DASHBOARD ── -->
+  <section class="block alt" data-screen-label="04 Old Dashboard">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">04</span> The Starting Point</div>
+      <div class="problem-grid">
+        <div>
+          <h2 class="section-title">The data was all there. The <em>insight wasn't.</em></h2>
+          <p class="section-lede" style="margin-bottom:28px;">The dashboard managers used before held every number imaginable — and revealed almost nothing. Reading it was a second job.</p>
+          <div class="challenge-list">
+            <div class="challenge-item"><span class="challenge-x">✕</span><h4>Couldn't identify challenge areas</h4></div>
+            <div class="challenge-item"><span class="challenge-x">✕</span><h4>Many data points needed manual calculation</h4></div>
+            <div class="challenge-item"><span class="challenge-x">✕</span><h4>No idea where to drill down</h4></div>
+            <div class="challenge-item"><span class="challenge-x">✕</span><h4>Huge volume of data &amp; clutter</h4></div>
+            <div class="challenge-item"><span class="challenge-x">✕</span><h4>Difficult to derive any insight</h4></div>
+          </div>
+        </div>
+        <div class="ba-frame">
+          <span class="ba-tag">Before · the legacy dashboard</span>
+          <img src="assets/waste/old-dashboard.png" alt="The existing waste dashboard — dense tables and clutter" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROCESS ── -->
+  <section class="block" data-screen-label="05 Process">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">05</span> Approach</div>
+      <h2 class="section-title">A double diamond, <em>end to end.</em></h2>
+      <p class="section-lede">Diverge to understand, converge to define, diverge to explore, converge to ship — in close partnership with the business and data-science teams.</p>
+
+      <div class="diamond-wrap">
+        <div class="diamond-captions">
+          <div class="dcap"><b>Discover</b><span>Conversations with the business to understand requirements, goals &amp; challenges.</span></div>
+          <div class="dcap"><b>Define</b><span>Framed the problem into a single, sharp "How Might We".</span></div>
+          <div class="dcap"><b>Develop</b><span>Wild ideation to completely re-imagine the experience.</span></div>
+          <div class="dcap"><b>Deliver</b><span>Executed with the business &amp; data-science teams.</span></div>
+        </div>
+        <svg class="diamond-svg" viewBox="0 0 1200 240" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+          <defs>
+            <linearGradient id="dv" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#c9e8dc"/><stop offset="100%" stop-color="#a7dcc8"/>
+            </linearGradient>
+            <linearGradient id="cv" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#8fd9bf"/><stop offset="100%" stop-color="#5fc8a3"/>
+            </linearGradient>
+          </defs>
+          <polygon points="10,120 300,10 300,230" fill="url(#dv)" stroke="#1f7159" stroke-width="1.5"/>
+          <polygon points="300,10 590,120 300,230" fill="url(#cv)" stroke="#1f7159" stroke-width="1.5"/>
+          <polygon points="610,120 900,10 900,230" fill="url(#dv)" stroke="#1f7159" stroke-width="1.5"/>
+          <polygon points="900,10 1190,120 900,230" fill="url(#cv)" stroke="#1f7159" stroke-width="1.5"/>
+          <text x="200" y="128" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="26" fill="#123">Discover</text>
+          <text x="400" y="128" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="26" fill="#123">Define</text>
+          <text x="800" y="128" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="26" fill="#123">Develop</text>
+          <text x="1000" y="128" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="700" font-size="26" fill="#123">Deliver</text>
+        </svg>
+      </div>
+
+      <div class="hmw-banner">
+        <div class="hmw-eyebrow">The defining question</div>
+        <div class="hmw-text">How might we help the store manager<br/><em>reduce waste?</em></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DIRECTIONS ── -->
+  <section class="block alt" data-screen-label="06 Directions">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">06</span> Exploration</div>
+      <h2 class="section-title">Two directions. <em>One bet.</em></h2>
+      <p class="section-lede" style="margin-bottom:40px;">Ideation converged on two ways forward: quietly patch the old dashboard, or rebuild it into something that thinks — surfacing drivers, setting goals, and recommending actions. We committed to the second.</p>
+
+      <div class="dir-grid">
+        <div class="dir-card dir-a">
+          <span class="dir-badge">Direction A · Fix the experience</span>
+          <h3>Repair the existing dashboard</h3>
+          <p>Make the current tool usable without changing what it fundamentally is.</p>
+          <div class="dir-opps">
+            <div class="dir-opp"><span class="oi">1</span><div><b>Drill-down experience</b></div></div>
+            <div class="dir-opp"><span class="oi">2</span><div><b>Show enough information for better analysis</b></div></div>
+            <div class="dir-opp"><span class="oi">3</span><div><b>Help identify the gap manually</b></div></div>
+          </div>
+        </div>
+        <div class="dir-card dir-b">
+          <span class="dir-badge">Direction B · Intelligent dashboard</span>
+          <h3>A dashboard that takes action</h3>
+          <p>Rethink the tool so it does the analysis and points to the next step.</p>
+          <div class="dir-opps">
+            <div class="dir-opp"><span class="oi">1</span><div><b>Identify &amp; report key drivers &amp; barriers</b></div></div>
+            <div class="dir-opp"><span class="oi">2</span><div><b>Analyse, set goals &amp; surface opportunities</b></div></div>
+            <div class="dir-opp"><span class="oi">3</span><div><b>Alert system for what needs attention</b></div></div>
+          </div>
+          <div class="dir-chosen">✓ The direction we shipped</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DESIGN PRINCIPLES ── -->
+  <section class="block" data-screen-label="07 Principles">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">07</span> Design Principles</div>
+      <h2 class="section-title">Five rules that <em>drove action.</em></h2>
+      <p class="section-lede" style="margin-bottom:40px;">The lens every decision was tested against — from the headline number down to a single item on a shelf.</p>
+
+      <div class="principles-grid">
+        <div class="principle"><div class="principle-num">01</div><div><h3>Lead with the answer</h3><p>Open the dashboard and immediately see where waste is worst and what it's costing. The headline does the work — no hunting, no maths.</p></div></div>
+        <div class="principle"><div class="principle-num">02</div><div><h3>Insight, then action</h3><p>Every surfaced problem carries a suggested next step and a potential saving. Data becomes a to-do list, not a report to decode.</p></div></div>
+        <div class="principle"><div class="principle-num">03</div><div><h3>Let people drill down</h3><p>From market → store → department → fineline → item. A clear path from the big number to the exact cause behind it.</p></div></div>
+        <div class="principle"><div class="principle-num">04</div><div><h3>Set goals &amp; track progress</h3><p>Targets, store rank and a leaderboard turn abstract reduction into something a team can aim at — and feel good about hitting.</p></div></div>
+        <div class="principle"><div class="principle-num">05</div><div><h3>Reduce clutter ruthlessly</h3><p>Show the few things that matter now; keep everything else one tap away. Signal over volume, at every level.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SOLUTION ── -->
+  <section class="block alt" data-screen-label="08 Solution">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">08</span> The Design Outcome</div>
+      <h2 class="section-title">An <em>intelligent</em> store overview.</h2>
+      <p class="section-lede">The new home screen opens on what matters: the store's goal performance, sales, waste and CVP — then surfaces the biggest saving opportunities, each with a suggested action and a dollar value.</p>
+
+      <div class="browser-frame">
+        <div class="browser-bar">
+          <div class="browser-dots"><span class="bd-r"></span><span class="bd-y"></span><span class="bd-g"></span></div>
+          <div class="browser-url">app.retail-ops.internal / waste / store-5123</div>
+        </div>
+        <img src="assets/waste/dashboard-main.png" alt="New waste dashboard — store overview with KPI cards and opportunity cards" />
+      </div>
+
+      <div class="kpi-row">
+        <div class="kpi">
+          <div class="kpi-top"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Goal Performance</div>
+          <div class="kpi-val">12.34%</div>
+          <div class="kpi-delta kpi-down">▲ 7.34% vs goal of 5%</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg> Total Sales</div>
+          <div class="kpi-val">$2.0M</div>
+          <div class="kpi-delta kpi-up">▲ 10% vs last year</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg> Total Waste</div>
+          <div class="kpi-val">$290K</div>
+          <div class="kpi-delta kpi-down">▲ 10% · 15.8% of sales</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi-top"><svg class="kpi-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg> CVP Recovered</div>
+          <div class="kpi-val">$150K</div>
+          <div class="kpi-delta kpi-up">▼ 12% · 49.3% of waste</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── DRILL-DOWN (signature interaction) ── -->
+  <section class="block" data-screen-label="09 Drill Down">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">09</span> The Signature Interaction</div>
+      <h2 class="section-title">From <em>$2.6B</em> to the exact shelf.</h2>
+      <p class="section-lede">The capability the old dashboard never had. Start at the market and keep clicking — the same waste, resolved one level deeper each time, until you land on the single item driving the loss. Try it below.</p>
+
+      <div class="drill" id="drill">
+        <div class="drill-top">
+          <div class="breadcrumb" id="breadcrumb"></div>
+          <div class="drill-total">Total waste here: <b id="drillTotal">$290,000</b></div>
+        </div>
+        <div class="drill-hint" id="drillHint">Click a row to drill deeper ↓</div>
+        <div class="drill-body" id="drillBody"></div>
+        <div class="drill-foot">
+          <button class="drill-reset" id="drillReset">↺ Back to the top level</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── IMPACT ── -->
+  <section class="block navy impact" data-screen-label="10 Impact">
+    <div class="container">
+      <div class="impact-eyebrow">The outcome</div>
+      <div class="impact-fig"><span id="impactCounter">$0</span></div>
+      <div class="impact-sub">of waste reduced across the market in the first 6 months</div>
+      <div class="impact-row">
+        <div class="impact-chip"><span class="ic-big">6mo</span><span class="ic-txt">from launch to<br/>measurable savings</span></div>
+        <div class="impact-chip"><span class="ic-big">★</span><span class="ic-txt">selected for a poster at an<br/>internal tech summit</span></div>
+        <div class="impact-chip"><span class="ic-big">1</span><span class="ic-txt">unified view replacing<br/>a wall of tables</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── OTHER PROJECTS ── -->
+  <section class="other-section" data-screen-label="11 Other Projects">
+    <div class="container">
+      <div class="other-head">
+        <div>
+          <h2 class="other-heading">Other Projects</h2>
+          <div class="other-heading-line"></div>
+        </div>
+        <a href="index.html#work" class="tag" style="text-decoration:none;">All case studies →</a>
+      </div>
+      <div class="other-grid">
+        <a class="cs-card" href="remittance.html" style="--cs-bg: #efe6f5;">
+          <div class="cs-image-wrap"><div class="cs-image-placeholder"><span class="cs-placeholder-label">project screenshot</span></div></div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Sending Money Home — Remittance</h3>
+            <div class="cs-tags"><span class="cs-tag">Service Design</span><span class="cs-tag">User Research</span><span class="cs-tag">Mobile</span></div>
+          </div>
+        </a>
+        <a class="cs-card" href="#" style="--cs-bg: #fdf0e3;">
+          <div class="cs-image-wrap"><div class="cs-image-placeholder"><span class="cs-placeholder-label">project screenshot</span></div></div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Vida: Electric Scooter Mobile App</h3>
+            <div class="cs-tags"><span class="cs-tag">EV Automobile</span><span class="cs-tag">Interface Design</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="foot">
+    <div>© Rajarshi · Designed with care</div>
+    <div style="display:flex; gap:24px;">
+      <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="index.html">Back to portfolio ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    // ── REVEAL ON SCROLL ──
+    (function(){
+      const els = document.querySelectorAll(
+        '.section-title, .section-lede, .compare-card, .change-card, .waste-types, ' +
+        '.pd-card, .challenge-item, .ba-frame, .diamond-wrap, .hmw-banner, ' +
+        '.dir-card, .principle, .browser-frame, .kpi, .drill, .impact-row, .cs-card, .count-panel'
+      );
+      els.forEach(e => e.classList.add('reveal'));
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+      }, { threshold: 0.12 });
+      els.forEach(e => io.observe(e));
+    })();
+
+    // ── HERO WASTE COUNTER ──
+    (function(){
+      const el = document.getElementById('counter');
+      const panel = document.getElementById('countPanel');
+      const target = 2638403431;
+      let done = false;
+      function fmt(n){ return Math.floor(n).toLocaleString('en-US'); }
+      function run(){
+        if (done) return; done = true;
+        panel.classList.add('in');
+        const dur = 2000, t0 = performance.now();
+        function tick(now){
+          const p = Math.min((now - t0)/dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = fmt(target * eased);
+          if (p < 1) requestAnimationFrame(tick); else el.textContent = fmt(target);
+        }
+        requestAnimationFrame(tick);
+      }
+      new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting) run(); }); }, {threshold:0.4}).observe(panel);
+    })();
+
+    // ── COMPARE CHART GROW ──
+    (function(){
+      const plot = document.getElementById('comparePlot');
+      new IntersectionObserver((es)=>{
+        es.forEach(e=>{
+          if(e.isIntersecting){
+            plot.classList.add('grow');
+            plot.querySelectorAll('.cbar').forEach(b => { b.style.height = b.dataset.h + '%'; });
+          }
+        });
+      }, {threshold:0.4}).observe(plot);
+    })();
+
+    // ── IMPACT COUNTER ──
+    (function(){
+      const el = document.getElementById('impactCounter');
+      const target = 27;
+      let done = false;
+      new IntersectionObserver((es)=>{
+        es.forEach(e=>{
+          if(e.isIntersecting && !done){
+            done = true;
+            const dur = 1600, t0 = performance.now();
+            function tick(now){
+              const p = Math.min((now-t0)/dur,1);
+              const eased = 1 - Math.pow(1-p,3);
+              el.textContent = '$' + Math.floor(target*eased) + 'M';
+              if(p<1) requestAnimationFrame(tick); else el.textContent = '$27M';
+            }
+            requestAnimationFrame(tick);
+          }
+        });
+      }, {threshold:0.5}).observe(el);
+    })();
+
+    // ── TYPES OF WASTE SEGMENTED BAR ──
+    (function(){
+      const data = {
+        throw:    { name:'Throw Away',    color:'var(--w-throw)',    tag:'Worst outcome · fully unrecoverable', desc:'Pure landfill loss — product that expired or spoiled before anyone could act. This is the category the entire dashboard was built to shrink, because every dollar here is unrecoverable.' },
+        damage:   { name:'Damage to Zero',color:'var(--w-damage)',   tag:'Often preventable', desc:'Product damaged in-store or reduced to zero value through mishandling. Much of it is avoidable with better stacking, rotation and floor practices.' },
+        shopworn: { name:'Shop Worn',     color:'var(--w-shopworn)', tag:'Recoverable at a discount', desc:'Items degraded on the shelf — scuffed packaging, wilting produce. Caught early, they can still be marked down and sold rather than dumped.' },
+        cvp:      { name:'CVP Reduction', color:'var(--w-cvp)',      tag:'Value recovered', desc:'Customer-value-price markdowns that clear product before it expires. Not zero-loss, but it recovers value instead of losing it entirely — a lever managers want to grow.' },
+        donation: { name:'Donation',      color:'var(--w-donation)', tag:'Best outcome', desc:'Still-good product routed to community partners instead of the bin. The best possible destination for waste that can\'t be sold.' }
+      };
+      const bar = document.getElementById('segBar');
+      const detail = document.getElementById('segDetail');
+      bar.querySelectorAll('.seg').forEach(seg => {
+        seg.addEventListener('click', () => {
+          bar.querySelectorAll('.seg').forEach(s => s.classList.remove('active'));
+          seg.classList.add('active');
+          const d = data[seg.dataset.seg];
+          detail.innerHTML = '<div class="sd-swatch" style="background:'+d.color+';"></div>' +
+            '<div><h4>'+d.name+'</h4><p>'+d.desc+'</p><span class="sd-tag">'+d.tag+'</span></div>';
+        });
+      });
+    })();
+
+    // ── DRILL-DOWN EXPLORER ──
+    (function(){
+      const tree = {
+        label: 'All Stores · Canada Market', value: 2638403431, level: 'market',
+        children: [
+          { label: 'Store 5123', value: 290000, level: 'store', children: [
+            { label: 'Fresh', value: 145000, level: 'dept', children: [
+              { label: 'Produce', value: 68000, level: 'fineline', children: [
+                { label: 'Berries (mixed)', value: 24000, level: 'item' },
+                { label: 'Leafy greens', value: 19000, level: 'item' },
+                { label: 'Stone fruit', value: 14000, level: 'item' },
+                { label: 'Fresh herbs', value: 11000, level: 'item' },
+              ]},
+              { label: 'Meat', value: 41000, level: 'fineline', children: [
+                { label: 'Ground beef', value: 18000, level: 'item' },
+                { label: 'Poultry', value: 13000, level: 'item' },
+                { label: 'Deli cuts', value: 10000, level: 'item' },
+              ]},
+              { label: 'Bakery', value: 22000, level: 'fineline' },
+              { label: 'Dairy', value: 14000, level: 'fineline' },
+            ]},
+            { label: 'Grocery', value: 58000, level: 'dept', children: [
+              { label: 'Canned & jarred', value: 21000, level: 'fineline' },
+              { label: 'Snacks', value: 19000, level: 'fineline' },
+              { label: 'Beverages', value: 18000, level: 'fineline' },
+            ]},
+            { label: 'Consumables', value: 42000, level: 'dept' },
+            { label: 'Health & Wellness', value: 26000, level: 'dept' },
+            { label: 'Apparel', value: 12000, level: 'dept' },
+            { label: 'Hardlines', value: 7000, level: 'dept' },
+          ]},
+          { label: 'Store 5124', value: 262000, level: 'store', children: [
+            { label: 'Fresh', value: 121000, level: 'dept' },
+            { label: 'Grocery', value: 64000, level: 'dept' },
+            { label: 'Consumables', value: 45000, level: 'dept' },
+            { label: 'Other departments', value: 32000, level: 'dept' },
+          ]},
+          { label: 'Store 5125', value: 238000, level: 'store' },
+          { label: 'Store 5126', value: 205000, level: 'store' },
+          { label: 'Store 5127', value: 181000, level: 'store' },
+          { label: 'All other stores', value: 1462403431, level: 'store' },
+        ]
+      };
+
+      const palette = ['#7c6cf0','#2bb9ad','#e0913a','#4c46c9','#cc4b8f','#5aa9e6','#e0c341'];
+      const body = document.getElementById('drillBody');
+      const crumbEl = document.getElementById('breadcrumb');
+      const totalEl = document.getElementById('drillTotal');
+      const hintEl = document.getElementById('drillHint');
+      const resetBtn = document.getElementById('drillReset');
+      let path = [tree];
+
+      function money(n){
+        if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+        if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+        if (n >= 1e3) return '$' + Math.round(n/1e3) + 'K';
+        return '$' + n;
+      }
+
+      function render(){
+        const node = path[path.length-1];
+        totalEl.textContent = money(node.value);
+
+        crumbEl.innerHTML = '';
+        path.forEach((n, i) => {
+          const c = document.createElement('span');
+          c.className = 'crumb' + (i === path.length-1 ? ' current' : '');
+          const b = document.createElement('button');
+          b.textContent = i === 0 ? 'Market' : n.label;
+          b.addEventListener('click', () => { if (i < path.length-1){ path = path.slice(0, i+1); render(); } });
+          c.appendChild(b);
+          crumbEl.appendChild(c);
+          if (i < path.length-1){
+            const sep = document.createElement('span');
+            sep.className = 'crumb-sep'; sep.textContent = '›';
+            crumbEl.appendChild(sep);
+          }
+        });
+
+        const kids = node.children;
+        body.innerHTML = '';
+        if (!kids || !kids.length){
+          hintEl.textContent = 'This is the deepest level — the individual item driving the loss.';
+          const msg = document.createElement('div');
+          msg.style.cssText = 'padding:18px 4px;color:var(--ink-mid);font-size:15px;';
+          msg.innerHTML = '🎯 <b>' + node.label + '</b> accounts for <b>' + money(node.value) + '</b> of waste. This is exactly the kind of pinpoint the old dashboard could never reach.';
+          body.appendChild(msg);
+          return;
+        }
+
+        const hasGrandkids = kids.some(k => k.children && k.children.length);
+        hintEl.textContent = hasGrandkids ? 'Click a row to drill deeper ↓' : 'Click a row to reach item level ↓';
+
+        const max = Math.max(...kids.map(k => k.value));
+        const sorted = [...kids].sort((a,b) => b.value - a.value);
+        sorted.forEach((k, idx) => {
+          const canDrill = !!(k.children && k.children.length) || k.level !== 'item';
+          const isLeaf = !(k.children && k.children.length);
+          const row = document.createElement('div');
+          row.className = 'drow' + (canDrill ? ' clickable' : '') + (isLeaf && !canDrill ? ' leaf' : '');
+          const color = palette[idx % palette.length];
+          const pct = Math.round((k.value / node.value) * 100);
+          row.innerHTML =
+            '<div class="drow-label"><span class="drow-swatch" style="background:'+color+'"></span>'+k.label+'</div>' +
+            '<div class="drow-track"><div class="drow-fill" style="background:'+color+'"></div></div>' +
+            '<div class="drow-val">'+money(k.value)+' · '+pct+'%</div>' +
+            '<div class="drow-chev">'+ (k.children && k.children.length ? '›' : '') +'</div>';
+          body.appendChild(row);
+          requestAnimationFrame(() => {
+            row.querySelector('.drow-fill').style.width = ((k.value/max)*100) + '%';
+          });
+          if (k.children && k.children.length){
+            row.addEventListener('click', () => { path.push(k); render(); });
+          } else if (k.level !== 'item') {
+            row.addEventListener('click', () => { path.push(k); render(); });
+          }
+        });
+      }
+
+      resetBtn.addEventListener('click', () => { path = [tree]; render(); });
+      render();
+    })();
+  </script>
+</body>
+</html>
