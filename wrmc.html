@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central Financial Hub — Rajarshi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg:       oklch(100% 0 0);
+      --bg2:      oklch(94% 0.015 75);
+      --bg-soft:  oklch(97% 0.008 75);
+      --ink:      oklch(13% 0.015 245);
+      --ink-mid:  oklch(42% 0.012 245);
+      --ink-soft: oklch(62% 0.010 245);
+
+      --accent:      #0071CE;
+      --accent-deep: #00509E;
+      --accent-soft: oklch(93% 0.06 245);
+      --accent-tint: oklch(97.5% 0.02 245);
+
+      --spark:    #FFC220;
+      --spark-deep:#E8A600;
+
+      --navy:     #001A3B;
+      --navy-2:   #002E6B;
+
+      --warn:     oklch(58% 0.19 32);
+      --warn-tint:oklch(96% 0.03 32);
+      --ok:       oklch(52% 0.15 155);
+      --ok-tint:  oklch(95% 0.05 155);
+
+      --line:     oklch(90% 0.006 245);
+      --pill-bg:      oklch(100% 0 0 / 0.8);
+      --pill-border:  oklch(89% 0.008 245);
+      --pill-shadow:  0 2px 24px oklch(15% 0.01 245 / 0.06), 0 1px 4px oklch(15% 0.01 245 / 0.04);
+
+      --font-display: 'Bricolage Grotesque', 'DM Sans', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'DM Mono', ui-monospace, monospace;
+    }
+
+    html, body {
+      background: var(--bg); color: var(--ink);
+      font-family: var(--font-body); overflow-x: hidden; line-height: 1.55;
+    }
+    .container      { max-width: 1200px; margin: 0 auto; padding: 0 48px; }
+    .container-wide { max-width: 1440px; margin: 0 auto; padding: 0 48px; }
+    em { font-style: italic; color: var(--accent); }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200; padding: 20px 36px;
+    }
+    .topbar-name-pill, .contact-pill, .nav-pill {
+      background: var(--pill-bg); border: 1px solid var(--pill-border);
+      box-shadow: var(--pill-shadow);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); border-radius: 999px;
+    }
+    .topbar-name-pill { display:flex; align-items:center; gap:8px; padding:8px 16px 8px 8px; font-size:14px; font-weight:600; color:var(--ink); text-decoration:none; }
+    .topbar-name-pill .back-arrow { font-size:16px; color:var(--ink-soft); }
+    .nav-pill { display:flex; gap:2px; padding:6px; }
+    .nav-pill a { font-size:14px; font-weight:500; color:var(--ink-mid); text-decoration:none; padding:7px 16px; border-radius:999px; transition:.18s; }
+    .nav-pill a.active, .nav-pill a:hover { background:var(--ink); color:#fff; }
+    .contact-pill { padding:8px 20px; font-size:13px; color:var(--ink-mid); display:flex; align-items:center; gap:12px; }
+    .contact-pill a { color:var(--ink); font-weight:600; text-decoration:none; }
+    .li-btn { display:inline-flex; align-items:center; justify-content:center; width:30px; height:30px; border-radius:6px; background:#0077B5; color:#fff; text-decoration:none; font-size:14px; font-weight:700; }
+
+    /* ── HERO ── */
+    .hero { padding-top:150px; padding-bottom:64px; position:relative; overflow:hidden; }
+    .hero::before {
+      content:''; position:absolute; top:-160px; right:-160px; width:640px; height:640px; border-radius:50%;
+      background: radial-gradient(circle, oklch(80% 0.10 245 / 0.16) 0%, transparent 70%); pointer-events:none;
+    }
+    .hero-eyebrow { display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:12px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:26px; }
+    .hero-eyebrow-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
+    .hero-title { font-family:var(--font-display); font-size:clamp(46px,7vw,104px); font-weight:800; letter-spacing:-.04em; line-height:.98; margin-bottom:28px; }
+    .hero-title em { color:var(--accent); }
+    .hero-sub { font-size:clamp(17px,1.6vw,21px); color:var(--ink-mid); max-width:50ch; line-height:1.6; margin-bottom:40px; }
+    .hero-tags { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:44px; }
+    .tag { font-family:var(--font-mono); font-size:11.5px; font-weight:500; letter-spacing:.03em; color:var(--ink-mid); border:1px solid var(--pill-border); border-radius:999px; padding:6px 14px; }
+    .hero-meta-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--line); padding-top:24px; }
+    .meta-item { display:flex; flex-direction:column; gap:5px; padding-right:20px; }
+    .meta-item + .meta-item { border-left:1px solid var(--line); padding-left:20px; }
+    .meta-label { font-family:var(--font-mono); font-size:11px; font-weight:500; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); }
+    .meta-value { font-family:var(--font-display); font-size:15px; font-weight:700; }
+
+    /* ── SHIFT BAND (signature convergence) ── */
+    .shift {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 40%, var(--bg2) 100%);
+      padding: 80px 0 96px; border-top:1px solid var(--line);
+    }
+    .shift-head { text-align:center; margin-bottom:8px; }
+    .shift-kicker { font-family:var(--font-mono); font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-soft); }
+    .converge {
+      display:grid; grid-template-columns: 1fr 150px 300px; gap:0; align-items:center;
+      max-width:940px; margin:44px auto 0; padding:0 24px;
+    }
+    .converge-col-label { font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:16px; }
+    .cl-before { color:var(--warn); }
+    .cl-after  { color:var(--accent); text-align:center; }
+    .surfaces { display:flex; flex-direction:column; gap:14px; }
+    .surface {
+      display:flex; align-items:center; gap:12px; background:var(--bg); border:1px solid var(--line);
+      border-left:3px solid var(--warn); border-radius:10px; padding:13px 16px;
+      box-shadow:0 1px 8px oklch(15% 0.01 245 / 0.04);
+    }
+    .surface-ico { font-size:17px; width:26px; text-align:center; flex-shrink:0; filter: grayscale(0.3); }
+    .surface-name { font-size:13.5px; font-weight:600; }
+    .surface-note { font-size:11px; color:var(--ink-soft); margin-top:1px; }
+    .converge-mid { position:relative; height:220px; }
+    .converge-mid svg { width:100%; height:100%; overflow:visible; }
+    .conv-chip {
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      background:var(--accent); color:#fff; font-family:var(--font-mono); font-size:11px; font-weight:600;
+      letter-spacing:.06em; padding:7px 14px; border-radius:999px; white-space:nowrap;
+      box-shadow:0 6px 18px oklch(50% 0.15 245 / 0.4);
+    }
+    .hub-phone {
+      width:100%; max-width:260px; margin:0 auto; position:relative; border-radius:26px; background:#0a0a0a; padding:6px;
+      box-shadow:0 30px 60px -30px oklch(20% 0.06 245 / 0.5);
+    }
+    .hub-phone-screen { border-radius:20px; overflow:hidden; background:#fff; }
+
+    /* ── SECTIONS ── */
+    .block { padding:112px 0; position:relative; }
+    .block.alt  { background:var(--bg2); }
+    .block.dark { background:var(--navy); color:#fff; }
+    .block.dark em { color:var(--spark); }
+
+    .sec-head { display:flex; align-items:flex-end; justify-content:space-between; gap:40px; margin-bottom:56px; flex-wrap:wrap; }
+    .sec-head-main { max-width:640px; }
+    .section-eyebrow { display:flex; align-items:center; gap:10px; font-family:var(--font-mono); font-size:11px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:16px; }
+    .section-eyebrow-num { width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+    .block.dark .section-eyebrow { color:var(--spark); }
+    .block.dark .section-eyebrow-num { background:var(--spark); color:var(--navy); }
+    .section-title { font-family:var(--font-display); font-size:clamp(30px,4vw,50px); font-weight:800; letter-spacing:-.03em; line-height:1.04; }
+    .block.dark .section-title { color:#fff; }
+    .section-lede { font-size:clamp(15px,1.5vw,18px); color:var(--ink-mid); max-width:42ch; line-height:1.6; }
+    .block.dark .section-lede { color:oklch(75% 0.02 245); }
+
+    /* ── GOAL MOVEMENTS (01) ── */
+    .goals { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .goal {
+      background:var(--bg); border:1px solid var(--line); border-radius:18px; padding:28px 28px 30px;
+      position:relative; overflow:hidden;
+    }
+    .goal-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+    .goal-label { font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-soft); }
+    .goal-chip { font-family:var(--font-mono); font-size:10px; letter-spacing:.04em; color:var(--accent); background:var(--accent-tint); border:1px solid var(--accent-soft); border-radius:999px; padding:3px 9px; }
+    .goal-move { display:flex; align-items:baseline; gap:12px; margin-bottom:20px; }
+    .goal-from { font-family:var(--font-display); font-size:28px; font-weight:700; color:var(--ink-soft); letter-spacing:-.02em; }
+    .goal-arrow { color:var(--accent); font-size:20px; font-weight:700; }
+    .goal-to { font-family:var(--font-display); font-size:clamp(38px,4.4vw,52px); font-weight:800; color:var(--accent); letter-spacing:-.03em; line-height:1; }
+    .goal-to.down { color:var(--ok); }
+    .goal-track { height:8px; border-radius:99px; background:var(--bg2); position:relative; overflow:hidden; margin-bottom:14px; }
+    .goal-fill { position:absolute; top:0; left:0; height:100%; border-radius:99px; background:var(--accent); }
+    .goal-target { position:absolute; top:-3px; width:2px; height:14px; background:var(--ink); border-radius:2px; }
+    .goal-target::after { content:'target'; position:absolute; top:-15px; left:50%; transform:translateX(-50%); font-family:var(--font-mono); font-size:8px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-mid); white-space:nowrap; }
+    .goal-desc { font-size:13px; color:var(--ink-mid); line-height:1.5; }
+
+    /* ── PERSONA (02) ── */
+    .persona {
+      display:grid; grid-template-columns: 300px 1fr; gap:0; border:1px solid var(--line);
+      border-radius:20px; overflow:hidden;
+    }
+    .persona-left { background:var(--navy); padding:40px 36px; color:#fff; display:flex; flex-direction:column; }
+    .persona-avatar { width:64px; height:64px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-family:var(--font-display); font-size:22px; font-weight:800; color:#fff; margin-bottom:20px; }
+    .persona-name { font-family:var(--font-display); font-size:22px; font-weight:700; letter-spacing:-.02em; }
+    .persona-role { font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:oklch(70% 0.03 245); margin-top:6px; margin-bottom:24px; }
+    .persona-quote { font-size:15px; line-height:1.55; color:oklch(85% 0.02 245); font-style:italic; border-left:3px solid var(--spark); padding-left:16px; margin-top:auto; }
+    .persona-right { padding:36px 40px; display:grid; grid-template-columns:1fr 1fr; gap:36px; }
+    .pcol-title { font-family:var(--font-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
+    .pcol-title.wants { color:var(--accent); }
+    .pcol-title.fears { color:var(--warn); }
+    .pitem { display:flex; gap:12px; align-items:flex-start; margin-bottom:16px; }
+    .pitem-ico { font-size:16px; flex-shrink:0; width:22px; text-align:center; }
+    .pitem-text { font-size:14px; color:var(--ink-mid); line-height:1.45; }
+
+    /* ── FRICTION (03) ── */
+    .friction { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; }
+    .fcard { background:var(--bg); border:1px solid var(--line); border-radius:18px; padding:32px 28px 34px; position:relative; }
+    .fcard-ico { width:52px; height:52px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:24px; margin-bottom:22px; }
+    .fcard.f1 .fcard-ico { background:var(--warn-tint); }
+    .fcard.f2 .fcard-ico { background:var(--accent-tint); }
+    .fcard.f3 .fcard-ico { background:oklch(96% 0.06 80); }
+    .fcard-title { font-family:var(--font-display); font-size:19px; font-weight:700; letter-spacing:-.02em; line-height:1.2; margin-bottom:12px; }
+    .fcard-desc { font-size:14px; color:var(--ink-mid); line-height:1.55; margin-bottom:18px; }
+    .fcard-tag { font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--warn); background:var(--warn-tint); border-radius:999px; padding:5px 12px; display:inline-block; }
+    .fcard.f2 .fcard-tag { color:var(--accent); background:var(--accent-tint); }
+    .fcard.f3 .fcard-tag { color:var(--spark-deep); background:oklch(96% 0.06 80); }
+
+    /* ── ARCHITECTURE (04) ── */
+    .arch-wrap { display:grid; grid-template-columns: 1fr 300px 1fr; gap:0; align-items:stretch; border:1px solid var(--line); border-radius:20px; overflow:hidden; }
+    .arch-panel { padding:40px 36px; }
+    .arch-panel.left  { background:var(--accent-tint); }
+    .arch-panel.right { background:oklch(97.5% 0.008 60); }
+    .arch-badge { display:inline-flex; align-items:center; gap:8px; font-family:var(--font-mono); font-size:11px; letter-spacing:.04em; text-transform:uppercase; padding:6px 13px; border-radius:999px; margin-bottom:18px; }
+    .arch-panel.left .arch-badge { background:var(--accent); color:#fff; }
+    .arch-panel.right .arch-badge { background:oklch(48% 0.10 42); color:#fff; }
+    .arch-h { font-family:var(--font-display); font-size:19px; font-weight:700; letter-spacing:-.02em; margin-bottom:20px; }
+    .arch-item { display:flex; align-items:center; gap:10px; font-size:13.5px; color:var(--ink-mid); padding:9px 0; border-bottom:1px solid oklch(88% 0.01 245 / 0.5); }
+    .arch-item:last-child { border-bottom:none; }
+    .arch-item-ico { font-size:14px; width:20px; text-align:center; flex-shrink:0; }
+    .arch-center { background:var(--navy); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:36px 24px; text-align:center; position:relative; }
+    .arch-center-phone { width:130px; border-radius:20px; background:#000; padding:5px; margin-bottom:20px; position:relative; }
+    .arch-center-top { background:var(--accent); border-radius:15px 15px 0 0; padding:14px 10px; }
+    .arch-center-toplabel { font-size:8px; color:rgba(255,255,255,.7); letter-spacing:.05em; text-transform:uppercase; }
+    .arch-center-topname { font-size:11px; color:#fff; font-weight:700; margin-top:2px; }
+    .arch-center-mid { background:#fff; padding:14px 10px; }
+    .arch-center-line { height:6px; background:oklch(92% 0.01 245); border-radius:3px; margin-bottom:6px; }
+    .arch-center-line.s { width:60%; }
+    .arch-center-seam { background:repeating-linear-gradient(90deg, oklch(48% 0.10 42) 0 6px, transparent 6px 12px); height:2px; margin:0; position:relative; }
+    .arch-center-bot { background:oklch(96% 0.008 60); border-radius:0 0 15px 15px; padding:14px 10px; }
+    .arch-center-botlabel { font-family:var(--font-mono); font-size:7px; color:oklch(48% 0.10 42); letter-spacing:.04em; text-transform:uppercase; text-align:center; }
+    .arch-center-caption { font-family:var(--font-mono); font-size:10px; color:oklch(70% 0.03 245); letter-spacing:.05em; line-height:1.6; }
+    .arch-rules { grid-column:1/-1; background:var(--bg2); border-top:1px solid var(--line); display:grid; grid-template-columns:repeat(4,1fr); }
+    .arch-rule { padding:18px 24px; font-size:12.5px; color:var(--ink-mid); border-right:1px solid var(--line); }
+    .arch-rule:last-child { border-right:none; }
+    .arch-rule-q { display:block; color:var(--ink); font-weight:600; margin-bottom:6px; }
+    .arch-rule-r { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:11px; }
+    .arch-rule-r.w { color:var(--accent); }
+    .arch-rule-r.f { color:oklch(48% 0.10 42); }
+
+    /* ── ROADMAP (05) ── */
+    .roadmap { display:grid; grid-template-columns:repeat(4,1fr); gap:0; border:1px solid var(--line); border-radius:18px; overflow:hidden; }
+    .rm-col { padding:30px 26px 34px; position:relative; }
+    .rm-col + .rm-col { border-left:1px solid var(--line); }
+    .rm-col.active { background:var(--accent-tint); }
+    .rm-badge { font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; padding:4px 10px; border-radius:999px; display:inline-block; margin-bottom:18px; }
+    .rm-col:not(.active) .rm-badge { background:var(--bg2); color:var(--ink-soft); }
+    .rm-col.active .rm-badge { background:var(--accent); color:#fff; }
+    .rm-num { font-family:var(--font-display); font-size:30px; font-weight:800; letter-spacing:-.04em; color:var(--ink-soft); margin-bottom:8px; }
+    .rm-col.active .rm-num { color:var(--accent); }
+    .rm-title { font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-.01em; margin-bottom:14px; }
+    .rm-items { list-style:none; display:flex; flex-direction:column; gap:8px; }
+    .rm-items li { font-size:12.5px; color:var(--ink-mid); padding-left:16px; position:relative; }
+    .rm-items li::before { content:''; position:absolute; left:0; top:8px; width:5px; height:5px; border-radius:50%; background:var(--ink-soft); }
+    .rm-col.active .rm-items li::before { background:var(--accent); }
+
+    /* ── DESIGN / SCREENS (06) ── */
+    .decisions { display:grid; grid-template-columns: 300px 1fr; gap:48px; align-items:center; margin-bottom:72px; }
+    .dec-phone { width:100%; max-width:290px; margin:0 auto; position:relative; border-radius:26px; background:#0a0a0a; padding:6px; box-shadow:0 30px 60px -32px oklch(20% 0.05 245 / 0.5); }
+    .dec-phone-screen { border-radius:20px; overflow:hidden; background:#fff; }
+    .dec-list { display:flex; flex-direction:column; gap:8px; }
+    .dec-item { display:flex; gap:18px; align-items:flex-start; padding:18px 20px; background:var(--bg); border:1px solid var(--line); border-radius:14px; transition:.2s; }
+    .dec-item:hover { border-color:var(--accent-soft); box-shadow:var(--pill-shadow); }
+    .dec-num { font-family:var(--font-display); font-size:15px; font-weight:800; color:#fff; background:var(--accent); width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .dec-title { font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-.01em; margin-bottom:4px; }
+    .dec-desc { font-size:13.5px; color:var(--ink-mid); line-height:1.5; }
+
+    .screens-strip-head { font-family:var(--font-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-soft); margin-bottom:28px; text-align:center; }
+    .screen-row { display:grid; grid-template-columns:repeat(4,1fr); gap:26px; }
+    .screen-card { display:flex; flex-direction:column; gap:16px; }
+    .screen-frame { width:100%; position:relative; border-radius:24px; background:#0a0a0a; box-shadow:0 20px 40px -26px oklch(20% 0.04 245 / 0.4); }
+    .screen-frame::before { content:''; display:block; width:100%; padding-top:216.6667%; }
+    .screen-inner { position:absolute; inset:0; padding:5px; }
+    .screen-scroll { width:100%; height:100%; border-radius:20px; overflow-y:auto; overflow-x:hidden; background:oklch(96% 0.01 245); scrollbar-width:thin; scrollbar-color:oklch(75% 0.01 245) transparent; }
+    .screen-scroll::-webkit-scrollbar { width:3px; }
+    .screen-scroll::-webkit-scrollbar-thumb { background:oklch(75% 0.01 245 / .5); border-radius:2px; }
+    .screen-label { font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-.01em; text-align:center; }
+    .screen-sublabel { font-family:var(--font-mono); font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-soft); text-align:center; margin-top:-10px; }
+    .screen-scroll-hint { position:absolute; bottom:5px; left:50%; transform:translateX(-50%); width:calc(100% - 10px); height:24px; border-radius:0 0 20px 20px; background:linear-gradient(to bottom, transparent, rgba(0,0,0,.28)); pointer-events:none; }
+
+    /* wibey inline note */
+    .wibey-note { display:inline-flex; align-items:center; gap:10px; margin-top:20px; font-size:13px; color:var(--ink-mid); background:var(--bg2); border:1px solid var(--line); border-radius:999px; padding:8px 16px; }
+    .wibey-note b { color:var(--ink); }
+    .wibey-dot { width:7px; height:7px; border-radius:50%; background:var(--accent); }
+
+    /* ── VALIDATION (07) ── */
+    .val-top { display:grid; grid-template-columns: 1.1fr 1fr; gap:40px; align-items:start; margin-bottom:44px; }
+    .perf-table { width:100%; border-collapse:collapse; background:var(--bg); border:1px solid var(--line); border-radius:16px; overflow:hidden; }
+    .perf-table thead th { font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; color:var(--ink-soft); font-weight:500; padding:14px 18px; text-align:left; border-bottom:1px solid var(--line); }
+    .perf-table td { padding:12px 18px; border-bottom:1px solid var(--line); font-size:13.5px; vertical-align:middle; }
+    .perf-table tr:last-child td { border-bottom:none; }
+    .perf-name { color:var(--ink); font-weight:500; }
+    .perf-bar-wrap { display:flex; align-items:center; gap:10px; }
+    .perf-bar { height:6px; border-radius:3px; flex:1; background:var(--bg2); min-width:60px; }
+    .perf-fill { height:100%; border-radius:3px; }
+    .perf-fill.high { background:var(--ok); } .perf-fill.mid { background:var(--spark); }
+    .perf-pct { font-family:var(--font-mono); font-size:12px; font-weight:600; min-width:34px; }
+    .perf-pct.high { color:var(--ok); } .perf-pct.mid { color:var(--spark-deep); }
+    .perf-score { font-family:var(--font-mono); font-size:12px; font-weight:600; padding:2px 9px; border-radius:999px; }
+    .perf-score.high { background:var(--ok-tint); color:oklch(40% 0.13 155); }
+    .perf-score.mid  { background:oklch(95% 0.07 80); color:var(--spark-deep); }
+    .val-summary { }
+    .val-sum-big { font-family:var(--font-display); font-size:clamp(40px,5vw,64px); font-weight:800; letter-spacing:-.04em; color:var(--accent); line-height:1; margin-bottom:8px; }
+    .val-sum-label { font-size:14px; color:var(--ink-mid); line-height:1.5; margin-bottom:24px; }
+    .val-method { display:flex; flex-direction:column; gap:12px; }
+    .val-method-item { display:flex; gap:12px; align-items:center; font-size:13.5px; color:var(--ink-mid); }
+    .val-method-ico { width:34px; height:34px; border-radius:10px; background:var(--accent-tint); display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+
+    .findings { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
+    .finding { background:var(--bg); border:1px solid var(--line); border-radius:16px; padding:26px 28px; display:flex; gap:18px; align-items:flex-start; }
+    .finding.win { border-left:3px solid var(--ok); }
+    .finding.gap { border-left:3px solid var(--warn); }
+    .finding-ico { width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+    .finding.win .finding-ico { background:var(--ok-tint); }
+    .finding.gap .finding-ico { background:var(--warn-tint); }
+    .finding-verdict { font-family:var(--font-mono); font-size:10px; letter-spacing:.05em; text-transform:uppercase; margin-bottom:6px; }
+    .finding.win .finding-verdict { color:var(--ok); }
+    .finding.gap .finding-verdict { color:var(--warn); }
+    .finding-title { font-family:var(--font-display); font-size:16px; font-weight:700; letter-spacing:-.01em; margin-bottom:6px; line-height:1.2; }
+    .finding-body { font-size:13px; color:var(--ink-mid); line-height:1.5; margin-bottom:12px; }
+    .finding-next { font-size:12.5px; color:var(--ink); background:var(--bg2); border-radius:8px; padding:8px 12px; line-height:1.45; }
+    .finding-next b { color:var(--accent); }
+
+    /* ── IMPACT (08) ── */
+    .impact-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+    .impact-card { background:oklch(100% 0 0 / 0.06); border:1px solid oklch(100% 0 0 / 0.13); border-radius:16px; padding:32px 26px 34px; }
+    .impact-card.hl { background:oklch(100% 0 0 / 0.1); border-color:var(--spark); }
+    .impact-num { font-family:var(--font-display); font-size:clamp(34px,4vw,50px); font-weight:800; letter-spacing:-.04em; color:var(--spark); line-height:1; margin-bottom:8px; }
+    .impact-label { font-size:14px; color:oklch(74% 0.02 245); line-height:1.45; }
+    .impact-note { font-size:12px; color:oklch(54% 0.02 245); margin-top:8px; }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal { opacity:0; transform:translateY(26px); transition:opacity .6s ease, transform .6s ease; }
+    .reveal.visible { opacity:1; transform:none; }
+    @media (prefers-reduced-motion: reduce) { .reveal { opacity:1; transform:none; transition:none; } }
+
+    /* ── FOOTER ── */
+    .page-footer { background:var(--navy); padding:60px 48px; display:flex; align-items:center; justify-content:space-between; }
+    .footer-label { font-family:var(--font-mono); font-size:11px; letter-spacing:.05em; text-transform:uppercase; color:oklch(50% 0.02 245); }
+    .footer-name { font-family:var(--font-display); font-size:24px; font-weight:700; color:#fff; margin-top:6px; }
+    .footer-links { display:flex; gap:22px; }
+    .footer-links a { font-size:14px; color:oklch(62% 0.04 245); text-decoration:none; }
+    .footer-links a:hover { color:#fff; }
+
+    /* ── MOCK UI (phone contents) ── */
+    .mock { width:100%; background:#fff; font-family:'DM Sans',sans-serif; }
+    .mock::-webkit-scrollbar { display:none; }
+    .m-top { background:#0071CE; padding:13px 15px; display:flex; align-items:center; justify-content:space-between; }
+    .m-top-t { font-size:15px; font-weight:700; color:#fff; }
+    .m-top-b { font-size:19px; color:rgba(255,255,255,.85); }
+    .m-top-r { font-size:12px; color:rgba(255,255,255,.85); }
+    .m-hero { background:linear-gradient(135deg,#001A3B,#003087); padding:20px 18px 24px; margin:13px; border-radius:15px; position:relative; overflow:hidden; }
+    .m-hero::before { content:''; position:absolute; top:-24px; right:-24px; width:110px; height:110px; border-radius:50%; background:rgba(255,196,32,.12); }
+    .m-hlabel { font-size:10px; color:rgba(255,255,255,.6); letter-spacing:.05em; text-transform:uppercase; }
+    .m-balance { font-size:30px; font-weight:800; color:#fff; letter-spacing:-.03em; }
+    .m-pay { background:#FFC220; color:#001A3B; font-size:13px; font-weight:700; padding:9px 18px; border-radius:999px; display:inline-block; margin-top:14px; }
+    .m-hmeta { display:flex; justify-content:space-between; margin-top:16px; position:relative; z-index:1; }
+    .m-mlabel { font-size:9px; color:rgba(255,255,255,.5); }
+    .m-mval { font-size:13px; font-weight:700; color:#fff; margin-top:2px; }
+    .m-reward-strip { background:#EFF6FF; margin:13px; border-radius:11px; padding:13px 16px; display:flex; align-items:center; gap:10px; }
+    .m-shead { font-size:12px; font-weight:700; color:#001A3B; padding:16px 18px 8px; }
+    .m-row { display:flex; align-items:center; padding:11px 18px; gap:11px; border-bottom:1px solid #F4F4F4; }
+    .m-row-ic { width:32px; height:32px; border-radius:9px; background:#EFF6FF; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+    .m-row-n { font-size:12.5px; font-weight:600; color:#001A3B; }
+    .m-row-s { font-size:10.5px; color:#999; margin-top:1px; }
+    .m-row-amt { font-size:12.5px; font-weight:700; color:#001A3B; margin-left:auto; }
+    .m-row-earn { font-size:10px; color:#0071CE; text-align:right; margin-top:1px; }
+    .m-vall { padding:14px; text-align:center; color:#0071CE; font-size:12px; font-weight:600; }
+    /* pay screen */
+    .m-pay-sec { padding:14px 18px; }
+    .m-pay-h { font-size:14px; font-weight:700; color:#001A3B; margin:6px 0 14px; }
+    .m-opt { display:flex; align-items:center; gap:11px; padding:11px 13px; border:1px solid #E8E8E8; border-radius:10px; margin-bottom:8px; }
+    .m-radio { width:17px; height:17px; border-radius:50%; border:2px solid #0071CE; flex-shrink:0; display:flex; align-items:center; justify-content:center; }
+    .m-radio.on::after { content:''; width:8px; height:8px; border-radius:50%; background:#0071CE; }
+    .m-opt-n { font-size:12.5px; font-weight:600; color:#001A3B; }
+    .m-opt-a { font-size:12.5px; color:#666; margin-left:auto; }
+    .m-field { border:1px solid #E8E8E8; border-radius:10px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between; }
+    .m-field-t { font-size:12.5px; color:#001A3B; }
+    .m-paybtn { background:#0071CE; color:#fff; font-size:13px; font-weight:700; padding:13px; border-radius:11px; text-align:center; margin-top:14px; }
+    /* rewards */
+    .m-rhero { margin:13px; background:linear-gradient(135deg,#FFC220,#FF9A00); border-radius:15px; padding:20px 18px; }
+    .m-ramt { font-size:32px; font-weight:800; color:#001A3B; letter-spacing:-.03em; }
+    .m-rlabel { font-size:11px; color:rgba(0,26,59,.7); }
+    .m-pending { background:#FFF8E7; margin:13px; border-radius:10px; padding:12px 14px; display:flex; gap:9px; align-items:flex-start; }
+    .m-rrow { display:flex; align-items:center; justify-content:space-between; padding:11px 18px; border-bottom:1px solid #F4F4F4; }
+    .m-rrow-l { font-size:12.5px; color:#333; }
+    .m-rrow-s { font-size:10.5px; color:#999; margin-top:1px; }
+    .m-rrow-v { font-size:12.5px; font-weight:700; color:#001A3B; }
+    .m-rrow-v.earn { color:#0071CE; }
+    /* manage */
+    .m-mcard { padding:14px 16px; background:#EFF6FF; margin:13px; border-radius:12px; display:flex; align-items:center; gap:12px; }
+    .m-mrow { display:flex; align-items:center; padding:13px 18px; gap:12px; border-bottom:1px solid #F4F4F4; }
+    .m-mrow-ic { width:36px; height:36px; border-radius:11px; background:#EFF6FF; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+    .m-mrow-n { font-size:13px; font-weight:600; color:#001A3B; }
+    .m-mrow-s { font-size:10.5px; color:#999; margin-top:1px; }
+    .m-mrow-ar { margin-left:auto; color:#CCC; font-size:15px; }
+    .m-badge { display:inline-block; padding:2px 9px; border-radius:999px; font-size:10px; font-weight:700; background:#E6F4EC; color:#1D7A45; }
+    .m-toggle { width:40px; height:22px; border-radius:999px; background:#E5E5E5; position:relative; margin-left:auto; flex-shrink:0; }
+    .m-toggle::after { content:''; width:18px; height:18px; border-radius:50%; background:#fff; position:absolute; top:2px; left:2px; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+
+    /* responsive */
+    @media (max-width: 980px) {
+      .goals, .friction { grid-template-columns:1fr; }
+      .persona { grid-template-columns:1fr; }
+      .persona-right { grid-template-columns:1fr; }
+      .arch-wrap { grid-template-columns:1fr; }
+      .arch-rules { grid-template-columns:1fr 1fr; }
+      .roadmap { grid-template-columns:1fr 1fr; }
+      .screen-row { grid-template-columns:1fr 1fr; }
+      .decisions { grid-template-columns:1fr; }
+      .val-top { grid-template-columns:1fr; }
+      .findings, .impact-grid { grid-template-columns:1fr; }
+      .converge { grid-template-columns:1fr; }
+      .converge-mid { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <a class="topbar-name-pill" href="index.html"><span class="back-arrow">←</span> Rajarshi</a>
+    <nav class="nav-pill">
+      <a href="index.html">👋 Hi</a>
+      <a href="index.html#work" class="active">Work</a>
+      <a href="index.html#about">About</a>
+      <a href="#">Download Resume</a>
+    </nav>
+    <div class="contact-pill">
+      <span>rajarshidasgupt633@gmail.com</span>
+      <a href="#" class="li-btn">in</a>
+    </div>
+  </header>
+
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow"><span class="hero-eyebrow-dot"></span>Case Study · Fintech &amp; Consumer Banking</div>
+      <h1 class="hero-title">One login.<br/><em>Every dollar.</em></h1>
+      <p class="hero-sub">A Central Financial Hub that pulls Walmart Canada's scattered card experience into one place — for 1.2M cardholders.</p>
+      <div class="hero-tags">
+        <span class="tag">Fintech</span>
+        <span class="tag">Card Management</span>
+        <span class="tag">Consumer Mobile</span>
+        <span class="tag">Information Architecture</span>
+        <span class="tag">Usability Testing</span>
+      </div>
+      <div class="hero-meta-grid">
+        <div class="meta-item"><span class="meta-label">Role</span><span class="meta-value">UX Designer</span></div>
+        <div class="meta-item"><span class="meta-label">Project</span><span class="meta-value">Walmart Canada · CFH</span></div>
+        <div class="meta-item"><span class="meta-label">Timeline</span><span class="meta-value">Nov 2025 – Jun 2026</span></div>
+        <div class="meta-item"><span class="meta-label">Validated</span><span class="meta-value">20 users · unmoderated</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SHIFT BAND (signature) ── -->
+  <section class="shift">
+    <div class="container">
+      <div class="shift-head">
+        <span class="shift-kicker">The whole project in one picture</span>
+      </div>
+      <div class="converge reveal">
+        <div>
+          <div class="converge-col-label cl-before">Before — 3 disconnected places</div>
+          <div class="surfaces">
+            <div class="surface"><span class="surface-ico">🛒</span><div><div class="surface-name">Walmart.ca</div><div class="surface-note">Shop only — no card info</div></div></div>
+            <div class="surface"><span class="surface-ico">💻</span><div><div class="surface-name">walmartrewards.com</div><div class="surface-note">Separate login · balance</div></div></div>
+            <div class="surface"><span class="surface-ico">🏦</span><div><div class="surface-name">Fairstone / bank</div><div class="surface-note">Payments via branch</div></div></div>
+          </div>
+        </div>
+        <div class="converge-mid">
+          <svg viewBox="0 0 150 220" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="cg" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0" stop-color="#c9553a" stop-opacity="0.5"/>
+                <stop offset="1" stop-color="#0071CE"/>
+              </linearGradient>
+            </defs>
+            <path d="M0,36 C70,36 70,110 150,110" fill="none" stroke="url(#cg)" stroke-width="2.5"/>
+            <path d="M0,110 C70,110 70,110 150,110" fill="none" stroke="url(#cg)" stroke-width="2.5"/>
+            <path d="M0,184 C70,184 70,110 150,110" fill="none" stroke="url(#cg)" stroke-width="2.5"/>
+            <circle cx="0" cy="36" r="4" fill="#c9553a"/>
+            <circle cx="0" cy="110" r="4" fill="#c9553a"/>
+            <circle cx="0" cy="184" r="4" fill="#c9553a"/>
+          </svg>
+          <span class="conv-chip">CFH</span>
+        </div>
+        <div>
+          <div class="converge-col-label cl-after">After — one hub in the Walmart app</div>
+          <div class="hub-phone">
+            <div class="hub-phone-screen">
+              <div class="mock">
+                <div class="m-top"><span class="m-top-t">Credit card</span><span class="m-top-r">Manage</span></div>
+                <div class="m-hero">
+                  <div class="m-hlabel">Statement balance</div>
+                  <div class="m-balance">$500.00</div>
+                  <span class="m-pay">Pay now</span>
+                  <div class="m-hmeta">
+                    <div><div class="m-mlabel">Due date</div><div class="m-mval">Apr 15</div></div>
+                    <div style="text-align:right"><div class="m-mlabel">Available</div><div class="m-mval">$4,400</div></div>
+                  </div>
+                </div>
+                <div class="m-reward-strip"><span style="font-size:17px">🏆</span><div><div style="font-size:12px;font-weight:700;color:#001A3B">Reward dollars</div><div style="font-size:11px;color:#0071CE">$50.00 →</div></div></div>
+                <div class="m-shead">Recent activity</div>
+                <div class="m-row"><div class="m-row-ic">🛒</div><div><div class="m-row-n">walmart.ca</div><div class="m-row-s">Apr 13</div></div><div style="margin-left:auto;text-align:right"><div class="m-row-amt">$103.05</div><div class="m-row-earn">+$3.10</div></div></div>
+                <div class="m-row"><div class="m-row-ic">🎵</div><div><div class="m-row-n">Apple Music</div><div class="m-row-s">Apr 09</div></div><div class="m-row-amt">$32.24</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 01 THE OPPORTUNITY ── -->
+  <section class="block" data-screen-label="01 Opportunity">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">01</span>Why this matters</div>
+          <h2 class="section-title reveal">The card works.<br/><em>The experience doesn't.</em></h2>
+        </div>
+        <p class="section-lede reveal">1.2M cards issued, but a third churn every year — lost to friction, not to the product. Three goals define the fix.</p>
+      </div>
+
+      <div class="goals reveal">
+        <div class="goal">
+          <div class="goal-top"><span class="goal-label">Activation</span><span class="goal-chip">1–2 yr</span></div>
+          <div class="goal-move"><span class="goal-from">50%</span><span class="goal-arrow">→</span><span class="goal-to">70%</span></div>
+          <div class="goal-track"><div class="goal-fill" style="width:50%"></div><div class="goal-target" style="left:70%"></div></div>
+          <div class="goal-desc">Turn dormant new cards into active ones by fixing onboarding &amp; first use.</div>
+        </div>
+        <div class="goal">
+          <div class="goal-top"><span class="goal-label">Annual churn</span><span class="goal-chip">3–4 yr</span></div>
+          <div class="goal-move"><span class="goal-from">33.5%</span><span class="goal-arrow">↓</span><span class="goal-to down">24%</span></div>
+          <div class="goal-track"><div class="goal-fill" style="width:33.5%;background:var(--warn)"></div><div class="goal-target" style="left:24%"></div></div>
+          <div class="goal-desc">Better servicing &amp; transparency remove the reasons people disengage.</div>
+        </div>
+        <div class="goal">
+          <div class="goal-top"><span class="goal-label">Purchase-active accounts</span><span class="goal-chip">ongoing</span></div>
+          <div class="goal-move"><span class="goal-from">600k</span><span class="goal-arrow">→</span><span class="goal-to">1M</span></div>
+          <div class="goal-track"><div class="goal-fill" style="width:60%"></div><div class="goal-target" style="left:100%"></div></div>
+          <div class="goal-desc">Deepen the retail flywheel — more frequency, more Walmart-linked spend.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 02 WHO ── -->
+  <section class="block alt" data-screen-label="02 Persona">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">02</span>Who we designed for</div>
+          <h2 class="section-title reveal">They came for the rewards.<br/><em>They stay for the trust.</em></h2>
+        </div>
+        <p class="section-lede reveal">A value-seeking Walmart shopper who expects their money to be as easy to manage as their cart.</p>
+      </div>
+
+      <div class="persona reveal">
+        <div class="persona-left">
+          <div class="persona-avatar">JB</div>
+          <div class="persona-name">Jean Bernard</div>
+          <div class="persona-role">WRMC cardholder · Ontario</div>
+          <div class="persona-quote">"I'm supposed to get 3% back — but I don't know how much I've earned. I called once, waited 20 minutes. Never again."</div>
+        </div>
+        <div class="persona-right">
+          <div>
+            <div class="pcol-title wants">✦ What they want</div>
+            <div class="pitem"><span class="pitem-ico">👁️</span><span class="pitem-text">See balance, due date &amp; rewards — without switching apps</span></div>
+            <div class="pitem"><span class="pitem-ico">💳</span><span class="pitem-text">Pay the bill right where they shop</span></div>
+            <div class="pitem"><span class="pitem-ico">🔔</span><span class="pitem-text">Reminders that quietly prevent mistakes</span></div>
+          </div>
+          <div>
+            <div class="pcol-title fears">✕ What they fear</div>
+            <div class="pitem"><span class="pitem-ico">🔍</span><span class="pitem-text">"I can't find basic info" → so they call support</span></div>
+            <div class="pitem"><span class="pitem-ico">🐌</span><span class="pitem-text">Slow onboarding → they abandon &amp; use other tender</span></div>
+            <div class="pitem"><span class="pitem-ico">⚠️</span><span class="pitem-text">Data that's wrong or late → they lose trust &amp; stop</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 03 FRICTION ── -->
+  <section class="block" data-screen-label="03 Friction">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">03</span>The existing experience</div>
+          <h2 class="section-title reveal">Three systems.<br/><em>Zero coherence.</em></h2>
+        </div>
+        <p class="section-lede reveal">Not broken — just scattered across three surfaces with three logins that never talk to each other.</p>
+      </div>
+
+      <div class="friction reveal">
+        <div class="fcard f1">
+          <div class="fcard-ico">🧩</div>
+          <div class="fcard-title">Fragmented onboarding</div>
+          <div class="fcard-desc">Customers hop across systems with repeated identity checks. Every hop loses people before the card is ever activated.</div>
+          <span class="fcard-tag">Drop-off before activation</span>
+        </div>
+        <div class="fcard f2">
+          <div class="fcard-ico">🙈</div>
+          <div class="fcard-title">Invisible basics</div>
+          <div class="fcard-desc">Balance, rewards, and due dates live behind a separate login — so simple questions become support calls.</div>
+          <span class="fcard-tag">High support volume</span>
+        </div>
+        <div class="fcard f3">
+          <div class="fcard-ico">🔒</div>
+          <div class="fcard-title">No self-service</div>
+          <div class="fcard-desc">Setting up auto-pay once meant printing a form and visiting a branch. No reminders, no safety nets.</div>
+          <span class="fcard-tag">Missed actions &amp; frustration</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 04 ARCHITECTURE ── -->
+  <section class="block alt" data-screen-label="04 Architecture">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">04</span>The architecture decision</div>
+          <h2 class="section-title reveal">Walmart owns the feel.<br/><em>Fairstone owns the bank.</em></h2>
+        </div>
+        <p class="section-lede reveal">One rule decided every screen: high-frequency &amp; retail moments go native; regulated banking stays with the issuer.</p>
+      </div>
+
+      <div class="arch-wrap reveal">
+        <div class="arch-panel left">
+          <span class="arch-badge">🛒 Walmart UI · Native</span>
+          <div class="arch-h">Everyday moments</div>
+          <div class="arch-item"><span class="arch-item-ico">💰</span>Balance &amp; available credit</div>
+          <div class="arch-item"><span class="arch-item-ico">💸</span>Pay the bill</div>
+          <div class="arch-item"><span class="arch-item-ico">🏆</span>Track &amp; redeem rewards</div>
+          <div class="arch-item"><span class="arch-item-ico">📄</span>Transactions &amp; statements</div>
+          <div class="arch-item"><span class="arch-item-ico">❄️</span>Freeze / activate card</div>
+          <div class="arch-item"><span class="arch-item-ico">✨</span>Discover &amp; apply</div>
+        </div>
+
+        <div class="arch-center">
+          <div class="arch-center-phone">
+            <div class="arch-center-top">
+              <div class="arch-center-toplabel">Walmart</div>
+              <div class="arch-center-topname">Card home</div>
+            </div>
+            <div class="arch-center-mid">
+              <div class="arch-center-line"></div>
+              <div class="arch-center-line s"></div>
+            </div>
+            <div class="arch-center-seam"></div>
+            <div class="arch-center-bot">
+              <div class="arch-center-botlabel">Fairstone secure</div>
+            </div>
+          </div>
+          <div class="arch-center-caption">One app.<br/>An invisible seam.</div>
+        </div>
+
+        <div class="arch-panel right">
+          <span class="arch-badge">🏦 Fairstone · WebView</span>
+          <div class="arch-h">Regulated &amp; sensitive</div>
+          <div class="arch-item"><span class="arch-item-ico">🚨</span>Report lost or stolen</div>
+          <div class="arch-item"><span class="arch-item-ico">📈</span>Credit line increase</div>
+          <div class="arch-item"><span class="arch-item-ico">🪪</span>Profile &amp; identity recovery</div>
+          <div class="arch-item"><span class="arch-item-ico">⚖️</span>Dispute management</div>
+          <div class="arch-item"><span class="arch-item-ico">✍️</span>Auto-pay enrollment</div>
+        </div>
+
+        <div class="arch-rules">
+          <div class="arch-rule"><span class="arch-rule-q">Retail or cross-sell?</span><span class="arch-rule-r w">→ Walmart UI</span></div>
+          <div class="arch-rule"><span class="arch-rule-q">High-frequency task?</span><span class="arch-rule-r w">→ Walmart UI</span></div>
+          <div class="arch-rule"><span class="arch-rule-q">Regulated workflow?</span><span class="arch-rule-r f">→ Fairstone</span></div>
+          <div class="arch-rule"><span class="arch-rule-q">Sensitive data?</span><span class="arch-rule-r f">→ Fairstone</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 05 ROADMAP ── -->
+  <section class="block" data-screen-label="05 Roadmap">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">05</span>Phased delivery</div>
+          <h2 class="section-title reveal">Ship value fast.<br/><em>Grow the platform under it.</em></h2>
+        </div>
+        <p class="section-lede reveal">Four phases, each shipping something real. Phase 1 was live and user-tested within the engagement.</p>
+      </div>
+
+      <div class="roadmap reveal">
+        <div class="rm-col active">
+          <span class="rm-badge">Shipped</span>
+          <div class="rm-num">01</div>
+          <div class="rm-title">Rewards Management</div>
+          <ul class="rm-items"><li>Rewards on home</li><li>Earn &amp; redeem history</li><li>Pending rewards</li></ul>
+        </div>
+        <div class="rm-col">
+          <span class="rm-badge">Next</span>
+          <div class="rm-num">02</div>
+          <div class="rm-title">Card Management</div>
+          <ul class="rm-items"><li>Balance &amp; due date</li><li>Bill payment</li><li>Freeze / lost &amp; stolen</li></ul>
+        </div>
+        <div class="rm-col">
+          <span class="rm-badge">Phase 3</span>
+          <div class="rm-num">03</div>
+          <div class="rm-title">Apply for Card</div>
+          <ul class="rm-items"><li>Inline application</li><li>Temporary shopping pass</li><li>Activation</li></ul>
+        </div>
+        <div class="rm-col">
+          <span class="rm-badge">Phase 4</span>
+          <div class="rm-num">04</div>
+          <div class="rm-title">Retention &amp; Hub</div>
+          <ul class="rm-items"><li>Auto-pay &amp; paperless</li><li>BNPL · insurance</li><li>Cross-product hub</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 06 THE DESIGN ── -->
+  <section class="block alt" data-screen-label="06 Solution">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">06</span>The design</div>
+          <h2 class="section-title reveal">Never wonder where to go,<br/><em>what you owe, or what you've earned.</em></h2>
+        </div>
+        <p class="section-lede reveal">Every screen puts the most critical data first and never buries an action.
+          <span class="wibey-note"><span class="wibey-dot"></span>Prototyped end-to-end with <b>Wibey</b>, an AI app builder — testable flows in days, not weeks.</span>
+        </p>
+      </div>
+
+      <!-- Annotated hero screen + design decisions -->
+      <div class="decisions reveal">
+        <div class="dec-phone">
+          <div class="dec-phone-screen">
+            <div class="mock">
+              <div class="m-top"><span class="m-top-b">‹</span><span class="m-top-t">Credit card</span><span class="m-top-r">Manage</span></div>
+              <div class="m-hero">
+                <div class="m-hlabel">Card ending 4325</div>
+                <div class="m-hlabel" style="margin-top:12px">Statement balance</div>
+                <div class="m-balance">$500.00</div>
+                <span class="m-pay">Pay now</span>
+                <div class="m-hmeta">
+                  <div><div class="m-mlabel">Due date</div><div class="m-mval">April 15</div></div>
+                  <div style="text-align:right"><div class="m-mlabel">Available credit</div><div class="m-mval">$4,400</div></div>
+                </div>
+              </div>
+              <div class="m-reward-strip"><span style="font-size:17px">🏆</span><div><div style="font-size:12px;font-weight:700;color:#001A3B">Reward dollars</div><div style="font-size:11px;color:#0071CE">Balance $50.00 →</div></div></div>
+              <div class="m-shead">Recent activity</div>
+              <div class="m-row"><div class="m-row-ic">🛒</div><div><div class="m-row-n">walmart.ca</div><div class="m-row-s">Apr 13</div></div><div style="margin-left:auto;text-align:right"><div class="m-row-amt">$103.05</div><div class="m-row-earn">+$3.10 earned</div></div></div>
+              <div class="m-row"><div class="m-row-ic">🔄</div><div><div class="m-row-n">Refund · Uber Eats</div><div class="m-row-s">Apr 10</div></div><div class="m-row-amt" style="color:#0A7A3E">+$32.24</div></div>
+              <div class="m-row"><div class="m-row-ic">🎵</div><div><div class="m-row-n">Apple Music</div><div class="m-row-s">Apr 09</div></div><div class="m-row-amt">$32.24</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="dec-list">
+          <div class="dec-item"><div class="dec-num">1</div><div><div class="dec-title">Balance first</div><div class="dec-desc">Statement balance is the largest thing on screen — due date and available credit sit right beneath it.</div></div></div>
+          <div class="dec-item"><div class="dec-num">2</div><div><div class="dec-title">One-tap pay</div><div class="dec-desc">"Pay now" lives on the card itself — never buried inside a menu or a second screen.</div></div></div>
+          <div class="dec-item"><div class="dec-num">3</div><div><div class="dec-title">Rewards on home</div><div class="dec-desc">Reward-dollar balance surfaces on the card screen, answering the #1 support question before it's asked.</div></div></div>
+          <div class="dec-item"><div class="dec-num">4</div><div><div class="dec-title">Activity, with earnings</div><div class="dec-desc">Each transaction shows what it earned back — reinforcing the value of paying with WRMC.</div></div></div>
+        </div>
+      </div>
+
+      <!-- Four key flows -->
+      <p class="screens-strip-head">Four core flows · Phase 1</p>
+      <div class="screen-row reveal">
+        <!-- Card home -->
+        <div class="screen-card">
+          <div class="screen-frame"><div class="screen-inner"><div class="screen-scroll">
+            <div class="mock">
+              <div class="m-top"><span class="m-top-b">‹</span><span class="m-top-t">Credit card</span><span class="m-top-r">Manage</span></div>
+              <div class="m-hero">
+                <div class="m-hlabel">Statement balance</div>
+                <div class="m-balance">$500.00</div>
+                <span class="m-pay">Pay now</span>
+                <div class="m-hmeta"><div><div class="m-mlabel">Due date</div><div class="m-mval">Apr 15</div></div><div style="text-align:right"><div class="m-mlabel">Available</div><div class="m-mval">$4,400</div></div></div>
+              </div>
+              <div class="m-reward-strip"><span style="font-size:16px">🏆</span><div><div style="font-size:12px;font-weight:700;color:#001A3B">Reward dollars</div><div style="font-size:11px;color:#0071CE">$50.00 →</div></div></div>
+              <div class="m-shead">Recent activity</div>
+              <div class="m-row"><div class="m-row-ic">🛒</div><div><div class="m-row-n">walmart.ca</div><div class="m-row-s">Apr 13</div></div><div style="margin-left:auto;text-align:right"><div class="m-row-amt">$103.05</div><div class="m-row-earn">+$3.10</div></div></div>
+              <div class="m-row"><div class="m-row-ic">🔄</div><div><div class="m-row-n">Refund · Uber Eats</div><div class="m-row-s">Apr 10</div></div><div class="m-row-amt" style="color:#0A7A3E">+$32.24</div></div>
+              <div class="m-row"><div class="m-row-ic">🎵</div><div><div class="m-row-n">Apple Music</div><div class="m-row-s">Apr 09</div></div><div class="m-row-amt">$32.24</div></div>
+              <div class="m-vall">View all transactions →</div>
+            </div>
+          </div><div class="screen-scroll-hint"></div></div></div>
+          <div class="screen-label">Card Home</div>
+          <div class="screen-sublabel">Balance · due · rewards</div>
+        </div>
+
+        <!-- Pay bill -->
+        <div class="screen-card">
+          <div class="screen-frame"><div class="screen-inner"><div class="screen-scroll">
+            <div class="mock">
+              <div class="m-top"><span class="m-top-b">‹</span><span class="m-top-t">Pay bill</span><span class="m-top-r"></span></div>
+              <div class="m-pay-sec">
+                <div class="m-pay-h">Amount to pay</div>
+                <div class="m-opt"><div class="m-radio on"></div><span class="m-opt-n">Minimum balance</span><span class="m-opt-a">$5.00</span></div>
+                <div class="m-opt"><div class="m-radio"></div><span class="m-opt-n">Current balance</span><span class="m-opt-a">$500.00</span></div>
+                <div class="m-opt"><div class="m-radio"></div><span class="m-opt-n">Total balance</span><span class="m-opt-a">$600.00</span></div>
+                <div class="m-opt"><div class="m-radio"></div><span class="m-opt-n">Other amount</span><span class="m-opt-a"></span></div>
+                <div class="m-pay-h" style="margin-top:18px">Payment date</div>
+                <div class="m-field"><span class="m-field-t">04/09/2026</span><span style="font-size:16px">📅</span></div>
+                <div class="m-pay-h" style="margin-top:18px">Payment method</div>
+                <div class="m-field"><span style="display:flex;align-items:center;gap:10px"><span style="font-size:16px">🏦</span><span><span style="font-size:12.5px;font-weight:600;color:#001A3B;display:block">Chase bank</span><span style="font-size:10.5px;color:#999">Ending 1313</span></span></span></div>
+                <div class="m-paybtn">Confirm payment</div>
+              </div>
+            </div>
+          </div><div class="screen-scroll-hint"></div></div></div>
+          <div class="screen-label">Bill Payment</div>
+          <div class="screen-sublabel">One screen · all options</div>
+        </div>
+
+        <!-- Rewards -->
+        <div class="screen-card">
+          <div class="screen-frame"><div class="screen-inner"><div class="screen-scroll">
+            <div class="mock">
+              <div class="m-top"><span class="m-top-b">‹</span><span class="m-top-t">Reward dollars</span><span class="m-top-r"></span></div>
+              <div class="m-rhero"><div class="m-rlabel">Ready to use at Walmart</div><div class="m-ramt">$50.00</div></div>
+              <div class="m-pending"><span style="font-size:15px">⏳</span><div><div style="font-size:12.5px;font-weight:600;color:#001A3B">Pending rewards</div><div style="font-size:11px;color:#999">+$5.00 next billing cycle</div></div></div>
+              <div class="m-shead">Recent rewards activity</div>
+              <div class="m-rrow"><div><div class="m-rrow-l">🏪 Redeemed</div><div class="m-rrow-s">Apr 17</div></div><span class="m-rrow-v">–$32.00</span></div>
+              <div class="m-rrow"><div><div class="m-rrow-l">🏆 March earned</div><div class="m-rrow-s">Apr 16</div></div><span class="m-rrow-v earn">+$103.24</span></div>
+              <div class="m-rrow"><div><div class="m-rrow-l">🏆 Feb earned</div><div class="m-rrow-s">Mar 16</div></div><span class="m-rrow-v earn">+$103.24</span></div>
+              <div class="m-vall">View all activity →</div>
+            </div>
+          </div><div class="screen-scroll-hint"></div></div></div>
+          <div class="screen-label">Reward Dollars</div>
+          <div class="screen-sublabel">Balance · history</div>
+        </div>
+
+        <!-- Manage -->
+        <div class="screen-card">
+          <div class="screen-frame"><div class="screen-inner"><div class="screen-scroll">
+            <div class="mock">
+              <div class="m-top"><span class="m-top-b">‹</span><span class="m-top-t">Manage card</span><span class="m-top-r"></span></div>
+              <div class="m-mcard"><span style="font-size:26px">💳</span><div><div style="font-size:13px;font-weight:700;color:#001A3B">Walmart Rewards MC</div><div style="font-size:11px;color:#666">•••• 4325</div><span class="m-badge" style="margin-top:6px">Active</span></div></div>
+              <div class="m-mrow"><div class="m-mrow-ic">❄️</div><div><div class="m-mrow-n">Freeze card</div><div class="m-mrow-s">Block all transactions</div></div><div class="m-toggle"></div></div>
+              <div class="m-mrow"><div class="m-mrow-ic">🚨</div><div><div class="m-mrow-n">Report lost or stolen</div><div class="m-mrow-s">Block &amp; replace</div></div><div class="m-mrow-ar">›</div></div>
+              <div class="m-mrow"><div class="m-mrow-ic">📄</div><div><div class="m-mrow-n">Paperless statements</div><div class="m-mrow-s">Delivery preferences</div></div><div class="m-mrow-ar">›</div></div>
+              <div class="m-mrow"><div class="m-mrow-ic">🔔</div><div><div class="m-mrow-n">Notifications</div><div class="m-mrow-s">Reminders &amp; alerts</div></div><div class="m-mrow-ar">›</div></div>
+              <div class="m-mrow"><div class="m-mrow-ic">📈</div><div><div class="m-mrow-n">Credit limit</div><div class="m-mrow-s">View or increase</div></div><div class="m-mrow-ar">›</div></div>
+            </div>
+          </div><div class="screen-scroll-hint"></div></div></div>
+          <div class="screen-label">Manage Card</div>
+          <div class="screen-sublabel">Freeze · controls</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 07 VALIDATION ── -->
+  <section class="block" data-screen-label="07 Validation">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">07</span>What users told us</div>
+          <h2 class="section-title reveal">20 users.<br/><em>Real flows, real findings.</em></h2>
+        </div>
+        <p class="section-lede reveal">Remote, unmoderated, think-aloud — every journey tested on a working prototype. High marks, two clear gaps.</p>
+      </div>
+
+      <div class="val-top reveal">
+        <table class="perf-table">
+          <thead><tr><th style="width:42%">Task</th><th>Success</th><th>Rating /7</th></tr></thead>
+          <tbody>
+            <tr><td class="perf-name">Card activation</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:100%"></div></div><span class="perf-pct high">100%</span></div></td><td><span class="perf-score high">6.81</span></td></tr>
+            <tr><td class="perf-name">Bill payment</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:100%"></div></div><span class="perf-pct high">100%</span></div></td><td><span class="perf-score high">6.54</span></td></tr>
+            <tr><td class="perf-name">Manage card</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:91%"></div></div><span class="perf-pct high">91%</span></div></td><td><span class="perf-score high">6.73</span></td></tr>
+            <tr><td class="perf-name">Transactions &amp; statements</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:91%"></div></div><span class="perf-pct high">91%</span></div></td><td><span class="perf-score high">6.45</span></td></tr>
+            <tr><td class="perf-name">Apply for card</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:82%"></div></div><span class="perf-pct high">82%</span></div></td><td><span class="perf-score high">6.45</span></td></tr>
+            <tr><td class="perf-name">Discover the card</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill mid" style="width:73%"></div></div><span class="perf-pct mid">73%</span></div></td><td><span class="perf-score mid">5.84</span></td></tr>
+            <tr><td class="perf-name">Understand balances</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill mid" style="width:63%"></div></div><span class="perf-pct mid">63%</span></div></td><td><span style="color:var(--ink-soft);font-family:var(--font-mono);font-size:12px">—</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="val-summary">
+          <div class="val-sum-big">6.5<span style="font-size:.5em;color:var(--ink-soft)">/7</span></div>
+          <div class="val-sum-label">Average experience rating across all tested tasks — with the two gaps below the only things standing between good and excellent.</div>
+          <div class="val-method">
+            <div class="val-method-item"><span class="val-method-ico">👆</span>First-click test — where users tap first</div>
+            <div class="val-method-item"><span class="val-method-ico">🗺️</span>Expectation survey — where they think it lives</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="findings reveal">
+        <div class="finding win">
+          <div class="finding-ico">✅</div>
+          <div>
+            <div class="finding-verdict">Works well</div>
+            <div class="finding-title">Core tasks completed with ease</div>
+            <div class="finding-body">Application, activation, payment, rewards — all cleared without hesitation. The single-screen payment drew special praise.</div>
+            <div class="finding-next"><b>Next:</b> finalise &amp; ship current flows as designed.</div>
+          </div>
+        </div>
+        <div class="finding win">
+          <div class="finding-ico">🧠</div>
+          <div>
+            <div class="finding-verdict">Mental model confirmed</div>
+            <div class="finding-title">Users expect Walmart to own card tasks</div>
+            <div class="finding-body">They assumed everything lived in the Walmart app, not a partner site — validating the Hub's core premise.</div>
+            <div class="finding-next"><b>Next:</b> keep core tasks native; hand off to Fairstone invisibly.</div>
+          </div>
+        </div>
+        <div class="finding gap">
+          <div class="finding-ico">🧭</div>
+          <div>
+            <div class="finding-verdict">Gap found</div>
+            <div class="finding-title">Discoverability: they looked elsewhere</div>
+            <div class="finding-body">Users expected the card &amp; rewards under Accounts, Wallet, or Savings — 27% missed it on first click.</div>
+            <div class="finding-next"><b>Next:</b> add entry points in Accounts, Wallet &amp; Savings.</div>
+          </div>
+        </div>
+        <div class="finding gap">
+          <div class="finding-ico">💭</div>
+          <div>
+            <div class="finding-verdict">Gap found</div>
+            <div class="finding-title">"Total balance" confused users</div>
+            <div class="finding-body">It was read as the available credit limit — some risked paying the wrong amount, some lost trust.</div>
+            <div class="finding-next"><b>Next:</b> add an info icon &amp; reword with content partners.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── 08 IMPACT ── -->
+  <section class="block dark" data-screen-label="08 Impact">
+    <div class="container">
+      <div class="sec-head">
+        <div class="sec-head-main">
+          <div class="section-eyebrow"><span class="section-eyebrow-num">08</span>Projected impact</div>
+          <h2 class="section-title reveal">The experience<br/><em>is the business case.</em></h2>
+        </div>
+        <p class="section-lede reveal">Every point of activation or churn compounds across 1.2M cards — turning a UX fix into a retail flywheel.</p>
+      </div>
+
+      <div class="impact-grid reveal">
+        <div class="impact-card hl">
+          <div class="impact-num">$150M</div>
+          <div class="impact-label">Incremental retail spend driven by WRMC usage</div>
+          <div class="impact-note">5-year projection · +$39M gross profit</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">$14M</div>
+          <div class="impact-label">Saved annually in payment processing costs</div>
+          <div class="impact-note">Each application adds ~$150 to store P&amp;L</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">$1,000+</div>
+          <div class="impact-label">More spend per cardholder, per year vs non-holders</div>
+          <div class="impact-note">23× trips/year vs 9× for non-cardholders</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">70%</div>
+          <div class="impact-label">Activation target, up from ~50%</div>
+          <div class="impact-note">1–2 year goal</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">24%</div>
+          <div class="impact-label">Churn target, down from 33.5%</div>
+          <div class="impact-note">3–4 year goal</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">↓ calls</div>
+          <div class="impact-label">Balance &amp; rewards inquiries shift to self-serve</div>
+          <div class="impact-note">Lower cost-to-serve per customer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="page-footer">
+    <div>
+      <div class="footer-label">Portfolio</div>
+      <div class="footer-name">Rajarshi Dasgupta</div>
+    </div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="waste-dashboard.html">Waste Dashboard</a>
+      <a href="remittance.html">Remittance</a>
+    </div>
+  </footer>
+
+  <script>
+    const reveals = document.querySelectorAll('.reveal');
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => io.observe(el));
+  </script>
+</body>
+</html>
