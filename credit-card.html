@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Central Financial Hub — Rajarshi</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    :root {
+      --bg:       oklch(100% 0 0);
+      --bg2:      oklch(94% 0.015 75);
+      --bg-soft:  oklch(97% 0.008 75);
+      --ink:      oklch(15% 0.01 60);
+      --ink-mid:  oklch(45% 0.01 60);
+      --ink-soft: oklch(62% 0.01 60);
+
+      /* primary: light blue from wrmc */
+      --accent:      #0071CE;
+      --accent-deep: #00509E;
+      --accent-soft: oklch(93% 0.06 245);
+      --accent-tint: oklch(97.5% 0.02 245);
+
+      /* card metals */
+      --gold:      #D8A94B;
+      --gold-deep: #A87C25;
+
+      --navy:  #0B1730;
+      --navy-2: #142442;
+
+      --warn:      oklch(60% 0.18 30);
+      --danger:    #D2453C;
+      --danger-soft: #fbe6e4;
+      --good:      #2E9E7B;
+      --ok:        oklch(52% 0.15 155);
+      --ok-tint:   oklch(95% 0.05 155);
+      --warn-tint: oklch(96% 0.03 32);
+      --spark:     #FFC220;
+      --spark-deep:#E8A600;
+
+      --line:        oklch(90% 0.006 245);
+      --pill-bg:     oklch(100% 0 0 / 0.75);
+      --pill-border: oklch(85% 0.01 70);
+      --pill-shadow: 0 2px 24px oklch(15% 0.01 60 / 0.08), 0 1px 4px oklch(15% 0.01 60 / 0.05);
+
+      --font-display: 'Bricolage Grotesque', 'DM Sans', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'DM Mono', ui-monospace, monospace;
+    }
+
+    html, body {
+      background: var(--bg); color: var(--ink);
+      font-family: var(--font-body); overflow-x: hidden; line-height: 1.5;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      width: 100%; position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 20px 40px; background: transparent;
+    }
+    .nav-pill-wrap { position: absolute; left: 50%; transform: translateX(-50%); }
+    .topbar-name-pill, .nav-pill, .contact-pill {
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-border);
+      border-radius: 999px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: var(--pill-shadow);
+    }
+    .topbar-name-pill {
+      padding: 7px 18px; font-family: var(--font-body); font-size: 14px;
+      font-weight: 500; letter-spacing: 0.04em; color: var(--ink);
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      transition: gap 0.2s;
+    }
+    .topbar-name-pill .back-arrow { font-size: 16px; line-height: 1; color: var(--ink-mid); transition: transform 0.2s; }
+    .topbar-name-pill:hover .back-arrow { transform: translateX(-3px); }
+    .nav-pill { display: flex; align-items: center; padding: 6px 8px; }
+    .nav-pill a {
+      font-family: var(--font-body); font-size: 13.5px; font-weight: 400;
+      color: var(--ink-mid); text-decoration: none; padding: 7px 16px;
+      border-radius: 999px; transition: background 0.18s, color 0.18s;
+      white-space: nowrap;
+    }
+    .nav-pill a:hover { background: var(--bg2); color: var(--ink); }
+    .nav-pill a.active { background: var(--ink); color: var(--bg); }
+    .contact-pill { display: flex; align-items: center; padding: 6px 14px; max-width: fit-content; margin-left: auto; }
+    .contact-pill a {
+      font-family: var(--font-body); font-size: 12.5px; font-weight: 400;
+      color: var(--ink-mid); text-decoration: none; display: flex; align-items: center; gap: 6px;
+      transition: color 0.18s;
+    }
+    .contact-pill a:hover { color: var(--ink); }
+    .contact-pill .c-divider { width: 1px; height: 16px; background: var(--pill-border); margin: 0 12px; }
+    .li-icon { width: 17px; height: 17px; display: block; }
+    .topbar-right { flex: 1; display: flex; justify-content: flex-end; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 1240px; margin: 0 auto; padding: 0 60px; }
+    .container-wide { max-width: 1440px; margin: 0 auto; padding: 0 60px; }
+    section.block { padding: 110px 0; }
+    section.block.alt { background: var(--bg-soft); }
+
+    /* ── SECTION EYEBROW (from credit-card) ── */
+    .section-eyebrow {
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      color: var(--accent); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .section-eyebrow .num {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--accent); color: var(--bg);
+      font-size: 11px; font-weight: 700; letter-spacing: 0;
+    }
+    .section-title {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(36px, 4.4vw, 64px); line-height: 1.02;
+      letter-spacing: -0.03em; color: var(--ink);
+      margin-bottom: 16px; max-width: 22ch; text-wrap: balance;
+    }
+    .section-title em { font-style: italic; color: var(--accent); font-weight: 600; }
+    .section-lede {
+      font-family: var(--font-body); font-size: 18px; color: var(--ink-mid);
+      max-width: 60ch; margin-bottom: 64px; text-wrap: pretty;
+    }
+    .section-lede.tight { margin-bottom: 40px; }
+
+    /* ── HERO ── */
+    .project-hero { padding: 150px 0 0; position: relative; overflow: hidden; }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 10px;
+      font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+      color: var(--ink-mid); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .hero-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+    .project-title {
+      font-family: var(--font-display); font-weight: 700;
+      font-size: clamp(46px, 7vw, 104px); line-height: 0.98;
+      letter-spacing: -0.04em; color: var(--ink);
+      margin-bottom: 28px; max-width: 15ch; text-wrap: balance;
+    }
+    .project-title em { font-style: italic; font-weight: 600; color: var(--accent); }
+    .hero-sub { font-size: 18px; color: var(--ink-mid); max-width: 62ch; margin-bottom: 36px; }
+
+    /* tags: colours from credit-card (bg2 + pill-border) */
+    .hero-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 56px; }
+    .tag {
+      font-family: var(--font-mono); font-size: 11.5px; font-weight: 500;
+      letter-spacing: 0.03em; color: var(--ink-mid); background: var(--bg2);
+      border: 1px solid var(--pill-border); border-radius: 999px; padding: 7px 16px;
+    }
+
+    /* meta grid */
+    .meta-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 40px;
+      padding: 36px 0; border-top: 1px solid var(--pill-border);
+      border-bottom: 1px solid var(--pill-border); margin-bottom: 72px;
+    }
+    .meta-item { display: flex; flex-direction: column; gap: 6px; }
+    .meta-label {
+      font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+      letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft);
+    }
+    .meta-value {
+      font-family: var(--font-display); font-size: 17px; font-weight: 600;
+      color: var(--ink); letter-spacing: -0.01em;
+    }
+
+    /* ── CARD STAGE (signature from credit-card) ── */
+    .card-stage {
+      width: 100%; aspect-ratio: 16 / 7; min-height: 380px;
+      border-radius: 28px; position: relative; overflow: hidden;
+      background:
+        radial-gradient(120% 90% at 78% 15%, oklch(96% 0.03 245) 0%, transparent 60%),
+        linear-gradient(150deg, oklch(97% 0.012 245) 0%, oklch(93% 0.02 75) 100%);
+      border: 1px solid var(--pill-border);
+      display: flex; align-items: center;
+    }
+    .card-stage .grid-dots {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, oklch(45% 0.12 245 / 0.16) 1.2px, transparent 1.2px);
+      background-size: 26px 26px;
+    }
+    .stage-copy {
+      position: relative; z-index: 3; padding: 0 clamp(28px, 5vw, 72px); max-width: 42%;
+    }
+    .stage-kicker {
+      font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--accent-deep); margin-bottom: 14px;
+    }
+    .stage-fig {
+      font-family: var(--font-display); font-weight: 800;
+      font-size: clamp(38px, 4.6vw, 68px); letter-spacing: -0.045em;
+      line-height: 0.95; color: var(--ink);
+    }
+    .stage-fig sup { font-size: 0.42em; font-weight: 600; color: var(--accent); letter-spacing: 0; top: -0.7em; }
+    .stage-note { font-size: 13.5px; color: var(--ink-mid); margin-top: 14px; max-width: 28ch; line-height: 1.5; }
+    .card-cluster {
+      position: absolute; right: clamp(24px, 6vw, 96px); top: 50%;
+      transform: translateY(-50%); z-index: 2;
+      width: min(40%, 440px);
+    }
+    .credit-card {
+      position: relative; width: 100%; aspect-ratio: 1.586 / 1;
+      border-radius: 18px; overflow: hidden;
+      box-shadow: 0 30px 60px -24px rgba(11, 23, 48, 0.55), 0 8px 20px -10px rgba(11,23,48,0.28);
+      padding: clamp(14px, 2vw, 22px);
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .credit-card.black {
+      background: radial-gradient(120% 140% at 12% 0%, #33405c 0%, #131c30 45%, #05080f 100%);
+      color: #fff; transform: rotate(-6deg) translate(2%, -2%); width: 86%;
+    }
+    .credit-card.silver {
+      background: linear-gradient(118deg, #f3f4f6 0%, #d3d7dd 22%, #f7f8fa 42%, #c3c8d0 62%, #eceef1 82%, #cfd4db 100%);
+      color: #1c2333; transform: rotate(4deg) translate(-2%, 4%);
+      margin-top: -38%; width: 86%; margin-left: 14%;
+    }
+    .credit-card::after {
+      content: ''; position: absolute; top: -60%; left: -30%;
+      width: 40%; height: 220%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+      transform: rotate(18deg);
+      animation: sheen 6.5s ease-in-out infinite;
+    }
+    .credit-card.silver::after { animation-delay: 1.2s; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.85), transparent); }
+    @keyframes sheen {
+      0%, 62% { left: -35%; opacity: 0; }
+      66% { opacity: 1; }
+      92%, 100% { left: 115%; opacity: 0; }
+    }
+    .cc-top { display: flex; align-items: flex-start; justify-content: space-between; }
+    .cc-brand { display: flex; flex-direction: column; gap: 2px; }
+    .cc-brand .cc-mark { font-family: var(--font-display); font-weight: 800; font-size: clamp(13px, 1.5vw, 19px); letter-spacing: -0.03em; line-height: 1; }
+    .cc-brand .cc-prog { font-family: var(--font-body); font-size: clamp(9px, 1vw, 12px); font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.72; }
+    .cc-tier { font-family: var(--font-mono); font-size: clamp(8px, 0.85vw, 10px); letter-spacing: 0.18em; text-transform: uppercase; opacity: 0.7; }
+    .cc-wave { display: block; opacity: 0.6; }
+    .cc-wave svg { width: clamp(13px, 1.5vw, 18px); height: clamp(13px, 1.5vw, 18px); display: block; }
+    .cc-chip {
+      width: clamp(28px, 3.2vw, 40px); height: clamp(21px, 2.4vw, 30px);
+      border-radius: 5px;
+      background: linear-gradient(135deg, var(--gold) 0%, #f0d79a 40%, var(--gold-deep) 100%);
+      position: relative; margin-top: 4px;
+    }
+    .cc-chip::before, .cc-chip::after {
+      content: ''; position: absolute; left: 12%; right: 12%; height: 1px;
+      background: rgba(0,0,0,0.22);
+    }
+    .cc-chip::before { top: 34%; }
+    .cc-chip::after { top: 66%; }
+    .cc-bottom { display: flex; align-items: flex-end; justify-content: space-between; }
+    .cc-name { font-family: var(--font-body); font-size: clamp(10px, 1.15vw, 14px); letter-spacing: 0.08em; opacity: 0.9; }
+    .cc-circles { display: flex; align-items: center; }
+    .cc-circles i { display: block; width: clamp(18px, 2.1vw, 26px); height: clamp(18px, 2.1vw, 26px); border-radius: 50%; }
+    .cc-circles i:first-child { background: #e8503a; }
+    .cc-circles i:last-child { background: #f2a93b; margin-left: -32%; mix-blend-mode: multiply; }
+
+    /* ── STATS STRIP (At a Glance) ── */
+    .stats-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+      border-top: 1px solid var(--pill-border); border-bottom: 1px solid var(--pill-border);
+    }
+    .stat-cell {
+      padding: 40px 36px; border-right: 1px solid var(--pill-border);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .stat-cell:last-child { border-right: none; }
+    .stat-num {
+      font-family: var(--font-display); font-size: clamp(44px, 5vw, 74px);
+      font-weight: 700; letter-spacing: -0.04em; line-height: 1;
+      color: var(--ink); margin-bottom: 4px; display: flex; align-items: baseline; gap: 4px;
+    }
+    .stat-num em { font-style: normal; color: var(--accent); }
+    .stat-num sup { font-family: var(--font-display); font-size: 0.42em; font-weight: 600; color: var(--ink-mid); letter-spacing: 0.02em; }
+    .stat-label { font-size: 13px; color: var(--ink-mid); line-height: 1.45; letter-spacing: 0.02em; }
+
+    /* ── BROKEN ROUTE MAP ── */
+    .route {
+      background: var(--bg); border: 1px solid var(--pill-border);
+      border-radius: 28px; padding: 44px 40px 40px;
+      position: relative; overflow-x: auto;
+    }
+    .route-legend {
+      display: flex; flex-wrap: wrap; gap: 22px; margin-bottom: 34px;
+      padding-bottom: 22px; border-bottom: 1px dashed var(--pill-border);
+    }
+    .rl-item {
+      display: flex; align-items: center; gap: 8px;
+      font-family: var(--font-mono); font-size: 10.5px;
+      letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-mid);
+    }
+    .rl-swatch { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--pill-border); }
+    .route-body { display: grid; grid-template-columns: 190px 1fr; gap: 30px; align-items: center; min-width: 880px; }
+    .route-anchor {
+      background: var(--accent); color: #fff; border-radius: 16px;
+      padding: 22px 20px; text-align: center; position: relative;
+    }
+    .route-anchor::after {
+      content: ''; position: absolute; right: -30px; top: 50%;
+      width: 30px; height: 2px;
+      background: repeating-linear-gradient(90deg, var(--ink-soft) 0 5px, transparent 5px 10px);
+      opacity: 0.5;
+    }
+    .route-anchor .ra-label {
+      font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.14em;
+      text-transform: uppercase; opacity: 0.72; margin-bottom: 8px; display: block;
+    }
+    .route-anchor h4 { font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+    .route-rows { display: flex; flex-direction: column; gap: 22px; position: relative; padding-left: 26px; }
+    .route-rows::before {
+      content: ''; position: absolute; left: -30px; top: 56px; bottom: 56px; width: 2px;
+      background: repeating-linear-gradient(180deg, var(--ink-soft) 0 5px, transparent 5px 10px);
+      opacity: 0.5;
+    }
+    .route-row { display: flex; align-items: stretch; gap: 0; position: relative; }
+    .route-row::before {
+      content: ''; position: absolute; left: -30px; top: 50%; width: 30px; height: 2px;
+      background: repeating-linear-gradient(90deg, var(--ink-soft) 0 5px, transparent 5px 10px);
+      opacity: 0.5;
+    }
+    .node {
+      flex: 1; border-radius: 12px; padding: 14px 16px;
+      border: 1px solid var(--pill-border); background: #fff;
+      display: flex; flex-direction: column; gap: 4px; min-width: 0;
+    }
+    .node h5 { font-family: var(--font-display); font-size: 14px; font-weight: 600; letter-spacing: -0.01em; color: var(--ink); line-height: 1.25; }
+    .node p { font-size: 11.5px; color: var(--ink-mid); line-height: 1.4; }
+    .node.friction { background: var(--danger-soft); border-color: #f2c3bf; }
+    .node.friction h5 { color: #8f2a23; }
+    .node.friction p { color: #a04a43; }
+    .node.dead { background: var(--danger); border-color: var(--danger); }
+    .node.dead h5, .node.dead p { color: #fff; }
+    .node.dead p { opacity: 0.86; }
+    .node-flag { font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 2px; }
+    .node.friction .node-flag { color: #b5544b; }
+    .node.dead .node-flag { color: rgba(255,255,255,0.75); }
+    .arrow {
+      flex: 0 0 46px; display: flex; align-items: center; justify-content: center;
+      color: var(--ink-soft); position: relative;
+    }
+    .arrow::before {
+      content: ''; position: absolute; left: 4px; right: 12px; height: 1.5px;
+      background: repeating-linear-gradient(90deg, currentColor 0 5px, transparent 5px 10px);
+      opacity: 0.55;
+    }
+    .arrow span { position: absolute; right: 4px; font-size: 13px; line-height: 1; }
+    .arrow.blocked { color: var(--danger); }
+    .arrow.blocked span {
+      right: 0; width: 20px; height: 20px; border-radius: 50%;
+      background: var(--danger); color: #fff; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .route-hint { display: none; margin-bottom: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
+    .route-caption {
+      margin-top: 30px; padding-top: 22px; border-top: 1px dashed var(--pill-border);
+      font-size: 14px; color: var(--ink-mid); max-width: 78ch;
+    }
+    .route-caption strong { color: var(--ink); font-weight: 600; }
+
+    /* ── FRICTION CARDS (existing experience, from wrmc) ── */
+    .friction-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+    .fcard {
+      background: var(--bg); border: 1px solid var(--pill-border); border-radius: 20px;
+      padding: 32px 28px 34px; display: flex; flex-direction: column; gap: 12px;
+      transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1), box-shadow 0.35s;
+    }
+    .fcard:hover { transform: translateY(-5px); box-shadow: 0 22px 44px -22px rgba(11,23,48,0.18); }
+    .fcard-ico {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 4px;
+    }
+    .fcard-ico svg { width: 24px; height: 24px; stroke: var(--danger); fill: none; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+    .fcard.f1 .fcard-ico { background: var(--danger-soft); }
+    .fcard.f2 .fcard-ico { background: var(--danger-soft); }
+    .fcard.f3 .fcard-ico { background: var(--danger-soft); }
+    .fcard-num { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-soft); }
+    .fcard-title { font-family: var(--font-display); font-size: 21px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
+    .fcard-desc { font-size: 14.5px; color: var(--ink-mid); line-height: 1.6; }
+    .fcard-tag {
+      margin-top: auto; padding-top: 16px; border-top: 1px solid var(--pill-border);
+      font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+      color: var(--danger); text-transform: uppercase;
+    }
+
+    /* ── GOAL METERS (Targets) ── */
+    .goal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
+    .goal {
+      background: #fff; border: 1px solid var(--pill-border); border-radius: 20px;
+      padding: 30px 30px 26px;
+    }
+    .goal-head { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; margin-bottom: 6px; }
+    .goal-head h4 { font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
+    .goal-horizon { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); white-space: nowrap; }
+    .goal > p { font-size: 14px; color: var(--ink-mid); line-height: 1.55; margin-bottom: 22px; }
+    .goal-move { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .gm-val { font-family: var(--font-display); font-size: 34px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; }
+    .gm-val.from { color: var(--ink-soft); }
+    .gm-val.to { color: var(--accent); }
+    .gm-arrow { color: var(--ink-soft); font-size: 18px; }
+    .gm-track { height: 8px; border-radius: 999px; background: var(--bg2); overflow: hidden; position: relative; }
+    .gm-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--accent), var(--accent-deep)); width: 0; transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1); }
+    .gm-fill.down { background: linear-gradient(90deg, var(--gold), var(--gold-deep)); }
+    .goal-foot { margin-top: 12px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); }
+
+    /* ── DECISION FRAMEWORK (Systems Decision) ── */
+    .split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-bottom: 40px; }
+    .split-card { border-radius: 22px; padding: 34px 32px; display: flex; flex-direction: column; gap: 14px; }
+    .split-card.ours { background: var(--accent); color: #fff; }
+    .split-card.theirs { background: var(--navy); color: #fff; }
+    .split-tag { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; opacity: 0.7; }
+    .split-card h3 { font-family: var(--font-display); font-size: 26px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.1; }
+    .split-card > p { font-size: 14.5px; line-height: 1.6; opacity: 0.85; }
+    .split-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .split-list span { font-size: 12px; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.22); }
+    .rules { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid var(--pill-border); border-bottom: 1px solid var(--pill-border); }
+    .rule { padding: 26px 24px; border-right: 1px solid var(--pill-border); display: flex; flex-direction: column; gap: 10px; }
+    .rule:last-child { border-right: none; }
+    .rule .r-if { font-size: 14px; color: var(--ink-mid); line-height: 1.5; }
+    .rule .r-if b { color: var(--ink); font-weight: 600; }
+    .rule .r-then { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 7px; }
+    .rule .r-then.ours { color: var(--accent); }
+    .rule .r-then.theirs { color: var(--navy); }
+
+    /* ── ROADMAP (wrmc style) ── */
+    .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--pill-border); border-radius: 18px; overflow: hidden; }
+    .rm-col { padding: 30px 26px 34px; position: relative; }
+    .rm-col + .rm-col { border-left: 1px solid var(--pill-border); }
+    .rm-col.active { background: var(--accent-tint); }
+    .rm-badge { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 999px; display: inline-block; margin-bottom: 18px; }
+    .rm-col:not(.active) .rm-badge { background: var(--bg2); color: var(--ink-soft); }
+    .rm-col.active .rm-badge { background: var(--accent); color: #fff; }
+    .rm-num { font-family: var(--font-display); font-size: 30px; font-weight: 800; letter-spacing: -0.04em; color: var(--ink-soft); margin-bottom: 8px; }
+    .rm-col.active .rm-num { color: var(--accent); }
+    .rm-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 14px; }
+    .rm-items { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .rm-items li { font-size: 12.5px; color: var(--ink-mid); padding-left: 16px; position: relative; }
+    .rm-items li::before { content: ''; position: absolute; left: 0; top: 8px; width: 5px; height: 5px; border-radius: 50%; background: var(--ink-soft); }
+    .rm-col.active .rm-items li::before { background: var(--accent); }
+
+    /* ── DESIGN OUTCOME: remittance-style placeholder screens ── */
+    .screens-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; }
+    .screen-cell { display: flex; flex-direction: column; gap: 0; }
+    .screen-cell .step-num {
+      font-family: var(--font-display); font-size: 11.5px; font-weight: 600;
+      letter-spacing: 0.14em; color: var(--accent-deep); text-transform: uppercase; margin-top: 18px;
+    }
+    .screen-cell h4 { font-family: var(--font-display); font-size: 17px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.25; margin-top: 6px; }
+    .screen-cell p { font-size: 13.5px; color: var(--ink-mid); line-height: 1.55; margin-top: 6px; }
+
+    /* empty phone frame, like remittance */
+    .phone-frame {
+      width: 100%; aspect-ratio: 9 / 19.5;
+      border-radius: 34px; background: #0a0a0a; padding: 8px;
+      box-shadow: 0 30px 60px -26px rgba(11,23,48,0.5), 0 10px 20px -12px rgba(11,23,48,0.28);
+    }
+    .phone-screen {
+      width: 100%; height: 100%; border-radius: 27px;
+      background: var(--accent-tint);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .phone-placeholder {
+      font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--accent-deep); opacity: 0.6;
+    }
+
+    /* design decisions list (from wrmc dec-list) */
+    .design-decisions {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+      margin-top: 56px;
+    }
+    .dec-item {
+      display: flex; gap: 18px; align-items: flex-start; padding: 18px 20px;
+      background: var(--bg); border: 1px solid var(--pill-border); border-radius: 14px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .dec-item:hover { border-color: var(--accent-soft); box-shadow: var(--pill-shadow); }
+    .dec-num {
+      font-family: var(--font-display); font-size: 15px; font-weight: 800; color: #fff;
+      background: var(--accent); width: 30px; height: 30px; border-radius: 9px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .dec-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 4px; }
+    .dec-desc { font-size: 13.5px; color: var(--ink-mid); line-height: 1.5; }
+
+    /* ── PULL QUOTE ── */
+    .pull-quote { padding: 80px 0 56px; text-align: center; }
+    .pull-quote blockquote {
+      font-family: var(--font-display); font-size: clamp(24px, 3vw, 42px);
+      font-weight: 600; font-style: italic; line-height: 1.18; letter-spacing: -0.02em;
+      color: var(--ink); max-width: 28ch; margin: 0 auto; text-wrap: balance; position: relative;
+    }
+    .pull-quote blockquote::before {
+      content: '\201C'; font-family: var(--font-display); font-size: 5em; line-height: 0;
+      color: var(--accent); opacity: 0.22; position: absolute; top: 0.42em; left: -0.45em;
+    }
+    .pull-quote cite {
+      display: block; margin-top: 22px; font-family: var(--font-body); font-style: normal;
+      font-size: 12px; font-weight: 500; letter-spacing: 0.16em;
+      text-transform: uppercase; color: var(--ink-soft);
+    }
+
+    /* ── WHAT USERS TOLD US (validation, from wrmc) ── */
+    .val-top { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: start; margin-bottom: 44px; }
+    .test-bar { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; border: 1px solid var(--pill-border); border-radius: 18px; overflow: hidden; margin-bottom: 56px; }
+    .tb-cell { padding: 26px 28px; border-right: 1px solid var(--pill-border); background: #fff; }
+    .tb-cell:last-child { border-right: none; }
+    .tb-cell .tb-num { font-family: var(--font-display); font-size: 36px; font-weight: 700; letter-spacing: -0.035em; line-height: 1; margin-bottom: 6px; }
+    .tb-cell .tb-lbl { font-size: 13px; color: var(--ink-mid); }
+
+    .perf-table { width: 100%; border-collapse: collapse; background: var(--bg); border: 1px solid var(--pill-border); border-radius: 16px; overflow: hidden; }
+    .perf-table thead th { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-soft); font-weight: 500; padding: 14px 18px; text-align: left; border-bottom: 1px solid var(--pill-border); }
+    .perf-table td { padding: 12px 18px; border-bottom: 1px solid var(--pill-border); font-size: 13.5px; vertical-align: middle; }
+    .perf-table tr:last-child td { border-bottom: none; }
+    .perf-name { color: var(--ink); font-weight: 500; }
+    .perf-bar-wrap { display: flex; align-items: center; gap: 10px; }
+    .perf-bar { height: 6px; border-radius: 3px; flex: 1; background: var(--bg2); min-width: 60px; }
+    .perf-fill { height: 100%; border-radius: 3px; }
+    .perf-fill.high { background: var(--ok); }
+    .perf-fill.mid  { background: var(--spark); }
+    .perf-pct { font-family: var(--font-mono); font-size: 12px; font-weight: 600; min-width: 34px; }
+    .perf-pct.high { color: var(--ok); }
+    .perf-pct.mid  { color: var(--spark-deep); }
+    .perf-score { font-family: var(--font-mono); font-size: 12px; font-weight: 600; padding: 2px 9px; border-radius: 999px; }
+    .perf-score.high { background: var(--ok-tint); color: oklch(40% 0.13 155); }
+    .perf-score.mid  { background: oklch(95% 0.07 80); color: var(--spark-deep); }
+
+    .val-summary { }
+    .val-sum-big { font-family: var(--font-display); font-size: clamp(40px, 5vw, 64px); font-weight: 800; letter-spacing: -0.04em; color: var(--accent); line-height: 1; margin-bottom: 8px; }
+    .val-sum-label { font-size: 14px; color: var(--ink-mid); line-height: 1.5; margin-bottom: 24px; }
+    .val-method { display: flex; flex-direction: column; gap: 12px; }
+    .val-method-item { display: flex; gap: 12px; align-items: center; font-size: 13.5px; color: var(--ink-mid); }
+    .val-method-ico { width: 34px; height: 34px; border-radius: 10px; background: var(--accent-tint); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .val-method-ico svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+    /* findings from wrmc style */
+    .findings { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .finding { background: var(--bg); border: 1px solid var(--pill-border); border-radius: 16px; padding: 26px 28px; display: flex; gap: 18px; align-items: flex-start; transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1); }
+    .finding.win { border-left: 3px solid var(--ok); }
+    .finding.gap { border-left: 3px solid var(--warn); }
+    .finding-ico { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .finding.win .finding-ico { background: var(--ok-tint); }
+    .finding.gap .finding-ico { background: var(--warn-tint); }
+    .finding-ico svg { width: 18px; height: 18px; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .finding.win .finding-ico svg { stroke: var(--ok); }
+    .finding.gap .finding-ico svg { stroke: var(--warn); }
+    .finding-verdict { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 6px; }
+    .finding.win .finding-verdict { color: var(--ok); }
+    .finding.gap .finding-verdict { color: var(--warn); }
+    .finding-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 6px; line-height: 1.2; }
+    .finding-body { font-size: 13px; color: var(--ink-mid); line-height: 1.5; margin-bottom: 12px; }
+    .finding-next { font-size: 12.5px; color: var(--ink); background: var(--bg2); border-radius: 8px; padding: 8px 12px; line-height: 1.45; }
+    .finding-next b { color: var(--accent); }
+
+    /* ── IMPACT (dark/navy, wrmc 6-card grid) ── */
+    section.dark { background: var(--navy); color: #fff; }
+    section.dark .section-eyebrow { color: var(--spark); }
+    section.dark .section-eyebrow .num { background: var(--spark); color: var(--navy); }
+    section.dark .section-title { color: #fff; }
+    section.dark .section-title em { color: var(--spark); }
+    section.dark .section-lede { color: oklch(75% 0.02 245); }
+    .impact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .impact-card { background: oklch(100% 0 0 / 0.06); border: 1px solid oklch(100% 0 0 / 0.13); border-radius: 16px; padding: 32px 26px 34px; }
+    .impact-card.hl { background: oklch(100% 0 0 / 0.1); border-color: var(--spark); }
+    .impact-num { font-family: var(--font-display); font-size: clamp(34px, 4vw, 50px); font-weight: 800; letter-spacing: -0.04em; color: var(--spark); line-height: 1; margin-bottom: 8px; }
+    .impact-label { font-size: 14px; color: oklch(74% 0.02 245); line-height: 1.45; }
+    .impact-note-sm { font-size: 12px; color: oklch(54% 0.02 245); margin-top: 8px; }
+
+    /* ── OTHER PROJECTS ── */
+    .other-section { padding: 120px 0 140px; background: var(--bg); }
+    .other-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 56px; gap: 40px; flex-wrap: wrap; }
+    .other-heading { font-family: var(--font-display); font-size: clamp(36px, 4vw, 60px); font-weight: 700; letter-spacing: -0.03em; color: var(--ink); }
+    .other-heading-line { width: 48px; height: 3px; background: var(--accent); border-radius: 2px; margin-top: 16px; }
+    .other-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+    .cs-card { cursor: pointer; text-decoration: none; color: inherit; display: block; }
+    .cs-image-wrap { width: 100%; aspect-ratio: 16 / 9; border-radius: 16px; overflow: hidden; background: var(--cs-bg, #e8e4dc); position: relative; }
+    .cs-image-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; transition: transform 0.65s cubic-bezier(0.25, 0.46, 0.45, 0.94); background-image: repeating-linear-gradient(-45deg, transparent, transparent 12px, oklch(0% 0 0 / 0.04) 12px, oklch(0% 0 0 / 0.04) 24px); }
+    .cs-card:hover .cs-image-placeholder { transform: scale(1.09); }
+    .cs-placeholder-label { font-family: monospace; font-size: 12px; color: var(--ink-mid); letter-spacing: 0.08em; text-transform: uppercase; background: oklch(100% 0 0 / 0.7); padding: 6px 14px; border-radius: 4px; }
+    .cs-meta { padding: 24px 4px 0; display: flex; flex-direction: column; gap: 12px; }
+    .cs-title { font-family: var(--font-display); font-size: clamp(20px, 2vw, 28px); font-weight: 700; letter-spacing: -0.02em; color: var(--ink); line-height: 1.15; margin-bottom: 4px; }
+    .cs-subtitle { font-size: 14px; color: var(--ink-mid); margin-bottom: 10px; }
+    .cs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .cs-tag { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--ink-mid); background: var(--bg2); border: 1px solid var(--pill-border); border-radius: 999px; padding: 5px 14px; }
+
+    /* ── FOOTER ── */
+    footer.foot {
+      border-top: 1px solid var(--pill-border); padding: 48px 60px;
+      display: flex; align-items: center; justify-content: space-between; gap: 24px;
+      color: var(--ink-mid); font-size: 13px;
+    }
+    footer.foot a { color: inherit; text-decoration: none; }
+    footer.foot a:hover { color: var(--ink); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1), transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    a:focus-visible, .cs-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      .friction-grid { grid-template-columns: 1fr 1fr; }
+      .screens-grid { grid-template-columns: 1fr 1fr; }
+      .roadmap { grid-template-columns: 1fr 1fr; }
+      .rules { grid-template-columns: 1fr 1fr; }
+      .rule:nth-child(2n) { border-right: none; }
+      .rule:nth-child(-n+2) { border-bottom: 1px solid var(--pill-border); }
+    }
+    @media (max-width: 980px) {
+      .container, .container-wide, footer.foot { padding-left: 28px; padding-right: 28px; }
+      .topbar { padding: 14px 20px; }
+      .nav-pill-wrap, .contact-pill { display: none; }
+      .meta-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+      .stats-strip { grid-template-columns: 1fr 1fr; }
+      .stat-cell { border-right: none; border-bottom: 1px solid var(--pill-border); }
+      .stat-cell:nth-child(odd) { border-right: 1px solid var(--pill-border); }
+      .stat-cell:nth-last-child(-n+2) { border-bottom: none; }
+      .card-stage { aspect-ratio: auto; min-height: 0; flex-direction: column; align-items: stretch; padding: 34px 0 44px; }
+      .stage-copy { max-width: 100%; }
+      .card-cluster { position: static; transform: none; width: min(78%, 380px); margin: 34px auto 0; }
+      .credit-card.black, .credit-card.silver { transform: rotate(0deg); margin-left: 0; }
+      .credit-card.silver { margin-top: 16px; }
+      .goal-grid, .split-grid, .other-grid { grid-template-columns: 1fr; }
+      .friction-grid, .screens-grid, .roadmap, .findings { grid-template-columns: 1fr; }
+      .rm-col + .rm-col { border-left: none; border-top: 1px solid var(--pill-border); }
+      .impact-grid { grid-template-columns: 1fr; }
+      .test-bar { grid-template-columns: 1fr; }
+      .tb-cell { border-right: none; border-bottom: 1px solid var(--pill-border); }
+      .tb-cell:last-child { border-bottom: none; }
+      .val-top { grid-template-columns: 1fr; }
+      .design-decisions { grid-template-columns: 1fr; }
+      section.block { padding: 76px 0; }
+      .route { padding: 28px 20px; }
+      .route-hint { display: block; }
+      footer.foot { flex-direction: column; align-items: flex-start; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+      html { scroll-behavior: auto; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── TOP BAR ── -->
+  <header class="topbar">
+    <a class="topbar-name-pill" href="index.html">
+      <span class="back-arrow">←</span> Rajarshi
+    </a>
+    <div class="nav-pill-wrap">
+      <nav class="nav-pill" aria-label="Primary navigation">
+        <a href="index.html">Hi</a>
+        <a href="index.html#work" class="active">Work</a>
+        <a href="index.html#about">About</a>
+        <a href="#">Download Resume</a>
+      </nav>
+    </div>
+    <div class="topbar-right">
+      <div class="contact-pill">
+        <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
+        <div class="c-divider"></div>
+        <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn">
+          <svg class="li-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="24" height="24" rx="4" fill="oklch(45% 0.12 240)"/>
+            <path d="M7.5 9.5H5V18H7.5V9.5Z" fill="white"/>
+            <circle cx="6.25" cy="6.75" r="1.5" fill="white"/>
+            <path d="M19 18H16.5V13.75C16.5 12.75 15.75 12 14.75 12C13.75 12 13 12.75 13 13.75V18H10.5V9.5H13V10.75C13.5 9.75 14.75 9.25 15.75 9.25C17.5 9.25 19 10.75 19 12.5V18Z" fill="white"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════
+       01 · HERO + AT A GLANCE  (from credit-card)
+  ══════════════════════════════════════════════════ -->
+  <section class="project-hero" data-screen-label="00 Hero">
+    <div class="container">
+      <div class="hero-eyebrow"><span class="dot"></span> Case study · Global Design</div>
+      <h1 class="project-title">One login. <em>Every dollar.</em></h1>
+      <p class="hero-sub">Avenue Mart's rewards card is a much-loved product — cardholders earn at one of the best rates in retail. But it was trapped behind three logins. We pulled applying, activating, paying, and redeeming out of scattered systems and into the retail app people already open every week.</p>
+
+      <!-- tags: colours from credit-card (bg2 + pill-border), no emojis -->
+      <div class="hero-tags">
+        <span class="tag">Fintech</span>
+        <span class="tag">Credit Card</span>
+        <span class="tag">Information Architecture</span>
+        <span class="tag">End-to-End Journeys</span>
+        <span class="tag">Usability Testing</span>
+        <span class="tag">Mobile &amp; Web</span>
+      </div>
+
+      <!-- 4 highlights from credit-card -->
+      <div class="meta-grid">
+        <div class="meta-item">
+          <span class="meta-label">Role</span>
+          <span class="meta-value">Product Designer</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Project done for</span>
+          <span class="meta-value">Global Retail Group</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Timeline</span>
+          <span class="meta-value">7 months · 2025–26</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Focus Area</span>
+          <span class="meta-value">IA · End-to-end journeys · Usability testing</span>
+        </div>
+      </div>
+
+      <!-- Card cluster + $600M stat (from credit-card, taken wholesale) -->
+      <div class="card-stage">
+        <div class="grid-dots" aria-hidden="true"></div>
+        <div class="stage-copy">
+          <div class="stage-kicker">Rewards redeemed to date</div>
+          <div class="stage-fig">$600M<sup>+</sup></div>
+          <p class="stage-note">Every dollar of it spent back inside the store. The card works. Getting to it didn't.</p>
+        </div>
+        <div class="card-cluster" aria-hidden="true">
+          <div class="credit-card black">
+            <div class="cc-top">
+              <div class="cc-brand">
+                <span class="cc-mark">Avenue Mart</span>
+                <span class="cc-prog">rewards</span>
+              </div>
+              <span class="cc-tier">world</span>
+            </div>
+            <div class="cc-chip"></div>
+            <div class="cc-bottom">
+              <span class="cc-name">J. BERNARD</span>
+              <span class="cc-circles"><i></i><i></i></span>
+            </div>
+          </div>
+          <div class="credit-card silver">
+            <div class="cc-top">
+              <div class="cc-brand">
+                <span class="cc-mark">Avenue Mart</span>
+                <span class="cc-prog">rewards</span>
+              </div>
+              <span class="cc-wave" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                  <path d="M7 6.5a8 8 0 0 1 0 11"/><path d="M11.5 4a12 12 0 0 1 0 16"/><path d="M16 1.5a16 16 0 0 1 0 21"/>
+                </svg>
+              </span>
+            </div>
+            <div class="cc-chip"></div>
+            <div class="cc-bottom">
+              <span class="cc-name">J. BERNARD</span>
+              <span class="cc-circles"><i></i><i></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- At a Glance stats strip (from credit-card) -->
+  <section class="block" data-screen-label="01 At a Glance">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">01</span> At a Glance</div>
+      <div class="stats-strip reveal">
+        <div class="stat-cell">
+          <div class="stat-num"><em>1.2</em><sup>M</sup></div>
+          <div class="stat-label">Cards issued in market</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num"><em>600</em><sup>K</sup></div>
+          <div class="stat-label">Active cardholders today</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num"><em>3</em></div>
+          <div class="stat-label">Separate systems a cardholder had to cross</div>
+        </div>
+        <div class="stat-cell">
+          <div class="stat-num"><em>20</em></div>
+          <div class="stat-label">Usability sessions on the working prototype</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       02 · THE PROBLEM  (from credit-card, as-is)
+  ══════════════════════════════════════════════════ -->
+  <section class="block alt" data-screen-label="02 The Problem">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">02</span> The Problem</div>
+      <h2 class="section-title reveal">Three systems, three logins, <em>two dead ends.</em></h2>
+      <p class="section-lede reveal">I mapped the existing journey end to end before drawing a single screen. What came back wasn't a slow flow — it was a flow that stopped. Two of the most common things a cardholder wants to do could not be finished online at all.</p>
+
+      <div class="route reveal">
+        <div class="route-legend">
+          <span class="rl-item"><span class="rl-swatch" style="background:#fff"></span> Works as expected</span>
+          <span class="rl-item"><span class="rl-swatch" style="background:var(--danger-soft)"></span> Friction — extra login or step</span>
+          <span class="rl-item"><span class="rl-swatch" style="background:var(--danger)"></span> Dead end — cannot finish digitally</span>
+        </div>
+        <p class="route-hint">Scroll the map sideways →</p>
+        <div class="route-body">
+          <div class="route-anchor">
+            <span class="ra-label">Entry point</span>
+            <h4>Avenue Mart home</h4>
+          </div>
+          <div class="route-rows">
+            <div class="route-row">
+              <div class="node">
+                <span class="node-flag">Apply</span>
+                <h5>Apply for the card</h5>
+                <p>Starts on the retail site, finishes on the bank's.</p>
+              </div>
+              <div class="arrow"><span>›</span></div>
+              <div class="node friction">
+                <span class="node-flag">Friction</span>
+                <h5>Create a second profile</h5>
+                <p>A new username and password, separate from the shopping account.</p>
+              </div>
+              <div class="arrow"><span>›</span></div>
+              <div class="node friction">
+                <span class="node-flag">Friction</span>
+                <h5>Temporary shopping pass</h5>
+                <p>Unreachable without signing in to the rewards site first.</p>
+              </div>
+            </div>
+            <div class="route-row">
+              <div class="node friction">
+                <span class="node-flag">Friction</span>
+                <h5>Rewards site</h5>
+                <p>A third destination, with its own credentials, to manage the card.</p>
+              </div>
+              <div class="arrow"><span>›</span></div>
+              <div class="node">
+                <span class="node-flag">Servicing</span>
+                <h5>Check balance &amp; credit</h5>
+                <p>Visible — but only after the detour.</p>
+              </div>
+              <div class="arrow blocked"><span>✕</span></div>
+              <div class="node dead">
+                <span class="node-flag">Dead end</span>
+                <h5>Pay the bill</h5>
+                <p>Not possible here. Pay at a branch or through a separate banking app.</p>
+              </div>
+            </div>
+            <div class="route-row">
+              <div class="node">
+                <span class="node-flag">Retention</span>
+                <h5>Set up autopay</h5>
+                <p>The one setting that prevents missed payments.</p>
+              </div>
+              <div class="arrow blocked"><span>✕</span></div>
+              <div class="node dead">
+                <span class="node-flag">Dead end</span>
+                <h5>Print, sign, visit a branch</h5>
+                <p>A paper mandate, signed in person, to switch on an automatic payment.</p>
+              </div>
+              <div class="arrow" style="visibility:hidden"><span>›</span></div>
+              <div class="node" style="visibility:hidden"><h5>&nbsp;</h5></div>
+            </div>
+          </div>
+        </div>
+        <p class="route-caption">Meanwhile, on the retail side, the card was invisible: <strong>no mention of the 3% reward on product pages, no financing offer at checkout</strong>. The two halves of the business were sitting next to each other and never speaking.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       03 · EXISTING EXPERIENCE  (from wrmc, as-is, icons replacing emojis)
+  ══════════════════════════════════════════════════ -->
+  <section class="block" data-screen-label="03 Existing Experience">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">03</span> The Existing Experience</div>
+      <h2 class="section-title reveal">Three systems.<br/><em>Zero coherence.</em></h2>
+      <p class="section-lede reveal">Not broken — just scattered across three surfaces with three logins that never talk to each other.</p>
+
+      <div class="friction-grid reveal">
+        <div class="fcard f1">
+          <div class="fcard-ico">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="7" rx="1.5"/><rect x="14" y="4" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+          </div>
+          <span class="fcard-num">Challenge 01</span>
+          <div class="fcard-title">Fragmented onboarding</div>
+          <div class="fcard-desc">Customers hop across systems with repeated identity checks. Every hop loses people before the card is ever activated.</div>
+          <span class="fcard-tag">Drop-off before activation</span>
+        </div>
+        <div class="fcard f2">
+          <div class="fcard-ico">
+            <svg viewBox="0 0 24 24"><path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="2.6"/><path d="M4 20L20 4"/></svg>
+          </div>
+          <span class="fcard-num">Challenge 02</span>
+          <div class="fcard-title">Invisible basics</div>
+          <div class="fcard-desc">Balance, rewards, and due dates live behind a separate login — so simple questions become support calls.</div>
+          <span class="fcard-tag">High support volume</span>
+        </div>
+        <div class="fcard f3">
+          <div class="fcard-ico">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <span class="fcard-num">Challenge 03</span>
+          <div class="fcard-title">No self-service</div>
+          <div class="fcard-desc">Setting up auto-pay once meant printing a form and visiting a branch. No reminders, no safety nets.</div>
+          <span class="fcard-tag">Missed actions &amp; frustration</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       04 · TARGETS  (from credit-card, as-is)
+  ══════════════════════════════════════════════════ -->
+  <section class="block alt" data-screen-label="04 Targets">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">04</span> Targets</div>
+      <h2 class="section-title reveal">Four numbers the design had to move.</h2>
+      <p class="section-lede reveal">Agreed with product and finance before design started, so every later decision had something to be measured against rather than argued about.</p>
+
+      <div class="goal-grid">
+        <div class="goal reveal">
+          <div class="goal-head"><h4>Activation</h4><span class="goal-horizon">1–2 years</span></div>
+          <p>Fix onboarding and the first-use moment so approved cards actually get used.</p>
+          <div class="goal-move">
+            <span class="gm-val from">50%</span>
+            <span class="gm-arrow">→</span>
+            <span class="gm-val to">70%</span>
+          </div>
+          <div class="gm-track"><div class="gm-fill" data-w="70"></div></div>
+          <div class="goal-foot">Activation rate</div>
+        </div>
+        <div class="goal reveal">
+          <div class="goal-head"><h4>Churn</h4><span class="goal-horizon">3–4 years</span></div>
+          <p>Close the servicing and visibility gaps that give people a reason to walk away.</p>
+          <div class="goal-move">
+            <span class="gm-val from">33.5%</span>
+            <span class="gm-arrow">→</span>
+            <span class="gm-val to">24%</span>
+          </div>
+          <div class="gm-track"><div class="gm-fill down" data-w="72"></div></div>
+          <div class="goal-foot">Annual churn</div>
+        </div>
+        <div class="goal reveal">
+          <div class="goal-head"><h4>Retail-linked usage</h4><span class="goal-horizon">Rolling</span></div>
+          <p>Grow purchase-active accounts by tying rewards and financing to real shopping moments.</p>
+          <div class="goal-move">
+            <span class="gm-val from">800K</span>
+            <span class="gm-arrow">→</span>
+            <span class="gm-val to">1M</span>
+          </div>
+          <div class="gm-track"><div class="gm-fill" data-w="80"></div></div>
+          <div class="goal-foot">Purchase-active accounts · 30-day</div>
+        </div>
+        <div class="goal reveal">
+          <div class="goal-head"><h4>Cost to serve</h4><span class="goal-horizon">Ongoing</span></div>
+          <p>Shift high-frequency questions — balance, rewards, statements — from the call centre to the screen.</p>
+          <div class="goal-move">
+            <span class="gm-val from">Call</span>
+            <span class="gm-arrow">→</span>
+            <span class="gm-val to">Self-serve</span>
+          </div>
+          <div class="gm-track"><div class="gm-fill down" data-w="64"></div></div>
+          <div class="goal-foot">Top three call reasons, answered on screen</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       05 · THE SYSTEMS DECISION  (from credit-card, heading changed)
+  ══════════════════════════════════════════════════ -->
+  <section class="block" data-screen-label="05 Systems Decision">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">05</span> The Systems Decision</div>
+      <h2 class="section-title reveal">Avenue Mart owns the feel. <em>Fairstone owns the bank.</em></h2>
+      <p class="section-lede reveal">The tempting answer was to rebuild everything natively. The honest answer was that regulated banking workflows belong to the issuer — and pretending otherwise would have added a year. So we drew a line, and wrote down the rule for where it falls.</p>
+
+      <div class="split-grid">
+        <div class="split-card ours reveal">
+          <span class="split-tag">Native · Avenue Mart</span>
+          <h3>Everything a customer touches weekly</h3>
+          <p>High-frequency, retail-connected moments live in our interface — where we control the experience, the analytics, and the link back to shopping.</p>
+          <div class="split-list">
+            <span>Hub landing</span><span>Balances</span><span>Rewards</span><span>Payments</span><span>Transactions</span><span>Activation</span><span>Notifications</span>
+          </div>
+        </div>
+        <div class="split-card theirs reveal">
+          <span class="split-tag">Embedded · Issuing bank</span>
+          <h3>Everything a regulator touches</h3>
+          <p>Sensitive and regulated workflows stay inside the issuer's secure webview, reached silently through single sign-on so it never feels like leaving.</p>
+          <div class="split-list">
+            <span>Application</span><span>Statements</span><span>Autopay mandate</span><span>Lost / stolen</span><span>Credit line increase</span><span>Authorised users</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rules reveal">
+        <div class="rule">
+          <p class="r-if">If it <b>drives retail engagement</b> or cross-sell</p>
+          <span class="r-then ours">→ Our UI</span>
+        </div>
+        <div class="rule">
+          <p class="r-if">If it's a <b>high-frequency</b> customer task</p>
+          <span class="r-then ours">→ Our UI</span>
+        </div>
+        <div class="rule">
+          <p class="r-if">If it's a <b>regulated banking</b> workflow</p>
+          <span class="r-then theirs">→ Issuer webview</span>
+        </div>
+        <div class="rule">
+          <p class="r-if">If it handles <b>sensitive banking data</b></p>
+          <span class="r-then theirs">→ Issuer webview</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       06 · PHASED DELIVERY  (from wrmc roadmap, as-is)
+  ══════════════════════════════════════════════════ -->
+  <section class="block alt" data-screen-label="06 Phased Delivery">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">06</span> Phased Delivery</div>
+      <h2 class="section-title reveal">Ship value fast.<br/><em>Grow the platform under it.</em></h2>
+      <p class="section-lede reveal">Four phases, each shipping something real. Phase 1 was live and user-tested within the engagement.</p>
+
+      <div class="roadmap reveal">
+        <div class="rm-col active">
+          <span class="rm-badge">Shipped</span>
+          <div class="rm-num">01</div>
+          <div class="rm-title">Rewards Management</div>
+          <ul class="rm-items"><li>Rewards on home</li><li>Earn &amp; redeem history</li><li>Pending rewards</li></ul>
+        </div>
+        <div class="rm-col">
+          <span class="rm-badge">Next</span>
+          <div class="rm-num">02</div>
+          <div class="rm-title">Card Management</div>
+          <ul class="rm-items"><li>Balance &amp; due date</li><li>Bill payment</li><li>Freeze / lost &amp; stolen</li></ul>
+        </div>
+        <div class="rm-col">
+          <span class="rm-badge">Phase 3</span>
+          <div class="rm-num">03</div>
+          <div class="rm-title">Apply for Card</div>
+          <ul class="rm-items"><li>Inline application</li><li>Temporary shopping pass</li><li>Activation</li></ul>
+        </div>
+        <div class="rm-col">
+          <span class="rm-badge">Phase 4</span>
+          <div class="rm-num">04</div>
+          <div class="rm-title">Retention &amp; Hub</div>
+          <ul class="rm-items"><li>Auto-pay &amp; paperless</li><li>BNPL · insurance</li><li>Cross-product hub</li></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       07 · DESIGN OUTCOME  (remittance-style placeholder screens + 4 design decisions from wrmc)
+  ══════════════════════════════════════════════════ -->
+  <section class="block" data-screen-label="07 Design Outcome">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">07</span> The Design Outcome</div>
+      <h2 class="section-title reveal">One login. <em>One screen.</em> Everything the card can do.</h2>
+      <p class="section-lede reveal">The three destinations collapse into one place inside the shopping app. What you owe, when it's due, what you've earned, and the next action — all above the fold, all in the same session you were already in.</p>
+
+      <!-- Placeholder screens: remittance style, 3-col -->
+      <div class="screens-grid">
+        <div class="screen-cell reveal">
+          <div class="phone-frame" role="img" aria-label="Card Home screen placeholder">
+            <div class="phone-screen">
+              <span class="phone-placeholder">Screen 01</span>
+            </div>
+          </div>
+          <div class="step-num">Screen 01</div>
+          <h4>Card Home</h4>
+          <p>Balance · due date · rewards — all above the fold.</p>
+        </div>
+        <div class="screen-cell reveal">
+          <div class="phone-frame" role="img" aria-label="Bill Payment screen placeholder">
+            <div class="phone-screen">
+              <span class="phone-placeholder">Screen 02</span>
+            </div>
+          </div>
+          <div class="step-num">Screen 02</div>
+          <h4>Pay the Bill</h4>
+          <p>One screen, all payment options, no detour.</p>
+        </div>
+        <div class="screen-cell reveal">
+          <div class="phone-frame" role="img" aria-label="Reward Dollars screen placeholder">
+            <div class="phone-screen">
+              <span class="phone-placeholder">Screen 03</span>
+            </div>
+          </div>
+          <div class="step-num">Screen 03</div>
+          <h4>Reward Dollars</h4>
+          <p>Balance, pending, and history — no separate login required.</p>
+        </div>
+        <div class="screen-cell reveal">
+          <div class="phone-frame" role="img" aria-label="Transactions screen placeholder">
+            <div class="phone-screen">
+              <span class="phone-placeholder">Screen 04</span>
+            </div>
+          </div>
+          <div class="step-num">Screen 04</div>
+          <h4>Transactions</h4>
+          <p>Full activity log with earn amounts per purchase, filterable by date.</p>
+        </div>
+      </div>
+
+      <!-- 4 design decisions from wrmc "06 the design" section -->
+      <div class="design-decisions">
+        <div class="dec-item reveal">
+          <div class="dec-num">1</div>
+          <div>
+            <div class="dec-title">Balance first</div>
+            <div class="dec-desc">Statement balance is the largest thing on screen — due date and available credit sit right beneath it.</div>
+          </div>
+        </div>
+        <div class="dec-item reveal">
+          <div class="dec-num">2</div>
+          <div>
+            <div class="dec-title">One-tap pay</div>
+            <div class="dec-desc">"Pay now" lives on the card itself — never buried inside a menu or a second screen.</div>
+          </div>
+        </div>
+        <div class="dec-item reveal">
+          <div class="dec-num">3</div>
+          <div>
+            <div class="dec-title">Rewards on home</div>
+            <div class="dec-desc">Reward-dollar balance surfaces on the card screen, answering the top support question before it's asked.</div>
+          </div>
+        </div>
+        <div class="dec-item reveal">
+          <div class="dec-num">4</div>
+          <div>
+            <div class="dec-title">Activity, with earnings</div>
+            <div class="dec-desc">Each transaction shows what it earned back — reinforcing the value of paying with the Avenue Mart card.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       08 · WHAT USERS TOLD US  (from wrmc, icons replacing emojis, quote added at bottom)
+  ══════════════════════════════════════════════════ -->
+  <section class="block alt" data-screen-label="08 What Users Told Us">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">08</span> What Users Told Us</div>
+      <h2 class="section-title reveal">20 users.<br/><em>Real flows, real findings.</em></h2>
+      <p class="section-lede reveal">Remote, unmoderated, think-aloud — every journey tested on a working prototype. High marks, two clear gaps.</p>
+
+      <!-- 3-stat bar -->
+      <div class="test-bar reveal">
+        <div class="tb-cell">
+          <div class="tb-num">20</div>
+          <div class="tb-lbl">Remote unmoderated sessions</div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-num">7</div>
+          <div class="tb-lbl">Tasks tested end-to-end</div>
+        </div>
+        <div class="tb-cell">
+          <div class="tb-num">6.5<span style="font-size:0.55em;color:var(--ink-soft)">/7</span></div>
+          <div class="tb-lbl">Average experience rating across rated tasks</div>
+        </div>
+      </div>
+
+      <!-- Task table + summary side panel -->
+      <div class="val-top reveal">
+        <table class="perf-table">
+          <thead><tr><th style="width:42%">Task</th><th>Success</th><th>Rating /7</th></tr></thead>
+          <tbody>
+            <tr><td class="perf-name">Card activation</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:100%"></div></div><span class="perf-pct high">100%</span></div></td><td><span class="perf-score high">6.81</span></td></tr>
+            <tr><td class="perf-name">Bill payment</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:100%"></div></div><span class="perf-pct high">100%</span></div></td><td><span class="perf-score high">6.54</span></td></tr>
+            <tr><td class="perf-name">Manage card</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:91%"></div></div><span class="perf-pct high">91%</span></div></td><td><span class="perf-score high">6.73</span></td></tr>
+            <tr><td class="perf-name">Transactions &amp; statements</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:91%"></div></div><span class="perf-pct high">91%</span></div></td><td><span class="perf-score high">6.45</span></td></tr>
+            <tr><td class="perf-name">Apply for card</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill high" style="width:82%"></div></div><span class="perf-pct high">82%</span></div></td><td><span class="perf-score high">6.45</span></td></tr>
+            <tr><td class="perf-name">Discover the card</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill mid" style="width:73%"></div></div><span class="perf-pct mid">73%</span></div></td><td><span class="perf-score mid">5.84</span></td></tr>
+            <tr><td class="perf-name">Understand balances</td><td><div class="perf-bar-wrap"><div class="perf-bar"><div class="perf-fill mid" style="width:63%"></div></div><span class="perf-pct mid">63%</span></div></td><td><span style="color:var(--ink-soft);font-family:var(--font-mono);font-size:12px">—</span></td></tr>
+          </tbody>
+        </table>
+
+        <div class="val-summary">
+          <div class="val-sum-big">6.5<span style="font-size:.5em;color:var(--ink-soft)">/7</span></div>
+          <div class="val-sum-label">Average experience rating across all tested tasks — with the two gaps below the only things standing between good and excellent.</div>
+
+        </div>
+      </div>
+
+      <!-- Findings cards (icons, no emojis) -->
+      <div class="findings reveal">
+        <div class="finding win">
+          <div class="finding-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <div>
+            <div class="finding-verdict">Works well</div>
+            <div class="finding-title">Core tasks completed with ease</div>
+            <div class="finding-body">Application, activation, payment, rewards — all cleared without hesitation. The single-screen payment drew special praise.</div>
+            <div class="finding-next"><b>Next:</b> finalise &amp; ship current flows as designed.</div>
+          </div>
+        </div>
+        <div class="finding win">
+          <div class="finding-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <div>
+            <div class="finding-verdict">Mental model confirmed</div>
+            <div class="finding-title">Users expect Avenue Mart to own card tasks</div>
+            <div class="finding-body">They assumed everything lived in the Avenue Mart app, not a partner site — validating the Hub's core premise.</div>
+            <div class="finding-next"><b>Next:</b> keep core tasks native; hand off to Fairstone invisibly.</div>
+          </div>
+        </div>
+        <div class="finding gap">
+          <div class="finding-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          </div>
+          <div>
+            <div class="finding-verdict">Gap found</div>
+            <div class="finding-title">Discoverability: they looked elsewhere</div>
+            <div class="finding-body">Users expected the card &amp; rewards under Accounts, Wallet, or Savings — 27% missed it on first click.</div>
+            <div class="finding-next"><b>Next:</b> add entry points in Accounts, Wallet &amp; Savings.</div>
+          </div>
+        </div>
+        <div class="finding gap">
+          <div class="finding-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div>
+            <div class="finding-verdict">Gap found</div>
+            <div class="finding-title">"Total balance" confused users</div>
+            <div class="finding-body">It was read as the available credit limit — some risked paying the wrong amount, some lost trust.</div>
+            <div class="finding-next"><b>Next:</b> add an info icon &amp; reword with content partners.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pull quote from credit-card "09 Design Outcome" -->
+      <div class="pull-quote">
+        <blockquote>Nobody went looking for a credit card. They went looking for Account, and Wallet.</blockquote>
+        <cite>First-click test · 20 participants</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       09 · PROJECTED IMPACT  (from wrmc, heading + subheading changed)
+  ══════════════════════════════════════════════════ -->
+  <section class="block dark" data-screen-label="09 Projected Impact">
+    <div class="container">
+      <div class="section-eyebrow"><span class="num">09</span> Projected Impact</div>
+      <h2 class="section-title reveal">The experience<br/><em>is the business case.</em></h2>
+      <p class="section-lede reveal">The target is set. The design isn't live yet — these are the numbers the work is being held to.</p>
+
+      <div class="impact-grid reveal">
+        <div class="impact-card hl">
+          <div class="impact-num">$150M</div>
+          <div class="impact-label">Incremental retail spend driven by card usage</div>
+          <div class="impact-note-sm">5-year projection · +$39M gross profit</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">$14M</div>
+          <div class="impact-label">Saved annually in payment processing costs</div>
+          <div class="impact-note-sm">Each application adds ~$150 to store P&amp;L</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">$1,000+</div>
+          <div class="impact-label">More spend per cardholder, per year vs non-holders</div>
+          <div class="impact-note-sm">23× trips/year vs 9× for non-cardholders</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">70%</div>
+          <div class="impact-label">Activation target, up from ~50%</div>
+          <div class="impact-note-sm">1–2 year goal</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">24%</div>
+          <div class="impact-label">Churn target, down from 33.5%</div>
+          <div class="impact-note-sm">3–4 year goal</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-num">↓ calls</div>
+          <div class="impact-label">Balance &amp; rewards inquiries shift to self-serve</div>
+          <div class="impact-note-sm">Lower cost-to-serve per customer</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════════════════
+       OTHER PROJECTS + FOOTER  (from credit-card, as-is)
+  ══════════════════════════════════════════════════ -->
+  <section class="other-section" data-screen-label="10 Other Projects">
+    <div class="container">
+      <div class="other-head">
+        <div>
+          <h2 class="other-heading">Other Projects</h2>
+          <div class="other-heading-line"></div>
+        </div>
+        <a href="index.html#work" class="tag" style="text-decoration:none;">All case studies →</a>
+      </div>
+
+      <div class="other-grid">
+        <a class="cs-card" href="remittance.html" style="--cs-bg: #efe6f5;">
+          <div class="cs-image-wrap">
+            <div class="cs-image-placeholder"><span class="cs-placeholder-label">project screenshot</span></div>
+          </div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Remittance — money transfer</h3>
+            <p class="cs-subtitle">Sending money home.</p>
+            <div class="cs-tags">
+              <span class="cs-tag">Service Design</span>
+              <span class="cs-tag">User Research</span>
+              <span class="cs-tag">Mobile</span>
+            </div>
+          </div>
+        </a>
+
+        <a class="cs-card" href="waste-dashboard.html" style="--cs-bg: #e3f0e8;">
+          <div class="cs-image-wrap">
+            <div class="cs-image-placeholder"><span class="cs-placeholder-label">project screenshot</span></div>
+          </div>
+          <div class="cs-meta">
+            <h3 class="cs-title">Waste Management Dashboard</h3>
+            <p class="cs-subtitle">Making waste impossible to ignore.</p>
+            <div class="cs-tags">
+              <span class="cs-tag">Store Operations</span>
+              <span class="cs-tag">Data Visualization</span>
+              <span class="cs-tag">Dashboard Design</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer class="foot">
+    <div>© Rajarshi · Designed with care</div>
+    <div style="display:flex; gap:24px;">
+      <a href="mailto:rajarshidasgupt633@gmail.com">rajarshidasgupt633@gmail.com</a>
+      <a href="https://linkedin.com" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="index.html">Back to portfolio ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      // ── Reveal on scroll ──
+      const targets = document.querySelectorAll(
+        '.section-title, .section-lede, .stats-strip, .card-stage, .meta-grid, ' +
+        '.route, .friction-grid, .goal, .split-card, .rules, .roadmap, ' +
+        '.screen-cell, .dec-item, .test-bar, .perf-table, .val-top, ' +
+        '.findings, .pull-quote blockquote, .pull-quote cite, ' +
+        '.impact-grid, .cs-card'
+      );
+      targets.forEach(t => {
+        if (!t.classList.contains('reveal')) t.classList.add('reveal');
+      });
+      const io = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+      targets.forEach(t => io.observe(t));
+
+      // ── Animate goal meter fills ──
+      const bars = document.querySelectorAll('[data-w]');
+      const barObs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const el = e.target;
+            setTimeout(() => { el.style.width = el.dataset.w + '%'; }, 200);
+            barObs.unobserve(el);
+          }
+        });
+      }, { threshold: 0.4 });
+      bars.forEach(b => barObs.observe(b));
+    })();
+  </script>
+</body>
+</html>
