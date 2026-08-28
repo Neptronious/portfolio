@@ -298,14 +298,23 @@
       letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-mid);
     }
     .rl-swatch { width: 12px; height: 12px; border-radius: 3px; border: 1px solid var(--pill-border); }
-    .route-body { display: grid; grid-template-columns: 190px 1fr; gap: 30px; align-items: center; min-width: 880px; }
+    /*
+      Diagram geometry (all measured from left edge of .route-rows box):
+        - .route-rows has padding-left: 0 — nodes start at x=0
+        - vertical rail (::before) sits at x = -24px (outside the box, in the gap)
+        - horizontal branches (route-row::before) run from x = -24px to x = 0
+        - anchor::after bridge runs from right edge of anchor to x = -24px of .route-rows
+          gap between columns = 24px → right: -24px; width: 24px on anchor::after
+    */
+    .route-body { display: grid; grid-template-columns: 190px 1fr; gap: 24px; align-items: center; min-width: 880px; }
     .route-anchor {
       background: var(--accent); color: #fff; border-radius: 16px;
       padding: 22px 20px; text-align: center; position: relative;
     }
+    /* Bridge: spans the 24px gap to reach the vertical rail at x=−24 of .route-rows */
     .route-anchor::after {
-      content: ''; position: absolute; right: -30px; top: 50%;
-      width: 30px; height: 2px;
+      content: ''; position: absolute; right: -24px; top: 50%;
+      width: 24px; height: 2px;
       background: repeating-linear-gradient(90deg, var(--ink-soft) 0 5px, transparent 5px 10px);
       opacity: 0.5;
     }
@@ -314,15 +323,18 @@
       text-transform: uppercase; opacity: 0.72; margin-bottom: 8px; display: block;
     }
     .route-anchor h4 { font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; }
-    .route-rows { display: flex; flex-direction: column; gap: 22px; position: relative; padding-left: 26px; }
+    /* Nodes start at x=0; no left padding needed — rail lives in the gap */
+    .route-rows { display: flex; flex-direction: column; gap: 22px; position: relative; padding-left: 0; }
+    /* Vertical rail: at x = −24px (the left edge of the gap) */
     .route-rows::before {
-      content: ''; position: absolute; left: -30px; top: 56px; bottom: 56px; width: 2px;
+      content: ''; position: absolute; left: -24px; top: 0; bottom: 0; width: 2px;
       background: repeating-linear-gradient(180deg, var(--ink-soft) 0 5px, transparent 5px 10px);
       opacity: 0.5;
     }
     .route-row { display: flex; align-items: stretch; gap: 0; position: relative; }
+    /* Horizontal branch: from rail (x = −24px) to left edge of node (x = 0) */
     .route-row::before {
-      content: ''; position: absolute; left: -30px; top: 50%; width: 30px; height: 2px;
+      content: ''; position: absolute; left: -24px; top: 50%; width: 24px; height: 2px;
       background: repeating-linear-gradient(90deg, var(--ink-soft) 0 5px, transparent 5px 10px);
       opacity: 0.5;
     }
@@ -360,9 +372,15 @@
     }
     .route-hint { display: none; margin-bottom: 16px; font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
     .route-caption {
-      margin-top: 30px; padding-top: 22px; border-top: 1px dashed var(--pill-border);
-      font-size: 14px; color: var(--ink-mid); max-width: 78ch;
+      margin-top: 30px; padding-top: 22px;
+      font-size: 14px; color: var(--ink-mid);
+      position: relative;
     }
+    .route-caption::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px;
+      background: var(--pill-border);
+    }
+    .route-caption-inner { max-width: 78ch; }
     .route-caption strong { color: var(--ink); font-weight: 600; }
 
     /* ── FRICTION CARDS (existing experience, from wrmc) ── */
@@ -389,6 +407,20 @@
       font-family: var(--font-mono); font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
       color: var(--danger); text-transform: uppercase;
     }
+
+    /* ── CONTEXT NOTE (below friction cards) ── */
+    .context-note { margin-top: 32px; }
+    .context-note-inner {
+      display: flex; gap: 18px; align-items: flex-start;
+      background: var(--bg2); border: 1px solid var(--pill-border);
+      border-left: 3px solid var(--accent); border-radius: 14px;
+      padding: 22px 26px;
+    }
+    .context-note-marker {
+      font-family: var(--font-mono); font-size: 18px; color: var(--accent);
+      flex-shrink: 0; line-height: 1.6; margin-top: -2px;
+    }
+    .context-note-inner p { font-size: 14px; color: var(--ink-mid); line-height: 1.65; }
 
     /* ── GOAL METERS (Targets) ── */
     .goal-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 26px; }
@@ -428,6 +460,12 @@
     .rule .r-then { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 7px; }
     .rule .r-then.ours { color: var(--accent); }
     .rule .r-then.theirs { color: var(--navy); }
+
+    /* ── SYSTEMS FOOTNOTE ── */
+    .systems-footnote {
+      margin-top: 28px; font-size: 13px; color: var(--ink-soft); line-height: 1.6;
+      border-top: 1px solid var(--pill-border); padding-top: 18px;
+    }
 
     /* ── ROADMAP (wrmc style) ── */
     .roadmap { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--pill-border); border-radius: 18px; overflow: hidden; }
@@ -566,7 +604,7 @@
     section.dark .section-title { color: #fff; }
     section.dark .section-title em { color: var(--spark); }
     section.dark .section-lede { color: oklch(75% 0.02 245); }
-    .impact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .impact-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
     .impact-card { background: oklch(100% 0 0 / 0.06); border: 1px solid oklch(100% 0 0 / 0.13); border-radius: 16px; padding: 32px 26px 34px; }
     .impact-card.hl { background: oklch(100% 0 0 / 0.1); border-color: var(--spark); }
     .impact-num { font-family: var(--font-display); font-size: clamp(34px, 4vw, 50px); font-weight: 800; letter-spacing: -0.04em; color: var(--spark); line-height: 1; margin-bottom: 8px; }
@@ -631,7 +669,7 @@
       .goal-grid, .split-grid, .other-grid { grid-template-columns: 1fr; }
       .friction-grid, .screens-grid, .roadmap, .findings { grid-template-columns: 1fr; }
       .rm-col + .rm-col { border-left: none; border-top: 1px solid var(--pill-border); }
-      .impact-grid { grid-template-columns: 1fr; }
+      .impact-grid { grid-template-columns: 1fr 1fr; }
       .test-bar { grid-template-columns: 1fr; }
       .tb-cell { border-right: none; border-bottom: 1px solid var(--pill-border); }
       .tb-cell:last-child { border-bottom: none; }
@@ -684,8 +722,7 @@
        01 · HERO + AT A GLANCE  (from credit-card)
   ══════════════════════════════════════════════════ -->
   <section class="project-hero" data-screen-label="00 Hero">
-    <div class="container">
-      <div class="hero-eyebrow"><span class="dot"></span> Case study · Global Design</div>
+    <div class="container-wide">
       <h1 class="project-title">One login. <em>Every dollar.</em></h1>
       <p class="hero-sub">Avenue Mart's rewards card is a much-loved product — cardholders earn at one of the best rates in retail. But it was trapped behind three logins. We pulled applying, activating, paying, and redeeming out of scattered systems and into the retail app people already open every week.</p>
 
@@ -711,11 +748,11 @@
         </div>
         <div class="meta-item">
           <span class="meta-label">Timeline</span>
-          <span class="meta-value">7 months · 2025–26</span>
+          <span class="meta-value">6 months · 2025–26</span>
         </div>
         <div class="meta-item">
-          <span class="meta-label">Focus Area</span>
-          <span class="meta-value">IA · End-to-end journeys · Usability testing</span>
+          <span class="meta-label">Domain</span>
+          <span class="meta-value">Fintech</span>
         </div>
       </div>
 
@@ -725,7 +762,7 @@
         <div class="stage-copy">
           <div class="stage-kicker">Rewards redeemed to date</div>
           <div class="stage-fig">$600M<sup>+</sup></div>
-          <p class="stage-note">Every dollar of it spent back inside the store. The card works. Getting to it didn't.</p>
+          <p class="stage-note">Every dollar of it spent back inside the store. The card works. The experience didn't.</p>
         </div>
         <div class="card-cluster" aria-hidden="true">
           <div class="credit-card black">
@@ -783,8 +820,8 @@
           <div class="stat-label">Separate systems a cardholder had to cross</div>
         </div>
         <div class="stat-cell">
-          <div class="stat-num"><em>20</em></div>
-          <div class="stat-label">Usability sessions on the working prototype</div>
+          <div class="stat-num"><em>$1K</em><sup>+</sup></div>
+          <div class="stat-label">More spend per year by cardholders vs non-cardholders</div>
         </div>
       </div>
     </div>
@@ -797,7 +834,7 @@
     <div class="container-wide">
       <div class="section-eyebrow"><span class="num">02</span> The Problem</div>
       <h2 class="section-title reveal">Three systems, three logins, <em>two dead ends.</em></h2>
-      <p class="section-lede reveal">I mapped the existing journey end to end before drawing a single screen. What came back wasn't a slow flow — it was a flow that stopped. Two of the most common things a cardholder wants to do could not be finished online at all.</p>
+      <p class="section-lede reveal">We mapped the existing journey end to end before drawing a single screen. What came back wasn't a slow flow — it was a flow that stopped. Two of the most common things a cardholder wants to do could not be finished online at all.</p>
 
       <div class="route reveal">
         <div class="route-legend">
@@ -824,12 +861,8 @@
                 <h5>Create a second profile</h5>
                 <p>A new username and password, separate from the shopping account.</p>
               </div>
-              <div class="arrow"><span>›</span></div>
-              <div class="node friction">
-                <span class="node-flag">Friction</span>
-                <h5>Temporary shopping pass</h5>
-                <p>Unreachable without signing in to the rewards site first.</p>
-              </div>
+              <div class="arrow" style="visibility:hidden"><span>›</span></div>
+              <div class="node" style="visibility:hidden"><h5>&nbsp;</h5></div>
             </div>
             <div class="route-row">
               <div class="node friction">
@@ -867,7 +900,7 @@
             </div>
           </div>
         </div>
-        <p class="route-caption">Meanwhile, on the retail side, the card was invisible: <strong>no mention of the 3% reward on product pages, no financing offer at checkout</strong>. The two halves of the business were sitting next to each other and never speaking.</p>
+        <p class="route-caption"><span class="route-caption-inner">Meanwhile, on the retail side, the card was invisible: <strong>no mention of the 3% reward on product pages, no financing offer at checkout</strong>. The two halves of the business were sitting next to each other and never speaking.</span></p>
       </div>
     </div>
   </section>
@@ -876,7 +909,7 @@
        03 · EXISTING EXPERIENCE  (from wrmc, as-is, icons replacing emojis)
   ══════════════════════════════════════════════════ -->
   <section class="block" data-screen-label="03 Existing Experience">
-    <div class="container">
+    <div class="container-wide">
       <div class="section-eyebrow"><span class="num">03</span> The Existing Experience</div>
       <h2 class="section-title reveal">Three systems.<br/><em>Zero coherence.</em></h2>
       <p class="section-lede reveal">Not broken — just scattered across three surfaces with three logins that never talk to each other.</p>
@@ -906,8 +939,15 @@
           </div>
           <span class="fcard-num">Challenge 03</span>
           <div class="fcard-title">No self-service</div>
-          <div class="fcard-desc">Setting up auto-pay once meant printing a form and visiting a branch. No reminders, no safety nets.</div>
+          <div class="fcard-desc">Setting up auto-pay once meant printing a form and visiting a branch. No reminders, no safety nets. There was no option to make a bill payment online at all.</div>
           <span class="fcard-tag">Missed actions &amp; frustration</span>
+        </div>
+      </div>
+
+      <div class="context-note reveal">
+        <div class="context-note-inner">
+          <span class="context-note-marker">↳</span>
+          <p>The issuing bank had plans to build a fully operational credit card management application — but without a timeline or a roadmap, it remained firmly in the future. Customers couldn't wait that long. Rather than hold on for an uncertain delivery, we made the call to build it ourselves: bringing the card experience into the Avenue Mart app now, for the people who needed it today.</p>
         </div>
       </div>
     </div>
@@ -917,54 +957,54 @@
        04 · TARGETS  (from credit-card, as-is)
   ══════════════════════════════════════════════════ -->
   <section class="block alt" data-screen-label="04 Targets">
-    <div class="container">
+    <div class="container-wide">
       <div class="section-eyebrow"><span class="num">04</span> Targets</div>
       <h2 class="section-title reveal">Four numbers the design had to move.</h2>
-      <p class="section-lede reveal">Agreed with product and finance before design started, so every later decision had something to be measured against rather than argued about.</p>
+      <p class="section-lede reveal">Agreed with product and finance before design starting, so every decision could be measured.</p>
 
       <div class="goal-grid">
         <div class="goal reveal">
-          <div class="goal-head"><h4>Activation</h4><span class="goal-horizon">1–2 years</span></div>
+          <div class="goal-head"><h4>Activation</h4></div>
           <p>Fix onboarding and the first-use moment so approved cards actually get used.</p>
           <div class="goal-move">
             <span class="gm-val from">50%</span>
             <span class="gm-arrow">→</span>
             <span class="gm-val to">70%</span>
           </div>
-          <div class="gm-track"><div class="gm-fill" data-w="70"></div></div>
+          <div class="gm-track" style="display:none"><div class="gm-fill" data-w="70"></div></div>
           <div class="goal-foot">Activation rate</div>
         </div>
         <div class="goal reveal">
-          <div class="goal-head"><h4>Churn</h4><span class="goal-horizon">3–4 years</span></div>
+          <div class="goal-head"><h4>Churn</h4></div>
           <p>Close the servicing and visibility gaps that give people a reason to walk away.</p>
           <div class="goal-move">
             <span class="gm-val from">33.5%</span>
             <span class="gm-arrow">→</span>
             <span class="gm-val to">24%</span>
           </div>
-          <div class="gm-track"><div class="gm-fill down" data-w="72"></div></div>
+          <div class="gm-track" style="display:none"><div class="gm-fill down" data-w="72"></div></div>
           <div class="goal-foot">Annual churn</div>
         </div>
         <div class="goal reveal">
-          <div class="goal-head"><h4>Retail-linked usage</h4><span class="goal-horizon">Rolling</span></div>
+          <div class="goal-head"><h4>Retail-linked usage</h4></div>
           <p>Grow purchase-active accounts by tying rewards and financing to real shopping moments.</p>
           <div class="goal-move">
             <span class="gm-val from">800K</span>
             <span class="gm-arrow">→</span>
             <span class="gm-val to">1M</span>
           </div>
-          <div class="gm-track"><div class="gm-fill" data-w="80"></div></div>
+          <div class="gm-track" style="display:none"><div class="gm-fill" data-w="80"></div></div>
           <div class="goal-foot">Purchase-active accounts · 30-day</div>
         </div>
         <div class="goal reveal">
-          <div class="goal-head"><h4>Cost to serve</h4><span class="goal-horizon">Ongoing</span></div>
+          <div class="goal-head"><h4>Cost to serve</h4></div>
           <p>Shift high-frequency questions — balance, rewards, statements — from the call centre to the screen.</p>
           <div class="goal-move">
             <span class="gm-val from">Call</span>
             <span class="gm-arrow">→</span>
             <span class="gm-val to">Self-serve</span>
           </div>
-          <div class="gm-track"><div class="gm-fill down" data-w="64"></div></div>
+          <div class="gm-track" style="display:none"><div class="gm-fill down" data-w="64"></div></div>
           <div class="goal-foot">Top three call reasons, answered on screen</div>
         </div>
       </div>
@@ -975,10 +1015,10 @@
        05 · THE SYSTEMS DECISION  (from credit-card, heading changed)
   ══════════════════════════════════════════════════ -->
   <section class="block" data-screen-label="05 Systems Decision">
-    <div class="container">
+    <div class="container-wide">
       <div class="section-eyebrow"><span class="num">05</span> The Systems Decision</div>
       <h2 class="section-title reveal">Avenue Mart owns the feel. <em>Fairstone owns the bank.</em></h2>
-      <p class="section-lede reveal">The tempting answer was to rebuild everything natively. The honest answer was that regulated banking workflows belong to the issuer — and pretending otherwise would have added a year. So we drew a line, and wrote down the rule for where it falls.</p>
+      <p class="section-lede reveal" style="margin-bottom: 36px;">Rebuilding regulated banking flows natively would have added a year of legal and compliance work. Instead, we drew a clear line: high-frequency customer moments live in our UI, while regulated workflows run inside the issuing bank's secure webview — invisible to the user, but handled correctly.</p>
 
       <div class="split-grid">
         <div class="split-card ours reveal">
@@ -986,7 +1026,7 @@
           <h3>Everything a customer touches weekly</h3>
           <p>High-frequency, retail-connected moments live in our interface — where we control the experience, the analytics, and the link back to shopping.</p>
           <div class="split-list">
-            <span>Hub landing</span><span>Balances</span><span>Rewards</span><span>Payments</span><span>Transactions</span><span>Activation</span><span>Notifications</span>
+            <span>Dashboard</span><span>Balances</span><span>Rewards</span><span>Payments</span><span>Transactions</span>
           </div>
         </div>
         <div class="split-card theirs reveal">
@@ -994,7 +1034,7 @@
           <h3>Everything a regulator touches</h3>
           <p>Sensitive and regulated workflows stay inside the issuer's secure webview, reached silently through single sign-on so it never feels like leaving.</p>
           <div class="split-list">
-            <span>Application</span><span>Statements</span><span>Autopay mandate</span><span>Lost / stolen</span><span>Credit line increase</span><span>Authorised users</span>
+            <span>Application</span><span>Activation</span><span>Autopay</span><span>Report lost card</span><span>Credit line increase</span><span>Other manage card actions</span>
           </div>
         </div>
       </div>
@@ -1017,13 +1057,15 @@
           <span class="r-then theirs">→ Issuer webview</span>
         </div>
       </div>
+
+      <p class="systems-footnote reveal">* Payments — while a regulated action — are surfaced natively in our UI. The issuing bank had no digital payment flow of their own, so this was one case where building it ourselves was the only path forward.</p>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       06 · PHASED DELIVERY  (from wrmc roadmap, as-is)
+       06 · PHASED DELIVERY  (hidden)
   ══════════════════════════════════════════════════ -->
-  <section class="block alt" data-screen-label="06 Phased Delivery">
+  <section class="block alt" data-screen-label="06 Phased Delivery" style="display:none">
     <div class="container-wide">
       <div class="section-eyebrow"><span class="num">06</span> Phased Delivery</div>
       <h2 class="section-title reveal">Ship value fast.<br/><em>Grow the platform under it.</em></h2>
@@ -1059,13 +1101,13 @@
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       07 · DESIGN OUTCOME  (remittance-style placeholder screens + 4 design decisions from wrmc)
+       06 · DESIGN OUTCOME
   ══════════════════════════════════════════════════ -->
-  <section class="block" data-screen-label="07 Design Outcome">
+  <section class="block alt" data-screen-label="06 Design Outcome">
     <div class="container-wide">
-      <div class="section-eyebrow"><span class="num">07</span> The Design Outcome</div>
+      <div class="section-eyebrow"><span class="num">06</span> The Design Outcome</div>
       <h2 class="section-title reveal">One login. <em>One screen.</em> Everything the card can do.</h2>
-      <p class="section-lede reveal">The three destinations collapse into one place inside the shopping app. What you owe, when it's due, what you've earned, and the next action — all above the fold, all in the same session you were already in.</p>
+      <p class="section-lede reveal">The three destinations collapse into one place inside the shopping app. What you owe, when it's due, what you've earned, and the next action.</p>
 
       <!-- Placeholder screens: remittance style, 3-col -->
       <div class="screens-grid">
@@ -1097,7 +1139,7 @@
           </div>
           <div class="step-num">Screen 03</div>
           <h4>Reward Dollars</h4>
-          <p>Balance, pending, and history — no separate login required.</p>
+          <p>Balance, pending, and history — in one place.</p>
         </div>
         <div class="screen-cell reveal">
           <div class="phone-frame" role="img" aria-label="Transactions screen placeholder">
@@ -1107,7 +1149,7 @@
           </div>
           <div class="step-num">Screen 04</div>
           <h4>Transactions</h4>
-          <p>Full activity log with earn amounts per purchase, filterable by date.</p>
+          <p>Full activity log with earn amounts per purchase.</p>
         </div>
       </div>
 
@@ -1131,7 +1173,7 @@
           <div class="dec-num">3</div>
           <div>
             <div class="dec-title">Rewards on home</div>
-            <div class="dec-desc">Reward-dollar balance surfaces on the card screen, answering the top support question before it's asked.</div>
+            <div class="dec-desc">Reward-dollar balance surfaces on the card screen. Answering the one thing all customers want to know.</div>
           </div>
         </div>
         <div class="dec-item reveal">
@@ -1146,13 +1188,13 @@
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       08 · WHAT USERS TOLD US  (from wrmc, icons replacing emojis, quote added at bottom)
+       07 · WHAT USERS TOLD US
   ══════════════════════════════════════════════════ -->
-  <section class="block alt" data-screen-label="08 What Users Told Us">
-    <div class="container">
-      <div class="section-eyebrow"><span class="num">08</span> What Users Told Us</div>
+  <section class="block" data-screen-label="07 What Users Told Us">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">07</span> What Users Told Us</div>
       <h2 class="section-title reveal">20 users.<br/><em>Real flows, real findings.</em></h2>
-      <p class="section-lede reveal">Remote, unmoderated, think-aloud — every journey tested on a working prototype. High marks, two clear gaps.</p>
+      <p class="section-lede reveal">Remote, unmoderated, think-aloud tests — every journey tested on a working prototype.</p>
 
       <!-- 3-stat bar -->
       <div class="test-bar reveal">
@@ -1187,7 +1229,7 @@
 
         <div class="val-summary">
           <div class="val-sum-big">6.5<span style="font-size:.5em;color:var(--ink-soft)">/7</span></div>
-          <div class="val-sum-label">Average experience rating across all tested tasks — with the two gaps below the only things standing between good and excellent.</div>
+          <div class="val-sum-label">Average experience rating across all tested tasks, with the two gaps below, the only things standing between good and excellent.</div>
 
         </div>
       </div>
@@ -1202,7 +1244,6 @@
             <div class="finding-verdict">Works well</div>
             <div class="finding-title">Core tasks completed with ease</div>
             <div class="finding-body">Application, activation, payment, rewards — all cleared without hesitation. The single-screen payment drew special praise.</div>
-            <div class="finding-next"><b>Next:</b> finalise &amp; ship current flows as designed.</div>
           </div>
         </div>
         <div class="finding win">
@@ -1211,9 +1252,8 @@
           </div>
           <div>
             <div class="finding-verdict">Mental model confirmed</div>
-            <div class="finding-title">Users expect Avenue Mart to own card tasks</div>
-            <div class="finding-body">They assumed everything lived in the Avenue Mart app, not a partner site — validating the Hub's core premise.</div>
-            <div class="finding-next"><b>Next:</b> keep core tasks native; hand off to Fairstone invisibly.</div>
+            <div class="finding-title">Users expected core actions to live in the Avenue Mart app.</div>
+            <div class="finding-body">Providing the information and tasks they regularly look for — like rewards, payment, and transactions — where they want it.</div>
           </div>
         </div>
         <div class="finding gap">
@@ -1222,7 +1262,7 @@
           </div>
           <div>
             <div class="finding-verdict">Gap found</div>
-            <div class="finding-title">Discoverability: they looked elsewhere</div>
+            <div class="finding-title">Users had a challenge in locating the credit card on the app.</div>
             <div class="finding-body">Users expected the card &amp; rewards under Accounts, Wallet, or Savings — 27% missed it on first click.</div>
             <div class="finding-next"><b>Next:</b> add entry points in Accounts, Wallet &amp; Savings.</div>
           </div>
@@ -1235,58 +1275,44 @@
             <div class="finding-verdict">Gap found</div>
             <div class="finding-title">"Total balance" confused users</div>
             <div class="finding-body">It was read as the available credit limit — some risked paying the wrong amount, some lost trust.</div>
-            <div class="finding-next"><b>Next:</b> add an info icon &amp; reword with content partners.</div>
+            <div class="finding-next"><b>Next:</b> Change copy to "current balance," which is commonly understood, and add an info icon for support.</div>
           </div>
         </div>
       </div>
 
       <!-- Pull quote from credit-card "09 Design Outcome" -->
       <div class="pull-quote">
-        <blockquote>Nobody went looking for a credit card. They went looking for Account, and Wallet.</blockquote>
+        <blockquote>Nobody went looking for a "credit card" option. They went looking for Account, and Wallet.</blockquote>
         <cite>First-click test · 20 participants</cite>
       </div>
     </div>
   </section>
 
   <!-- ══════════════════════════════════════════════════
-       09 · PROJECTED IMPACT  (from wrmc, heading + subheading changed)
+       08 · PROJECTED IMPACT
   ══════════════════════════════════════════════════ -->
-  <section class="block dark" data-screen-label="09 Projected Impact">
-    <div class="container">
-      <div class="section-eyebrow"><span class="num">09</span> Projected Impact</div>
-      <h2 class="section-title reveal">The experience<br/><em>is the business case.</em></h2>
-      <p class="section-lede reveal">The target is set. The design isn't live yet — these are the numbers the work is being held to.</p>
+  <section class="block dark" data-screen-label="08 Projected Impact">
+    <div class="container-wide">
+      <div class="section-eyebrow"><span class="num">08</span> Projected Impact</div>
+      <h2 class="section-title reveal">What one connected experience is projected to return.</h2>
+      <p class="section-lede reveal">The design isn't live yet but the target is set. — these are the numbers the work is being held to.</p>
 
       <div class="impact-grid reveal">
         <div class="impact-card hl">
           <div class="impact-num">$150M</div>
           <div class="impact-label">Incremental retail spend driven by card usage</div>
-          <div class="impact-note-sm">5-year projection · +$39M gross profit</div>
-        </div>
-        <div class="impact-card">
-          <div class="impact-num">$14M</div>
-          <div class="impact-label">Saved annually in payment processing costs</div>
-          <div class="impact-note-sm">Each application adds ~$150 to store P&amp;L</div>
-        </div>
-        <div class="impact-card">
-          <div class="impact-num">$1,000+</div>
-          <div class="impact-label">More spend per cardholder, per year vs non-holders</div>
-          <div class="impact-note-sm">23× trips/year vs 9× for non-cardholders</div>
         </div>
         <div class="impact-card">
           <div class="impact-num">70%</div>
           <div class="impact-label">Activation target, up from ~50%</div>
-          <div class="impact-note-sm">1–2 year goal</div>
         </div>
         <div class="impact-card">
           <div class="impact-num">24%</div>
           <div class="impact-label">Churn target, down from 33.5%</div>
-          <div class="impact-note-sm">3–4 year goal</div>
         </div>
         <div class="impact-card">
           <div class="impact-num">↓ calls</div>
           <div class="impact-label">Balance &amp; rewards inquiries shift to self-serve</div>
-          <div class="impact-note-sm">Lower cost-to-serve per customer</div>
         </div>
       </div>
     </div>
@@ -1296,7 +1322,7 @@
        OTHER PROJECTS + FOOTER  (from credit-card, as-is)
   ══════════════════════════════════════════════════ -->
   <section class="other-section" data-screen-label="10 Other Projects">
-    <div class="container">
+    <div class="container-wide">
       <div class="other-head">
         <div>
           <h2 class="other-heading">Other Projects</h2>
@@ -1357,7 +1383,7 @@
         '.route, .friction-grid, .goal, .split-card, .rules, .roadmap, ' +
         '.screen-cell, .dec-item, .test-bar, .perf-table, .val-top, ' +
         '.findings, .pull-quote blockquote, .pull-quote cite, ' +
-        '.impact-grid, .cs-card'
+        '.impact-grid, .cs-card, .context-note, .systems-footnote'
       );
       targets.forEach(t => {
         if (!t.classList.contains('reveal')) t.classList.add('reveal');
